@@ -8,4 +8,20 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="model\" />
+    <Folder Include="style\" />
+    <Folder Include="viewmodel\" />
+    <Folder Include="ui\" />
+    <Folder Include="view\userControl\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
+    <PackageReference Include="Material.Icons" Version="3.0.0" />
+    <PackageReference Include="MaterialDesignColors" Version="5.3.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.3.0" />
+    <PackageReference Include="MaterialDesignThemes.Wpf" Version="1.0.1" />
+  </ItemGroup>
+
 </Project>

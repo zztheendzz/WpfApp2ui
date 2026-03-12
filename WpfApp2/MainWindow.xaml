@@ -3,51 +3,105 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:WpfApp2"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"/>
-            <ColumnDefinition  Width="*"/>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"  />
         </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" ShowGridLines="True"  Margin="20,0,0,0">
+
+            <StackPanel Width="150">
+                <Label  VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20">Menu</Label>
+                <Grid Margin="0,15,0,0" Width="300">
+                    <Button  Style="{StaticResource  MaterialDesignFlatButton}"  Command="{Binding puchasehistory }" HorizontalAlignment="Left" Click="Button_Click_4" >Brand</Button>
+                </Grid>
+                <Grid>
+
+                    <Button  Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding category }" HorizontalAlignment="Left" Click="Button_Click" >Category</Button>
+                </Grid>
+                <Grid>
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding vendor }" HorizontalAlignment="Left" Click="Button_Click_1" >Puchase History</Button>
+                </Grid>
+                <Grid>
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding brand }" HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Click="Button_Click_2" >Vendor</Button>
         
-        <Grid Grid.Column="0" ShowGridLines="True">
+                </Grid>
+                <Grid>
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding logout }" HorizontalAlignment="Left" Click="Button_Click_3" >Analysis</Button>
+                </Grid>
+                <Grid>
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding logout }" HorizontalAlignment="Left" >Setting</Button>
+                </Grid>
 
+                <Grid>
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding logout }" HorizontalAlignment="Left" >Log Out</Button>
+                </Grid>
 
-            <StackPanel>
-                <TextBox>Menu</TextBox>
-                <Grid>
-                    <Button>puchasehistory</Button> 
-                </Grid>
-                <Grid>
-                    <Button>category</Button>
-                </Grid>
-                <Grid>
-                    <Button>vendor</Button>
-                </Grid>
-                <Grid>
-                    <Button>log out</Button>
-                </Grid>
             </StackPanel>
-            
         </Grid>
-        <Grid Grid.Column="1" ShowGridLines="True">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition  Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            
-            <Grid ShowGridLines="True" Grid.Column="0" Margin="5,0,0,0">
-                <TextBox VerticalAlignment="Top" Height="20" Width="100" Background="White"></TextBox>
+        <Grid Grid.Column="1" ShowGridLines="false" Margin="20,0,0,0">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="150" />
+
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0" Width="200">
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox Width="100" >search</TextBox>
+                        <Button Style="{StaticResource MaterialDesignFlatButton}" BorderBrush="Aqua" BorderThickness="1">
+                            <materialDesign:PackIcon Kind="Search"></materialDesign:PackIcon>
+                        </Button>
+                        <Button Margin="10,0,0,0" Style="{StaticResource MaterialDesignFlatButton}" BorderBrush="Aqua" BorderThickness="1">
+                                <materialDesign:PackIcon Kind="Filter" ></materialDesign:PackIcon>
+                            </Button>
+
+                    </StackPanel>
+
+                </Grid>
+                <Grid Grid.Column="1">
+                    <Button  Margin="20,0,10,0" Style="{StaticResource MaterialDesignFlatButton}"  BorderBrush="Aqua" BorderThickness="1">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Add" ></materialDesign:PackIcon>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+                <Grid Grid.Column="2">
+
+                    <Button Margin="10" Style="{StaticResource MaterialDesignFlatButton}"  BorderBrush="Aqua" BorderThickness="1" >
+                        <materialDesign:PackIcon Kind="Delete" ></materialDesign:PackIcon>
+                    </Button>
+                </Grid>
+                <Grid Grid.Column="3" >
+                    <Button Margin="10"  Style="{StaticResource MaterialDesignFlatButton}" BorderBrush="Aqua" BorderThickness="1">...</Button>
+
+                </Grid>
+
             </Grid>
-            <Grid ShowGridLines="True" Grid.Column="1" Margin="5,0,0,0">
-                <Button  VerticalAlignment="Top" Height="20" Width="100" >search</Button>
+            <Grid Grid.Row="1" Margin="0,15,0,0">
+                <Frame x:Name="dataTable" NavigationUIVisibility="Hidden">
+                </Frame>
             </Grid>
-
-
-
+            <Grid Grid.Row="2" Margin="0,15,0,0">
+                <Frame x:Name="DA" NavigationUIVisibility="Hidden">
+                </Frame>
+            </Grid>
         </Grid>
+        
 
     </Grid>
 </Window>
