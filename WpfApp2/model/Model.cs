@@ -7,7 +7,7 @@ using System.Text;
 namespace WpfApp2.model
 {
     [Table("Model")]
-    class Model
+ public   class Model
     {
         [Key]   
         public int Id { get; set; }
