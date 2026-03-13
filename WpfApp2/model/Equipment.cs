@@ -6,17 +6,13 @@ using System.Text;
 
 namespace WpfApp2.model
 {
-    [Table("Model")]
-    class Model
+    [Table("Equipment")]
+    public class Equipment
     {
-        [Key]   
+        [Key]
         public int Id { get; set; }
-        [Column("ModelCode")]
-        public string ModelCode { get; set; }
-        [Column("ModelName")]
-        public string ModelName { get; set; }
-        [Column("BrandId")]
-        public int BrandId { get; set; }
+        [Column("EquipmentName")]
+        public string EquipmentName { get; set; }
         [Column("IsActive")]
         public int IsActive { get; set; }
     }

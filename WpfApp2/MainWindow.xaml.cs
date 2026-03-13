@@ -13,6 +13,7 @@ using WpfApp2.model;
 using WpfApp2.Services;
 using WpfApp2.view.analysis;
 using WpfApp2.view.pages;
+
 namespace WpfApp2
 {
     /// <summary>
@@ -25,13 +26,10 @@ namespace WpfApp2
         {
             InitializeComponent();
             modelService = new ModelService();
-            List<Model> data = modelService.GetAll();
+
         }
-        Page category = new Category();
-        Page puchaseHistory = new PuchaseHistory();
-        Page vendor = new Vendor();
-        Page Currency = new Currency();
-        Page brand = new Brand();
+
+
         Page daModel = new DAModel();
 
 

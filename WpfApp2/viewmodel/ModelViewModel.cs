@@ -35,11 +35,7 @@ namespace WpfApp2.viewmodel
 
         void LoadData()
         {
-            List<Model> list = ModelService.GetAll();
-            foreach (var item in list)
-            {
-                Models.Add(item);
-            }
+
             Models.Add(new Model
             {
                 Id = 1,
