@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Data;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -8,8 +9,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using WpfApp2.view.pages;
+using WpfApp2.model;
+using WpfApp2.Services;
 using WpfApp2.view.analysis;
+using WpfApp2.view.pages;
 namespace WpfApp2
 {
     /// <summary>
@@ -17,9 +20,12 @@ namespace WpfApp2
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ModelService modelService;
         public MainWindow()
         {
             InitializeComponent();
+            modelService = new ModelService();
+            List<Model> data = modelService.GetAll();
         }
         Page category = new Category();
         Page puchaseHistory = new PuchaseHistory();
@@ -27,29 +33,11 @@ namespace WpfApp2
         Page Currency = new Currency();
         Page brand = new Brand();
         Page daModel = new DAModel();
+
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            dataTable.Navigate(new Category());
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            dataTable.Navigate(puchaseHistory);
-        }
-
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-            dataTable.Navigate(vendor);
-        }
-
-        private void Button_Click_3(object sender, RoutedEventArgs e)
-        {
-            DA.Navigate(daModel);
-        }
-
-        private void Button_Click_4(object sender, RoutedEventArgs e)
-        {
-            dataTable.Navigate(brand);
+            MainFrame.Navigate(new newModel());
         }
     }
 }

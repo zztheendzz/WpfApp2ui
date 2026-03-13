@@ -1,0 +1,31 @@
+﻿<Window x:Class="WpfApp2.view.windows.AddEditModelWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp2.view.windows"
+        mc:Ignorable="d"
+        Title="AddEditModelWindow" Height="450" Width="800">
+    <Grid>
+
+        <StackPanel Margin="20">
+
+            <TextBox x:Name="txtCode" />
+
+            <TextBox x:Name="txtName"/>
+
+            <ComboBox x:Name="cbBrand"/>
+
+            <ComboBox x:Name="cbCategory"/>
+
+            <ComboBox x:Name="cbStatus">
+                <ComboBoxItem Content="Active"/>
+                <ComboBoxItem Content="Inactive"/>
+            </ComboBox>
+
+            <Button Content="Save"/>
+
+        </StackPanel>
+
+    </Grid>
+</Window>

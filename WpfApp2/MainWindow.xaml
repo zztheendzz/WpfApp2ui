@@ -8,100 +8,133 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+
+        <!-- Rows -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Columns -->
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"/>
-            <ColumnDefinition Width="*"  />
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0" ShowGridLines="True"  Margin="20,0,0,0">
 
-            <StackPanel Width="150">
-                <Label  VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20">Menu</Label>
-                <Grid Margin="0,15,0,0" Width="300">
-                    <Button  Style="{StaticResource  MaterialDesignFlatButton}"  Command="{Binding puchasehistory }" HorizontalAlignment="Left" Click="Button_Click_4" >Brand</Button>
-                </Grid>
-                <Grid>
-
-                    <Button  Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding category }" HorizontalAlignment="Left" Click="Button_Click" >Category</Button>
-                </Grid>
-                <Grid>
-                    <Button Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding vendor }" HorizontalAlignment="Left" Click="Button_Click_1" >Puchase History</Button>
-                </Grid>
-                <Grid>
-                    <Button Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding brand }" HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Click="Button_Click_2" >Vendor</Button>
+ 
         
-                </Grid>
-                <Grid>
-                    <Button Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding logout }" HorizontalAlignment="Left" Click="Button_Click_3" >Analysis</Button>
-                </Grid>
-                <Grid>
-                    <Button Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding logout }" HorizontalAlignment="Left" >Setting</Button>
-                </Grid>
+        <!-- TopBar -->
+        <Border Grid.Row="0"
+            Grid.ColumnSpan="2"
+            Background="#2C3E50">
 
-                <Grid>
-                    <Button Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding logout }" HorizontalAlignment="Left" >Log Out</Button>
-                </Grid>
 
-            </StackPanel>
-        </Grid>
-        <Grid Grid.Column="1" ShowGridLines="false" Margin="20,0,0,0">
+                <TextBlock Text="Price Management System"
+                   Foreground="White"
+                   FontSize="18"
+                   VerticalAlignment="Center"
+                   Margin="15,0"/>
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="150" />
-                    <ColumnDefinition Width="150" />
-                    <ColumnDefinition Width="150" />
+        </Border>
 
-                </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0" Width="200">
+        <ScrollViewer Grid.Row="1"
+              Grid.Column="0"
+              VerticalScrollBarVisibility="Auto">
+            <!-- Sidebar -->
+        <StackPanel Grid.Row="1"
+                Grid.Column="0"
+                Background="#34495E">
 
-                    <StackPanel Orientation="Horizontal">
-                        <TextBox Width="100" >search</TextBox>
-                        <Button Style="{StaticResource MaterialDesignFlatButton}" BorderBrush="Aqua" BorderThickness="1">
-                            <materialDesign:PackIcon Kind="Search"></materialDesign:PackIcon>
-                        </Button>
-                        <Button Margin="10,0,0,0" Style="{StaticResource MaterialDesignFlatButton}" BorderBrush="Aqua" BorderThickness="1">
-                                <materialDesign:PackIcon Kind="Filter" ></materialDesign:PackIcon>
-                            </Button>
+            <!-- Inquiry -->
+            <Expander Header="Inquiry / Analysis"
+                  Foreground="Black">
 
-                    </StackPanel>
+                <StackPanel>
 
-                </Grid>
-                <Grid Grid.Column="1">
-                    <Button  Margin="20,0,10,0" Style="{StaticResource MaterialDesignFlatButton}"  BorderBrush="Aqua" BorderThickness="1">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Add" ></materialDesign:PackIcon>
-                        </StackPanel>
-                    </Button>
-                </Grid>
-                <Grid Grid.Column="2">
+                    <Button Content="Price Overview"
+                        Height="35"/>
 
-                    <Button Margin="10" Style="{StaticResource MaterialDesignFlatButton}"  BorderBrush="Aqua" BorderThickness="1" >
-                        <materialDesign:PackIcon Kind="Delete" ></materialDesign:PackIcon>
-                    </Button>
-                </Grid>
-                <Grid Grid.Column="3" >
-                    <Button Margin="10"  Style="{StaticResource MaterialDesignFlatButton}" BorderBrush="Aqua" BorderThickness="1">...</Button>
+                    <Button Content="Model Price Analysis"
+                        Height="35"/>
 
-                </Grid>
+                    <Button Content="Supplier Analysis"
+                        Height="35"/>
 
-            </Grid>
-            <Grid Grid.Row="1" Margin="0,15,0,0">
-                <Frame x:Name="dataTable" NavigationUIVisibility="Hidden">
-                </Frame>
-            </Grid>
-            <Grid Grid.Row="2" Margin="0,15,0,0">
-                <Frame x:Name="DA" NavigationUIVisibility="Hidden">
-                </Frame>
-            </Grid>
-        </Grid>
-        
+                    <Button Content="Brand Analysis"
+                        Height="35"/>
+
+                    <Button Content="Equipment Analysis"
+                        Height="35"/>
+
+                </StackPanel>
+
+            </Expander>
+
+            <!-- Data Management -->
+            <Expander Header="Data Management"
+                  Foreground="Black">
+
+                <StackPanel>
+
+                    <Button Content="Model" Height="35" Click="Button_Click"/>
+                    <Button Content="Brand" Height="35"/>
+                    <Button Content="Vendor" Height="35"/>
+                    <Button Content="Equipment" Height="35"/>
+                    <Button Content="Category" Height="35"/>
+                    <Button Content="Exchange Rate" Height="35"/>
+
+                </StackPanel>
+
+            </Expander>
+
+            <!-- Price Management -->
+            <Expander Header="Price Management"
+                  Foreground="Black">
+
+                <StackPanel>
+
+                    <Button Content="Register Price" Height="35"/>
+                    <Button Content="Edit Price" Height="35"/>
+                    <Button Content="Delete Price" Height="35"/>
+
+                </StackPanel>
+
+            </Expander>
+
+            <!-- Excel -->
+            <Expander Header="Excel"
+                  Foreground="Black">
+
+                <StackPanel>
+
+                    <Button Content="Excel Upload" Height="35"/>
+
+                </StackPanel>
+
+            </Expander>
+
+            <!-- Settings -->
+            <Expander Header="Settings"
+                  Foreground="Black">
+
+                <StackPanel>
+
+                    <Button Content="Database Backup" Height="35"/>
+                    <Button Content="User" Height="35"/>
+                    <Button Content="Language" Height="35"/>
+                </StackPanel>
+
+            </Expander>
+
+        </StackPanel>
+
+        </ScrollViewer>
+        <!-- Main Frame -->
+        <Frame x:Name="MainFrame"
+           Grid.Row="1"
+           Grid.Column="1"
+           NavigationUIVisibility="Hidden"/>
 
     </Grid>
 </Window>
