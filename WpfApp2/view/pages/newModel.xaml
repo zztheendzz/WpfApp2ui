@@ -18,57 +18,81 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Toolbar -->
-        <StackPanel Orientation="Horizontal">
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
 
             <Button Content="Thêm"
-                    Width="80"
-                    Command="{Binding AddCommand}"/>
+            Width="80"
+            Command="{Binding AddCommand}"/>
+
+            <!-- Search -->
+            <TextBox Width="200" Margin="20,0,0,0" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
+
+            <!-- Filter Brand -->
+            <ListBox Width="150"  ItemsSource="{Binding BrandList}" SelectionMode="Multiple">BrandList</ListBox>
+
+            <!-- Filter Category -->
+            <ListBox Width="150" ItemsSource="{Binding CategoryList}" SelectionMode="Multiple" >CategoryList</ListBox>
 
         </StackPanel>
 
+
+
+
         <!-- Table -->
-        <DataGrid Grid.Row="1"
+        <Grid  Grid.Row="1" >
+            <DataGrid
                   ItemsSource="{Binding Models}"
                   AutoGenerateColumns="False" IsReadOnly="True">
 
-            <DataGrid.Columns>
+                <DataGrid.Columns>
 
-                <DataGridTextColumn Header="ID"
+                    <DataGridTextColumn Header="ID"
                                     Binding="{Binding Id}"/>
 
-                <DataGridTextColumn Header="Code"
+                    <DataGridTextColumn Header="Code"
                                     Binding="{Binding ModelCode}"/>
 
-                <DataGridTextColumn Header="Name"
+                    <DataGridTextColumn Header="Name"
                                     Binding="{Binding ModelName}"/>
 
-                <DataGridTextColumn Header="Brand"
-                                    Binding="{Binding Brand}"/>
+                    <DataGridTextColumn Header="Brand"
+                                    Binding="{Binding BrandId}"/>
 
-                <DataGridTextColumn Header="Category"
-                                    Binding="{Binding Category}"/>
+                    <DataGridTextColumn Header="Category"
+                                    Binding="{Binding CategoryId}"/>
 
-                <DataGridTextColumn Header="Status"
-                                    Binding="{Binding Status}"/>
+                    <DataGridTextColumn Header="Status"
+                                    Binding="{Binding IsActive}"/>
 
-                <DataGridTemplateColumn Header="Delete">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="Xóa"
+                    <DataGridTemplateColumn Header="Delete">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Xóa"
                                     Command="{Binding DataContext.DeleteCommand,
                                     RelativeSource={RelativeSource AncestorType=Page}}"
                                     CommandParameter="{Binding}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Margin="0,5,0,0">
 
-            </DataGrid.Columns>
+                <Button Content="◀"  Width="45"  Height="25"  Command="{Binding PrevCommand}"/>
 
-        </DataGrid>
+                <TextBlock Text="{Binding CurrentPage}"  Margin="10,0"   VerticalAlignment="Center"  FontSize="14"/>
+
+                <Button Content="▶"  Width="45"  Height="25" Command="{Binding NextCommand}"/>
+
+            </StackPanel>
+        </Grid>
 
     </Grid>
+    
 </Page>

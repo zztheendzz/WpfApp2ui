@@ -17,7 +17,7 @@ namespace WpfApp2.Services
 
                 var cmd = conn.CreateCommand();
 
-                cmd.CommandText = "SELECT Id, ModelCode FROM Model";
+                cmd.CommandText = "SELECT Id, ModelCode, ModelName FROM Model";
 
                 using var reader = cmd.ExecuteReader();
 
@@ -26,7 +26,8 @@ namespace WpfApp2.Services
                     list.Add(new Model
                     {
                         Id = reader.GetInt32(0),
-                        ModelCode = reader.GetString(1)
+                        ModelCode = reader.GetString(1),
+                        ModelName= reader.GetString(2),
 
                     });
                 }

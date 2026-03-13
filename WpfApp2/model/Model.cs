@@ -12,7 +12,7 @@ namespace WpfApp2.model
 
         public string ModelName { get; set; }
 
-        public int BrandeId { get; set; }
+        public int BrandId { get; set; }
 
         public int IsActive { get; set; }
     }
