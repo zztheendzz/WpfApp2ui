@@ -11,7 +11,7 @@ namespace WpfApp2.Services
 
 
 
-    public class ModelService
+    public class ModelService:BaseService<Model>
     {
         private DatabaseService _db = new DatabaseService();
 
@@ -70,35 +70,7 @@ namespace WpfApp2.Services
             });
         }
 
-        public IEnumerable<Model> GetAll()
-        {
-            using var conn = _db.GetConnection();
-            return conn.GetAll<Model>();
-        }
 
-        public Model Get(int id)
-        {
-            using var conn = _db.GetConnection();
-            return conn.Get<Model>(id);
-        }
-
-        public long Add(Model model)
-        {
-            using var conn = _db.GetConnection();
-            return conn.Insert(model);
-        }
-
-        public bool Update(Model model)
-        {
-            using var conn = _db.GetConnection();
-            return conn.Update(model);
-        }
-
-        public bool Delete(Model model)
-        {
-            using var conn = _db.GetConnection();
-            return conn.Delete(model);
-        }
     }
 }
         

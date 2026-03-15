@@ -9,7 +9,7 @@ namespace WpfApp2.model
 
 
     [Table("Category")]
-    class Category
+    public class Category
 {
     [Key]
     public int Id { get; set; }

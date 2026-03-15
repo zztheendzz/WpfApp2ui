@@ -5,9 +5,8 @@ using WpfApp2.model;
 
 namespace WpfApp2.Services
 {
-    class PurchaseService : BaseService<PurchaseHistory>
-    { 
-        
-    } 
+    public class UserService:BaseService<User>
+    {
 
+    }
 }

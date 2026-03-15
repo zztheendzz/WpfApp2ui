@@ -12,7 +12,7 @@ using WpfApp2.Services;
 namespace WpfApp2.model
 {
     [Table("PurchaseHistory")]
-    class PurchaseHistory
+    public class PurchaseHistory
     {
         [Key]
         public int Id { get; set; }

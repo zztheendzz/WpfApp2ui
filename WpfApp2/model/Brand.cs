@@ -8,7 +8,7 @@ namespace WpfApp2.model
 {
 
     [Table("Brand")]
-    class Brand
+  public  class Brand
     {
             [Key]
             public int Id { get; set; }
