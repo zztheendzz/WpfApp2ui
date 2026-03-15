@@ -26,15 +26,55 @@
         
         <!-- TopBar -->
         <Border Grid.Row="0"
-            Grid.ColumnSpan="2"
-            Background="#2C3E50">
+        Grid.ColumnSpan="2"
+        Background="#2C3E50"
+        Padding="10">
 
+            <Grid>
 
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="150"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Title -->
                 <TextBlock Text="Price Management System"
                    Foreground="White"
                    FontSize="18"
+                   VerticalAlignment="Center"/>
+
+                <!-- Global Search -->
+                <StackPanel Grid.Column="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+
+                    <TextBox Width="300"
+                     Height="30"
+                     Margin="0,0,5,0"
+                     VerticalContentAlignment="Center"
+                     Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
+                     materialDesign:HintAssist.Hint="Search model, brand, vendor..." />
+
+                    <Button 
+                    Width="80"
+                    Height="30"
+                    Command="{Binding GlobalSearchCommand}">
+
+                        <materialDesign:PackIcon Kind="Search"/>
+                    </Button>
+
+                </StackPanel>
+
+                <!-- User -->
+                <TextBlock Grid.Column="2"
+                   Text="Admin"
+                   Foreground="White"
                    VerticalAlignment="Center"
-                   Margin="15,0"/>
+                   HorizontalAlignment="Right"/>
+
+            </Grid>
 
         </Border>
 
@@ -42,99 +82,117 @@
               Grid.Column="0"
               VerticalScrollBarVisibility="Auto">
             <!-- Sidebar -->
-        <StackPanel Grid.Row="1"
+            <StackPanel Grid.Row="1"
                 Grid.Column="0"
                 Background="#34495E">
 
-            <!-- Inquiry -->
-            <Expander Header="Inquiry / Analysis"
+                <!-- Inquiry -->
+                <Expander Header="Inquiry / Analysis"
                   Foreground="Black">
 
-                <StackPanel>
+                    <StackPanel>
 
-                    <Button Content="Price Overview"
+                        <Button Content="Price Overview"
                         Height="35"/>
 
-                    <Button Content="Model Price Analysis"
+                        <Button Content="Model Price Analysis"
                         Height="35"/>
 
-                    <Button Content="Supplier Analysis"
+                        <Button Content="Supplier Analysis"
                         Height="35"/>
 
-                    <Button Content="Brand Analysis"
+                        <Button Content="Brand Analysis"
                         Height="35"/>
 
-                    <Button Content="Equipment Analysis"
+                        <Button Content="Equipment Analysis"
                         Height="35"/>
 
-                </StackPanel>
+                    </StackPanel>
 
-            </Expander>
+                </Expander>
 
-            <!-- Data Management -->
-            <Expander Header="Data Management"
+                <!-- Data Management -->
+                <Expander Header="Data Management"
                   Foreground="Black">
 
-                <StackPanel>
+                    <StackPanel>
 
                         <Button Content="Model" Height="35" Command="{Binding ShowModelPageCommand}"/>
                         <Button Content="Brand" Height="35" Command="{Binding ShowBrandPageCommand}"/>
-                    <Button Content="Vendor" Height="35"/>
-                    <Button Content="Equipment" Height="35"/>
-                    <Button Content="Category" Height="35"/>
-                    <Button Content="Exchange Rate" Height="35"/>
+                        <Button Content="Vendor" Height="35"/>
+                        <Button Content="Equipment" Height="35"/>
+                        <Button Content="Category" Height="35"/>
+                        <Button Content="Exchange Rate" Height="35"/>
 
-                </StackPanel>
+                    </StackPanel>
 
-            </Expander>
+                </Expander>
 
-            <!-- Price Management -->
-            <Expander Header="Price Management"
+                <!-- Price Management -->
+                <Expander Header="Price Management"
                   Foreground="Black">
 
-                <StackPanel>
+                    <StackPanel>
 
-                    <Button Content="Register Price" Height="35"/>
-                    <Button Content="Edit Price" Height="35"/>
-                    <Button Content="Delete Price" Height="35"/>
+                        <Button Content="Register Price" Height="35"/>
+                        <Button Content="Edit Price" Height="35"/>
+                        <Button Content="Delete Price" Height="35"/>
 
-                </StackPanel>
+                    </StackPanel>
 
-            </Expander>
+                </Expander>
 
-            <!-- Excel -->
-            <Expander Header="Excel"
+                <!-- Excel -->
+                <Expander Header="Excel"
                   Foreground="Black">
 
-                <StackPanel>
+                    <StackPanel>
 
-                    <Button Content="Excel Upload" Height="35"/>
+                        <Button Content="Excel Upload" Height="35"/>
 
-                </StackPanel>
+                    </StackPanel>
 
-            </Expander>
+                </Expander>
 
-            <!-- Settings -->
-            <Expander Header="Settings"
+                <!-- Settings -->
+                <Expander Header="Settings"
                   Foreground="Black">
 
-                <StackPanel>
+                    <StackPanel>
 
-                    <Button Content="Database Backup" Height="35"/>
-                    <Button Content="User" Height="35"/>
-                    <Button Content="Language" Height="35"/>
-                </StackPanel>
+                        <Button Content="Database Backup" Height="35"/>
+                        <Button Content="User" Height="35"/>
+                        <Button Content="Language" Height="35"/>
+                    </StackPanel>
 
-            </Expander>
+                </Expander>
 
-        </StackPanel>
-
+            </StackPanel>
         </ScrollViewer>
-        <!-- Main Frame -->
-        <Frame   Content="{Binding CurrentPage}"
-           Grid.Row="1"
-           Grid.Column="1"
+        <Grid Grid.Row="1" Grid.Column="1">
+            <StackPanel>
+            <Grid>
+            <StackPanel Orientation="Horizontal">
+
+                <Button Content="Add"
+            Command="{Binding AddCommand}"/>
+
+                <Button Content="Update"
+            Command="{Binding UpdateCommand}"/>
+
+                <Button Content="Delete"
+            Command="{Binding DeleteCommand}"/>
+                
+
+            </StackPanel>
+            </Grid>
+            <Grid>
+            <Frame   Content="{Binding CurrentPage}"
            NavigationUIVisibility="Hidden"/>
+            </Grid>
+            </StackPanel>
+        </Grid>
+        <!-- Main Frame -->
 
     </Grid>
 </Window>
