@@ -8,7 +8,7 @@ namespace WpfApp2.Services
 
     public class BaseService<T> where T : class
     {
-        private DatabaseService _db = new DatabaseService();
+        public DatabaseService _db = new DatabaseService();
 
         public IEnumerable<T> GetAll()
         {

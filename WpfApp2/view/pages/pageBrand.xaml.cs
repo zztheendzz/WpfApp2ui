@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,25 +10,18 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using WpfApp2.model;
-using WpfApp2.Services;
-using WpfApp2.view.analysis;
-using WpfApp2.view.pages;
 using WpfApp2.viewmodel;
-
-namespace WpfApp2
+namespace WpfApp2.view.pages
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for pageBrand.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class pageBrand : Page
     {
-        private ModelService modelService;
-        public MainWindow()
+        public pageBrand()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
+            DataContext = new BrandViewModel();
         }
-
     }
 }

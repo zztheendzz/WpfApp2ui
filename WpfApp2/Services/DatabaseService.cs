@@ -8,7 +8,7 @@ namespace WpfApp2.Services
 {
     public class DatabaseService
     {
-        private string connectionString = "Data Source=database.db";
+        private string connectionString = "Data Source=DataBase/database.db";
 
         public IDbConnection GetConnection()
         {

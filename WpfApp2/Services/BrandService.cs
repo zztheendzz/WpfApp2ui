@@ -13,7 +13,7 @@ namespace WpfApp2.Services
         public class BrandService:BaseService<Brand>
 
         {
-            private DatabaseService _db = new DatabaseService();
+            public DatabaseService _db = new DatabaseService();
 
             public IEnumerable<Brand> Search(string keyword)
             {

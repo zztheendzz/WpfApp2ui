@@ -77,8 +77,8 @@
 
                 <StackPanel>
 
-                    <Button Content="Model" Height="35" Click="Button_Click"/>
-                    <Button Content="Brand" Height="35"/>
+                        <Button Content="Model" Height="35" Command="{Binding ShowModelPageCommand}"/>
+                        <Button Content="Brand" Height="35" Command="{Binding ShowBrandPageCommand}"/>
                     <Button Content="Vendor" Height="35"/>
                     <Button Content="Equipment" Height="35"/>
                     <Button Content="Category" Height="35"/>
@@ -131,7 +131,7 @@
 
         </ScrollViewer>
         <!-- Main Frame -->
-        <Frame x:Name="MainFrame"
+        <Frame   Content="{Binding CurrentPage}"
            Grid.Row="1"
            Grid.Column="1"
            NavigationUIVisibility="Hidden"/>

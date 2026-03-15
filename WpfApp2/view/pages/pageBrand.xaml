@@ -1,0 +1,86 @@
+﻿<Page x:Class="WpfApp2.view.pages.pageBrand"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:WpfApp2.view.pages"
+       xmlns:vm="clr-namespace:WpfApp2.viewmodel"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="pageBrand">
+
+    <Page.DataContext>
+        <vm:BrandViewModel/>
+    </Page.DataContext>
+
+        <Grid Margin="20">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Toolbar -->
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+
+                <Button Content="Thêm"
+            Width="80"
+            Command="{Binding AddCommand}"/>
+
+                <!-- Search -->
+                <TextBox Width="200" Margin="20,0,0,0" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
+
+                <!-- Filter Brand -->
+                <ListBox Width="150"  ItemsSource="{Binding BrandList}" SelectionMode="Multiple">BrandList</ListBox>
+
+                <!-- Filter Category -->
+                <ListBox Width="150" ItemsSource="{Binding CategoryList}" SelectionMode="Multiple" >CategoryList</ListBox>
+
+            </StackPanel>
+
+            <!-- Table -->
+            <Grid  Grid.Row="1" >
+                <DataGrid
+                  ItemsSource="{Binding Brands}"
+                  AutoGenerateColumns="False" IsReadOnly="True">
+
+                    <DataGrid.Columns>
+
+                    <DataGridTextColumn Header="ID"
+                                    Binding="{Binding Id}"/>
+
+                    <DataGridTextColumn Header="Name"
+                                    Binding="{Binding BrandName}"/>
+
+                        <DataGridTextColumn Header="Status"
+                                    Binding="{Binding IsActive}"/>
+
+                        <DataGridTemplateColumn Header="Delete">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Xóa"
+                                    Command="{Binding DataContext.DeleteCommand,
+                                    RelativeSource={RelativeSource AncestorType=Page}}"
+                                    CommandParameter="{Binding}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Margin="0,5,0,0">
+
+                    <Button Content="◀"  Width="45"  Height="25"  Command="{Binding PrevCommand}"/>
+
+                    <TextBlock Text="{Binding CurrentPage}"  Margin="10,0"   VerticalAlignment="Center"  FontSize="14"/>
+
+                    <Button Content="▶"  Width="45"  Height="25" Command="{Binding NextCommand}"/>
+
+                </StackPanel>
+            </Grid>
+
+        </Grid>
+
+
+</Page>

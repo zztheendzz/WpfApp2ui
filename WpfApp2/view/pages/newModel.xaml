@@ -41,9 +41,6 @@
 
         </StackPanel>
 
-
-
-
         <!-- Table -->
         <Grid  Grid.Row="1" >
             <DataGrid
@@ -64,8 +61,6 @@
                     <DataGridTextColumn Header="Brand"
                                     Binding="{Binding BrandId}"/>
 
-                    <DataGridTextColumn Header="Category"
-                                    Binding="{Binding CategoryId}"/>
 
                     <DataGridTextColumn Header="Status"
                                     Binding="{Binding IsActive}"/>

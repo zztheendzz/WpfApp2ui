@@ -10,8 +10,6 @@
 
   <ItemGroup>
     <Folder Include="Services\DatabaseServices\" />
-    <Folder Include="style\" />
-    <Folder Include="ui\" />
   </ItemGroup>
 
   <ItemGroup>
