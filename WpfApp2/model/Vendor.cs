@@ -13,7 +13,8 @@ namespace WpfApp2.model
         public int Id { get; set; }
 
         [Column("VendorName")]
-        public string VendorName { get; set; }
+        public string? VendorName { get; set; }
+
         [Column("IsActive")]
         public int IsActive { get; set; }
     }

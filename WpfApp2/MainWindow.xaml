@@ -133,7 +133,7 @@
 
                     <StackPanel>
 
-                        <Button Content="Price Overview"
+                        <Button Content="Price Overview" Command="{Binding ShowPuchaseHistoryPageCommand }"
                         Height="35"/>
 
                         <Button Content="Model Price Analysis"
@@ -153,20 +153,17 @@
                 </Expander>
 
                 <!-- Data Management -->
-                <Expander Header="Data Management"
+                <Expander Header="Data Management" 
                   Foreground="Black">
-
-                    <StackPanel>
-
-                        <Button Content="Model" Height="35" Command="{Binding ShowModelPageCommand}"/>
-                        <Button Content="Brand" Height="35" Command="{Binding ShowBrandlPageCommand}"/>
+                    <StackPanel Background="Gray" >
+                        <Button Background="Gray" Content="Model" Height="35" Command="{Binding ShowModelPageCommand}"/>
+                        <Button Background="Gray" Content="Brand" Height="35" Command="{Binding ShowBrandlPageCommand}"/>
                         <Button Content="Vendor" Height="35" Command="{Binding ShowVendorPageCommand}" />
                         <Button Content="Equipment" Height="35" Command="{Binding ShowEquipmentPageCommand}" />
                         <Button Content="Category" Height="35" Command="{Binding ShowCategoryPageCommand}" />
                         <Button Content="Puchase History" Height="35" Command="{Binding ShowPuchaseHistoryPageCommand}" />
                         <Button Content="Currency" Height="35" Command="{Binding ShowCurrencyPageCommand}"/>
                     </StackPanel>
-
                 </Expander>
 
                 <!-- Price Management -->

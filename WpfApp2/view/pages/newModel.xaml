@@ -79,20 +79,7 @@
                 </DataGrid.RowStyle>
                 <DataGrid.Columns>
 
-                    <DataGridTextColumn Header="ID"
-                                        Binding="{Binding Id}"/>
 
-                    <DataGridTextColumn Header="Code"
-                                        Binding="{Binding ModelCode}"/>
-
-                    <DataGridTextColumn Header="Name"
-                                        Binding="{Binding ModelName}"/>
-
-                    <DataGridTextColumn Header="Brand"
-                                        Binding="{Binding BrandId}"/>
-
-                    <DataGridTextColumn Header="Status"
-                                        Binding="{Binding IsActive}"/>
 
                     <!-- EDIT -->
                     <DataGridTemplateColumn Header="Edit" Width="60">

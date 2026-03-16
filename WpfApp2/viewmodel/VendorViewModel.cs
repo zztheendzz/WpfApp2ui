@@ -7,11 +7,10 @@ using WpfApp2.viewmodel.common;
 
 namespace WpfApp2.viewmodel
 {
-
-    class CategoryViewModel : BaseCrudViewModel<Category>
+    class VendorViewModel : BaseCrudViewModel<Brand>
     {
 
-        public CategoryViewModel() : base(new BaseService<Category>())
+        public VendorViewModel() : base(new BaseService<Brand>())
         {
 
         }

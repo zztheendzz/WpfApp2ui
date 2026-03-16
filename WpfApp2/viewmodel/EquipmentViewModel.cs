@@ -8,14 +8,12 @@ using WpfApp2.viewmodel.common;
 namespace WpfApp2.viewmodel
 {
 
-    class CategoryViewModel : BaseCrudViewModel<Category>
+    class EquipmentViewModel : BaseCrudViewModel<Equipment>
     {
-
-        public CategoryViewModel() : base(new BaseService<Category>())
+        public EquipmentViewModel() : base(new BaseService<Equipment>())
         {
 
         }
-
-
     }
+
 }

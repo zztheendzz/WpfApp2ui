@@ -7,43 +7,20 @@ using System.Windows.Input;
 using WpfApp2.command;
 using WpfApp2.model;
 using WpfApp2.Services;
+using WpfApp2.viewmodel.common;
 
 namespace WpfApp2.viewmodel
 {
-    class PurchaseViewModel: INotifyPropertyChanged
+
+    class PurchaseViewModel : BaseCrudViewModel<PurchaseHistory>
     {
 
-        public ObservableCollection<PurchaseHistory> puchaseHistories { get; set; }
-
-        public ICommand AddCommand { get; set; }
-        public ICommand DeleteCommand { get; set; }
-
-
-        public PurchaseViewModel()
-        {
-            puchaseHistories = new ObservableCollection<PurchaseHistory>();
-
-            AddCommand = new RelayCommand(AddModel);
-            DeleteCommand = new RelayCommand(DeleteModel);
-            LoadData();
-        }
-
-        void LoadData()
+        public PurchaseViewModel() : base(new BaseService<PurchaseHistory>())
         {
 
         }
 
-        void AddModel(object obj)
-        {
 
-
-        }
-
-        void DeleteModel(object obj)
-        {
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
 
