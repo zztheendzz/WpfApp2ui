@@ -17,12 +17,12 @@ namespace WpfApp2.viewmodel
 
         public ICommand AddCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
-        public ModelService ModelService { get; set; }
+
 
         public PurchaseViewModel()
         {
             puchaseHistories = new ObservableCollection<PurchaseHistory>();
-            ModelService = new ModelService();
+
             AddCommand = new RelayCommand(AddModel);
             DeleteCommand = new RelayCommand(DeleteModel);
             LoadData();

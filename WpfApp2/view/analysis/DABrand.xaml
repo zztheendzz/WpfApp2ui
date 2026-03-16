@@ -18,7 +18,6 @@
                 <DataGridTextColumn Header="Model Code" Binding="{Binding modelCode}" Width="*"/>
                 <DataGridTextColumn Header="Total Amount" Binding="{Binding totalAmount}" Width="*"/>
                 <DataGridTextColumn Header="Usage rate" Binding="{Binding usageRate}" Width="*"/>
-
             </DataGrid.Columns>
         </DataGrid>
 

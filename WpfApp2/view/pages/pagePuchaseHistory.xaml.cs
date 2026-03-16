@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -13,19 +10,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using WpfApp2.viewmodel;
+
 namespace WpfApp2.view.pages
 {
     /// <summary>
-    /// Interaction logic for pageBrand.xaml
+    /// Interaction logic for pagePuchaseHistory.xaml
     /// </summary>
-    public partial class pageBrand : Page
+    public partial class pagePuchaseHistory : Page
     {
-        public pageBrand()
+        public pagePuchaseHistory()
         {
             InitializeComponent();
-            DataContext = new BrandViewModel(); ;
-
         }
     }
 }

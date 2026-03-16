@@ -14,11 +14,11 @@ using System.Windows.Shapes;
 namespace WpfApp2.view.pages
 {
     /// <summary>
-    /// Interaction logic for Category.xaml
+    /// Interaction logic for pageCategory.xaml
     /// </summary>
-    public partial class Category : Page
+    public partial class pageCategory : Page
     {
-        public Category()
+        public pageCategory()
         {
             InitializeComponent();
         }

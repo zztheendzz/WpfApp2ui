@@ -12,43 +12,19 @@ using WpfApp2.command;
 using WpfApp2.model;
 using WpfApp2.Services;
 using WpfApp2.view.pages;
+using WpfApp2.viewmodel.common;
+using static MaterialDesignThemes.Wpf.Theme.ToolBar;
 
 namespace WpfApp2.viewmodel
 {
-    class ModelViewModel : INotifyPropertyChanged
+    class ModelViewModel :BaseCrudViewModel<Model>
     {
-        private ObservableCollection<Model> _models;
 
-        public ObservableCollection<Model> Models
+        public ModelViewModel():base(new BaseService<Model>())
         {
-            get => _models;
-            set
-            {
-                _models = value;
-                PropertyChanged?.Invoke(this,
-                    new PropertyChangedEventArgs(nameof(Models)));
-            }
+
         }
 
-        public ICommand AddCommand { get; set; }
-        public ICommand DeleteCommand { get; set; }
 
-        public ModelService ModelService { get; set; }
-
-        public ModelViewModel()
-        {
-            ModelService = new ModelService();
-
-            Models = new ObservableCollection<Model>(ModelService.GetAll());
-
-            AddCommand = new RelayCommand(AddModel);
-            DeleteCommand = new RelayCommand(DeleteModel);
-        }
-
-        void AddModel(object obj) { }
-
-        void DeleteModel(object obj) { }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

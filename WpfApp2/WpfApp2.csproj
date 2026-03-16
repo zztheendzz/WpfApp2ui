@@ -9,6 +9,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="DataBase\database.db" />
+    <None Remove="images\logo.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="DataBase\database.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\common\" />
+    <Folder Include="style\" />
     <Folder Include="Services\DatabaseServices\" />
   </ItemGroup>
 
@@ -25,9 +38,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="DataBase\database.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Resource Include="images\logo.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

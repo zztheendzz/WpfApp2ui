@@ -11,7 +11,7 @@
 
         <!-- Rows -->
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="70"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -20,62 +20,103 @@
             <ColumnDefinition Width="220"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
-
- 
-        
         <!-- TopBar -->
         <Border Grid.Row="0"
         Grid.ColumnSpan="2"
-        Background="#2C3E50"
+        Background="Gray"
         Padding="10">
 
             <Grid>
-
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition Width="350"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="150"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Title -->
-                <TextBlock Text="Price Management System"
-                   Foreground="White"
-                   FontSize="18"
-                   VerticalAlignment="Center"/>
+                <!-- Logo + Title -->
+                <StackPanel Orientation="Horizontal"
+                    VerticalAlignment="Center">
+
+                    <StackPanel Margin="0,0,10,0"
+                        VerticalAlignment="Center">
+
+                        <Image Source="/Images/logo.jpg"
+                       Width="35"
+                       Height="25"
+                       HorizontalAlignment="Center"/>
+
+                        <TextBlock Text="Automation"
+                           FontSize="10"
+                           Foreground="White"
+                           HorizontalAlignment="Center"/>
+                    </StackPanel>
+
+                    <TextBlock Text="Price Management System"
+                       Foreground="White"
+                       FontSize="18"
+                       VerticalAlignment="Center"/>
+                </StackPanel>
+
 
                 <!-- Global Search -->
                 <StackPanel Grid.Column="1"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
+            Orientation="Horizontal"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
 
-                    <TextBox Width="300"
-                     Height="30"
-                     Margin="0,0,5,0"
-                     VerticalContentAlignment="Center"
-                     Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
-                     materialDesign:HintAssist.Hint="Search model, brand, vendor..." />
+                    <ComboBox Width="300"
+              IsEditable="True"
+              IsTextSearchEnabled="False"
+              StaysOpenOnEdit="True"
+              IsDropDownOpen="{Binding IsSearchDropDownOpen}"
+              ItemsSource="{Binding SearchSuggestions}"
+              Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
+              SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}">
 
-                    <Button 
-                    Width="80"
-                    Height="30"
-                    Command="{Binding GlobalSearchCommand}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Source}"
+                               FontWeight="Bold"
+                               Margin="0,0,10,0"/>
+                                    <TextBlock Text="{Binding Text}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
 
-                        <materialDesign:PackIcon Kind="Search"/>
+                    </ComboBox>
+
+                    <Button Width="60"
+            Height="30"
+            Margin="5,0,0,0"
+            Command="{Binding GlobalSearchCommand}">
+
+                        <materialDesign:PackIcon Kind="Magnify"
+                                 Width="20"
+                                 Height="20"/>
                     </Button>
 
                 </StackPanel>
 
+
                 <!-- User -->
-                <TextBlock Grid.Column="2"
-                   Text="Admin"
-                   Foreground="White"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Right"/>
+                <StackPanel Grid.Column="2"
+                    Orientation="Horizontal"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Right">
+
+                    <materialDesign:PackIcon Kind="Account"
+                                     Width="20"
+                                     Height="20"
+                                     Margin="0,0,5,0"/>
+
+                    <TextBlock Text="Admin"
+                       Foreground="White"
+                       VerticalAlignment="Center"/>
+
+                </StackPanel>
 
             </Grid>
-
         </Border>
 
         <ScrollViewer Grid.Row="1"
@@ -118,12 +159,12 @@
                     <StackPanel>
 
                         <Button Content="Model" Height="35" Command="{Binding ShowModelPageCommand}"/>
-                        <Button Content="Brand" Height="35" Command="{Binding ShowBrandPageCommand}"/>
-                        <Button Content="Vendor" Height="35"/>
-                        <Button Content="Equipment" Height="35"/>
-                        <Button Content="Category" Height="35"/>
-                        <Button Content="Exchange Rate" Height="35"/>
-
+                        <Button Content="Brand" Height="35" Command="{Binding ShowBrandlPageCommand}"/>
+                        <Button Content="Vendor" Height="35" Command="{Binding ShowVendorPageCommand}" />
+                        <Button Content="Equipment" Height="35" Command="{Binding ShowEquipmentPageCommand}" />
+                        <Button Content="Category" Height="35" Command="{Binding ShowCategoryPageCommand}" />
+                        <Button Content="Puchase History" Height="35" Command="{Binding ShowPuchaseHistoryPageCommand}" />
+                        <Button Content="Currency" Height="35" Command="{Binding ShowCurrencyPageCommand}"/>
                     </StackPanel>
 
                 </Expander>
@@ -170,27 +211,12 @@
             </StackPanel>
         </ScrollViewer>
         <Grid Grid.Row="1" Grid.Column="1">
-            <StackPanel>
-            <Grid>
-            <StackPanel Orientation="Horizontal">
 
-                <Button Content="Add"
-            Command="{Binding AddCommand}"/>
-
-                <Button Content="Update"
-            Command="{Binding UpdateCommand}"/>
-
-                <Button Content="Delete"
-            Command="{Binding DeleteCommand}"/>
-                
-
-            </StackPanel>
-            </Grid>
-            <Grid>
+                <Grid>
             <Frame   Content="{Binding CurrentPage}"
            NavigationUIVisibility="Hidden"/>
             </Grid>
-            </StackPanel>
+
         </Grid>
         <!-- Main Frame -->
 

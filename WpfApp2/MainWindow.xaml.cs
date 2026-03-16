@@ -22,12 +22,11 @@ namespace WpfApp2
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ModelService modelService;
+
         public MainWindow()
         {
             InitializeComponent();
             DataContext = new MainViewModel();
         }
-
     }
 }

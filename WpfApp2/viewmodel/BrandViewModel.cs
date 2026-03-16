@@ -7,44 +7,22 @@ using System.Windows.Input;
 using WpfApp2.command;
 using WpfApp2.model;
 using WpfApp2.Services;
-using WpfApp2.Services.WpfApp2.Services;
+using WpfApp2.Services;
+
+using WpfApp2.viewmodel.common;
 
 namespace WpfApp2.viewmodel
 {
-    class BrandViewModel
+
+    class BrandViewModel : BaseCrudViewModel<Brand>
     {
-        private ObservableCollection<Brand> _brands;
 
-        public ObservableCollection<Brand> Brands
+        public BrandViewModel() : base(new BaseService<Brand>())
         {
-            get => _brands;
-            set
-            {
-                _brands = value;
-                PropertyChanged?.Invoke(this,
-                    new PropertyChangedEventArgs(nameof(Brands)));
-            }
+
         }
 
-        public ICommand AddCommand { get; set; }
-        public ICommand DeleteCommand { get; set; }
 
-        public BrandService BrandService { get; set; }
-
-        public BrandViewModel()
-        {
-            BrandService = new BrandService();
-
-            Brands = new ObservableCollection<Brand>(BrandService.GetAll());
-
-            AddCommand = new RelayCommand(AddBrand);
-            DeleteCommand = new RelayCommand(DeleteBrand);
-        }
-
-        void AddBrand(object obj) { }
-
-        void DeleteBrand(object obj) { }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
+
 }
