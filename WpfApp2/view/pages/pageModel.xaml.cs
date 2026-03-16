@@ -10,19 +10,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using WpfApp2.viewmodel;
 
 namespace WpfApp2.view.pages
 {
     /// <summary>
-    /// Interaction logic for pageEquipment.xaml
+    /// Interaction logic for pageModel.xaml
     /// </summary>
-    public partial class pageEquipment : Page
+    public partial class pageModel : Page
     {
-        public pageEquipment()
+        public pageModel()
         {
             InitializeComponent();
-            DataContext = new EquipmentViewModel();
         }
     }
 }

@@ -101,13 +101,13 @@
                                         Binding="{Binding TotalPrice}"/>
 
                     <DataGridTextColumn Header="Currency"
-                                        Binding="{Binding CurencyCode}"/>
+                                        Binding="{Binding CurrencyCode}"/>
 
-                    <DataGridTextColumn Header="Puchase Date"
-                                       Binding="{Binding PuchaseDate}"/>
+                    <DataGridTextColumn Header="Purchase Date"
+                                       Binding="{Binding PurchaseDate}"/>
 
                     <DataGridTextColumn Header="Creat At"
-                                       Binding="{Binding CreatAt}"/>
+                                       Binding="{Binding CreateAt}"/>
 
                     <DataGridTextColumn Header="User"
                                        Binding="{Binding UserId}"/>

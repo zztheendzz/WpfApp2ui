@@ -36,7 +36,7 @@ namespace WpfApp2.model
         [Column("PurchaseDate")]
         public string PurchaseDate { get; set; }
         [Column("CreatAt")]
-        public string CreatAt { get; set; }
+        public string CreateAt { get; set; }
         [Column("UserId")]
         public int UserId { get; set; }
         [Column("Note")]

@@ -15,11 +15,12 @@ namespace WpfApp2.model
     public int Id { get; set; }
     [Column("CategoryName")]
     public string CategoryName { get; set; }
-    [Column("IsActive")]
+        [Column("ParentId")]
+        public int ParentId { get; set; }
+        [Column("IsActive")]
     public int IsActive { get; set; }
 
-    [Column("ParentId")]
-    public int ParentId { get; set; }
+
 
     }
 }
