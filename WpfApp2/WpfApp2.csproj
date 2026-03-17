@@ -20,13 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="modelDTO\analysysDto\" />
     <Folder Include="Services\common\" />
     <Folder Include="Services\DatabaseServices\" />
-    <Folder Include="Services\analysisService\" />
     <Folder Include="style\" />
     <Folder Include="viewmodel\common\" />
-    <Folder Include="viewmodel\analysis\" />
     <Folder Include="viewmodel\analysisViewModel\" />
   </ItemGroup>
 

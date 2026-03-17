@@ -13,7 +13,6 @@ using WpfApp2.command;
 using WpfApp2.model;
 using WpfApp2.modelDTO;
 using WpfApp2.Services;
-using WpfApp2.Services;
 using WpfApp2.view.dialog;
 using WpfApp2.view.pages;
 using static MaterialDesignThemes.Wpf.Theme.ToolBar;

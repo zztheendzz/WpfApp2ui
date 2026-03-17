@@ -40,12 +40,12 @@ namespace WpfApp2.Services
 
             public AnalysisService() { }
 
-        public IEnumerable<PurchaseDto> GetByModel(string modelName)
+        public void GetByModel(string modelName)
         {
-            var sql = BaseQuery + " WHERE m.Name LIKE @modelName";
+            //var sql = BaseQuery + " WHERE m.Name LIKE @modelName";
 
-            return _db.Connection.Query<PurchaseDto>(sql,
-                new { modelName = "%" + modelName + "%" });
+            //return _db.Connection.Query<PurchaseDto>(sql,
+            //    new { modelName = "%" + modelName + "%" });
         }
     }
 }

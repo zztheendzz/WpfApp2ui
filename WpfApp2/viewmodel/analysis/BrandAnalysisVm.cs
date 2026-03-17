@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace WpfApp2.viewmodel
+namespace WpfApp2.viewmodel.analysis
 {
-    public class AnalysisViewModel
+    internal class BrandAnalysisVm
     {
-
-
-
-
     }
 }
