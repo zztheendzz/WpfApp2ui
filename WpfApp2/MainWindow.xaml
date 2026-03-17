@@ -136,16 +136,16 @@
                         <Button Content="Price Overview" Command="{Binding ShowPuchaseHistoryPageCommand }"
                         Height="35"/>
 
-                        <Button Content="Model Price Analysis"
+                        <Button Content="Model Price Analysis" Command="{Binding ShowModelAnalysisCommand}"
+                        Height="35" />
+
+                        <Button Content="Vendor Analysis" Command="{Binding ShowVendorAnalysisCommand}"
                         Height="35"/>
 
-                        <Button Content="Supplier Analysis"
+                        <Button Content="Brand Analysis" Command="{Binding ShowBrandAnalysisCommand}"
                         Height="35"/>
 
-                        <Button Content="Brand Analysis"
-                        Height="35"/>
-
-                        <Button Content="Equipment Analysis"
+                        <Button Content="Equipment Analysis" Command="{Binding ShowEquipmentAnalysisCommand}"
                         Height="35"/>
 
                     </StackPanel>

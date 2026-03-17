@@ -21,77 +21,84 @@
         </Grid.RowDefinitions>
 
         <!-- TOOLBAR -->
-        <StackPanel Grid.Row="0"
-            Orientation="Horizontal"
-            Margin="0,0,0,10"
-            VerticalAlignment="Center">
+        <Grid Margin="0,0,0,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-            <Button Content="Add"
-            Width="80"
-            Command="{Binding AddCommand}"/>
+            <!-- Row 1 -->
+            <StackPanel Grid.Row="0"
+                Orientation="Horizontal"
+                VerticalAlignment="Center" Margin="0,0,0,0">
 
-            <!-- Search -->
-            <TextBox Width="160"
-             Margin="20,0,0,0"
-             VerticalContentAlignment="Center"
-             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-             materialDesign:HintAssist.Hint="Search"/>
+                <Button Content="Add"
+                Width="80"
+                Command="{Binding AddCommand}"/>
 
-            <!-- Model -->
-            <ComboBox Width="140"
-              Margin="10,0,0,0"
-              ItemsSource="{Binding ModelList}"
-              SelectedItem="{Binding SelectedModel}"
-              DisplayMemberPath="ModelCode"
-              materialDesign:HintAssist.Hint="Model"/>
+                <TextBox Width="160"
+                 Margin="20,0,0,0"
+                 VerticalContentAlignment="Center"
+                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                 materialDesign:HintAssist.Hint="Search"/>
 
-            <!-- Vendor -->
-            <ComboBox Width="150"
-              Margin="10,0,0,0"
-              ItemsSource="{Binding VendorList}"
-              SelectedItem="{Binding SelectedVendor}"
-              DisplayMemberPath="VendorName"
-                      materialDesign:HintAssist.Hint="Vendor"/>
+                <ComboBox Width="140"
+                  Margin="10,0,0,0"
+                  ItemsSource="{Binding ModelList}"
+                  SelectedItem="{Binding SelectedModel}"
+                  DisplayMemberPath="ModelCode"
+                  materialDesign:HintAssist.Hint="Model"/>
 
-            <!-- Equipment -->
-            <ComboBox Width="150"
-              Margin="10,0,0,0"
-              ItemsSource="{Binding EquipmentList}"
-              SelectedItem="{Binding SelectedEquipment}"
-              DisplayMemberPath="EquipmentName"
-                      materialDesign:HintAssist.Hint="Equipment"/>
+                <ComboBox Width="150"
+                  Margin="10,0,0,0"
+                  ItemsSource="{Binding VendorList}"
+                  SelectedItem="{Binding SelectedVendor}"
+                  DisplayMemberPath="VendorName"
+                  materialDesign:HintAssist.Hint="Vendor"/>
 
-            <!-- Category -->
-            <ComboBox Width="150"
-              Margin="10,0,0,0"
-              ItemsSource="{Binding CategoryList}"
-              SelectedItem="{Binding SelectedCategory}"
-              DisplayMemberPath="CategoryName"
-                      materialDesign:HintAssist.Hint="Category"/>
+                <ComboBox Width="150"
+                  Margin="10,0,0,0"
+                  ItemsSource="{Binding EquipmentList}"
+                  SelectedItem="{Binding SelectedEquipment}"
+                  DisplayMemberPath="EquipmentName"
+                  materialDesign:HintAssist.Hint="Equipment"/>
 
-            <!-- Date -->
-            <DatePicker Width="140"
-                Margin="10,0,0,0"
-                SelectedDate="{Binding DateFrom}"
-                        materialDesign:HintAssist.Hint="Date From"/>
+                <ComboBox Width="150"
+                  Margin="10,0,0,0"
+                  ItemsSource="{Binding CategoryList}"
+                  SelectedItem="{Binding SelectedCategory}"
+                  DisplayMemberPath="CategoryName"
+                  materialDesign:HintAssist.Hint="Category"/>
+            </StackPanel>
 
-            <DatePicker Width="140"
-                Margin="5,0,0,0"
-                SelectedDate="{Binding DateTo}"
-                        materialDesign:HintAssist.Hint="Date To"/>
 
-            <!-- Price -->
-            <TextBox Width="80"
-             Margin="10,0,0,0"
-             Text="{Binding PriceMin}"
-             materialDesign:HintAssist.Hint="Min"/>
+            <!-- Row 2 -->
+            <StackPanel Grid.Row="1"
+                Orientation="Horizontal"
+                Margin="0,8,0,0"
+                VerticalAlignment="Center">
 
-            <TextBox Width="80"
-             Margin="5,0,0,0"
-             Text="{Binding PriceMax}"
-             materialDesign:HintAssist.Hint="Max"/>
+                <DatePicker Width="140"
+                    SelectedDate="{Binding DateFrom}"
+                    materialDesign:HintAssist.Hint="Date From"/>
 
-        </StackPanel>
+                <DatePicker Width="140"
+                    Margin="10,0,0,0"
+                    SelectedDate="{Binding DateTo}"
+                    materialDesign:HintAssist.Hint="Date To"/>
+
+                <TextBox Width="80"
+                 Margin="10,0,0,0"
+                 Text="{Binding PriceMin}"
+                 materialDesign:HintAssist.Hint="Min Price"/>
+
+                <TextBox Width="80"
+                 Margin="5,0,0,0"
+                 Text="{Binding PriceMax}"
+                 materialDesign:HintAssist.Hint="Max Price"/>
+
+            </StackPanel>
+        </Grid>
 
 
         <!-- TABLE + PAGINATION -->
@@ -104,7 +111,7 @@
 
             <!-- DATA GRID -->
             <DataGrid Grid.Row="0"
-                      ItemsSource="{Binding purchases}"
+                      ItemsSource="{Binding PurchasesView}"
                       SelectedItem="{Binding SelectedItem}"
                       AutoGenerateColumns="False"
                       IsReadOnly="True">

@@ -2,14 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using WpfApp2.model;
 using WpfApp2.modelDTO;
+
 namespace WpfApp2.Services
 {
-    public class PurchaseService 
+    public class PurchaseService
     {
         DatabaseService _db = new DatabaseService();
 
+        // SEARCH
         public IEnumerable<PurchaseDto> Search(
             int? modelId,
             int? vendorId,
@@ -21,25 +22,25 @@ namespace WpfApp2.Services
             decimal? maxPrice)
         {
             var sql = new StringBuilder(@"
-        SELECT 
-            p.Id,
-            m.ModelCode AS ModelName,
-            v.VendorName,
-            e.EquipmentName,
-            c.CategoryName,
-            p.Quantity,
-            p.UnitPrice,
-            p.Quantity * p.UnitPrice AS TotalPrice,
-            p.CurrencyCode,
-            p.PurchaseDate,
-            p.Note
-        FROM Purchase p
-        LEFT JOIN Model m ON p.ModelId = m.Id
-        LEFT JOIN Vendor v ON p.VendorId = v.Id
-        LEFT JOIN Equipment e ON p.EquipmentId = e.Id
-        LEFT JOIN Category c ON p.CategoryId = c.Id
-        WHERE 1=1
-        ");
+SELECT 
+    p.Id,
+    m.ModelCode,
+    v.VendorName,
+    e.EquipmentName,
+    c.CategoryName,
+    p.Quantity,
+    p.UnitPrice,
+    p.Quantity * p.UnitPrice AS TotalPrice,
+    p.CurrencyCode,
+    p.PurchaseDate,
+    p.Note
+FROM PurchaseHistory p
+LEFT JOIN Model m ON p.ModelId = m.Id
+LEFT JOIN Vendor v ON p.VendorId = v.Id
+LEFT JOIN Equipment e ON p.EquipmentId = e.Id
+LEFT JOIN Category c ON p.CategoryId = c.Id
+WHERE 1=1
+");
 
             if (modelId.HasValue)
                 sql.Append(" AND p.ModelId = @modelId");
@@ -73,75 +74,91 @@ namespace WpfApp2.Services
                 sql.ToString(),
                 new { modelId, vendorId, equipmentId, categoryId, from, to, minPrice, maxPrice });
         }
-    
 
-            public IEnumerable<PurchaseDto> GetPurchaseDTO()
+
+        // GET ALL
+        public IEnumerable<PurchaseDto> GetPurchaseDTO()
         {
             using var conn = _db.GetConnection();
 
             string sql = @"
-    SELECT
-        p.Id,
-        m.ModelName,
-        v.VendorName,
-        e.EquipmentName,
-        p.Quantity,
-        p.UnitPrice,
-        p.TotalPrice,
-        p.CurrencyCode,
-        p.PurchaseDate,
-        p.CreateAt,
-        u.UserName,
-        p.Note
-    FROM PurchaseHistory p
-    LEFT JOIN Model m ON p.ModelId = m.Id
-    LEFT JOIN Vendor v ON p.VendorId = v.Id
-    LEFT JOIN Equipment e ON p.EquipmentId = e.Id
-    LEFT JOIN User u ON p.UserId = u.Id
-    ";
+SELECT
+    p.Id,
+    m.ModelCode,
+    v.VendorName,
+    e.EquipmentName,
+    c.CategoryName,
+    p.Quantity,
+    p.UnitPrice,
+    p.Quantity * p.UnitPrice AS TotalPrice,
+    p.CurrencyCode,
+    p.PurchaseDate,
+    p.CreateAt,
+    u.UserName,
+    p.Note
+FROM PurchaseHistory p
+LEFT JOIN Model m ON p.ModelId = m.Id
+LEFT JOIN Vendor v ON p.VendorId = v.Id
+LEFT JOIN Equipment e ON p.EquipmentId = e.Id
+LEFT JOIN Category c ON p.CategoryId = c.Id
+LEFT JOIN User u ON p.UserId = u.Id
+ORDER BY p.PurchaseDate DESC
+";
+
             return conn.Query<PurchaseDto>(sql);
         }
 
 
+        // DELETE
         public void Delete(int id)
         {
             using var conn = _db.GetConnection();
 
-            string sql = "DELETE FROM Model WHERE Id = @Id";
+            string sql = "DELETE FROM PurchaseHistory WHERE Id = @Id";
 
             conn.Execute(sql, new { Id = id });
         }
 
+
+        // EDIT
         public void Edit(PurchaseDto purchase)
         {
             using var conn = _db.GetConnection();
 
             string sql = @"
-        UPDATE Model
-        SET 
-            ModelCode = @ModelCode,
-            BrandId = @BrandId,
-            IsActive = @IsActive
-        WHERE Id = @Id
-        ";
+UPDATE PurchaseHistory
+SET
+    ModelId = @ModelId,
+    VendorId = @VendorId,
+    EquipmentId = @EquipmentId,
+    CategoryId = @CategoryId,
+    Quantity = @Quantity,
+    UnitPrice = @UnitPrice,
+    CurrencyCode = @CurrencyCode,
+    PurchaseDate = @PurchaseDate,
+    Note = @Note
+WHERE Id = @Id
+";
 
             conn.Execute(sql, purchase);
         }
 
+
+        // ADD
         public int Add(PurchaseDto purchase)
         {
             using var conn = _db.GetConnection();
 
             string sql = @"
-    INSERT INTO Model (ModelCode, BrandId, IsActive)
-    VALUES (@ModelCode, @BrandId, @IsActive);
+INSERT INTO PurchaseHistory
+(ModelId, VendorId, EquipmentId, CategoryId, Quantity, UnitPrice, CurrencyCode, PurchaseDate, Note)
+VALUES
+(@ModelId, @VendorId, @EquipmentId, @CategoryId, @Quantity, @UnitPrice, @CurrencyCode, @PurchaseDate, @Note);
 
-    SELECT last_insert_rowid();
-    ";
+SELECT last_insert_rowid();
+";
+
             return conn.ExecuteScalar<int>(sql, purchase);
         }
-
     }
-
-
 }

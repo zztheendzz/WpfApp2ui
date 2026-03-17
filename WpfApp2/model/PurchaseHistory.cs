@@ -28,9 +28,9 @@ namespace WpfApp2.model
         [Column("Quantity")]
         public int Quantity { get; set; }
         [Column("UnitPrice")]
-        public double UnitPrice { get; set; }
+        public decimal UnitPrice { get; set; }
         [Column("TotalPrice")]
-        public double TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }
         [Column("CurrencyCode")]
         public string CurrencyCode { get; set; }
         [Column("PurchaseDate")]

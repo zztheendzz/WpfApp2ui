@@ -9,7 +9,7 @@ using System.Windows.Input;
 using WpfApp2.command;
 using WpfApp2.model;
 using WpfApp2.Services;
-
+using WpfApp2.view.analysis;
 using WpfApp2.view.pages;
 
 namespace WpfApp2.viewmodel
@@ -24,6 +24,11 @@ namespace WpfApp2.viewmodel
         public ICommand ShowPuchaseHistoryPageCommand { get; set; }
         public ICommand ShowVendorPageCommand { get; set; }
 
+        public ICommand ShowModelAnalysisCommand { get; set; }
+        public ICommand ShowVendorAnalysisCommand { get; set; }
+        public ICommand ShowBrandAnalysisCommand { get; set; }
+
+        public ICommand ShowEquipmentAnalysisCommand { get; set; }
 
         private object _currentPage;
         public object CurrentPage
@@ -46,10 +51,32 @@ namespace WpfApp2.viewmodel
             ShowCategoryPageCommand = new RelayCommand(OpenPuchaseHistoryPage);
             ShowPuchaseHistoryPageCommand = new RelayCommand(OpenVendorPage);
             ShowVendorPageCommand = new RelayCommand(OpenCurrencyPage);
-
+            ShowModelAnalysisCommand = new RelayCommand(OpenModelAnalysis);
+            ShowVendorAnalysisCommand = new RelayCommand(OpenVendorAnalysis);
+            ShowBrandAnalysisCommand = new RelayCommand(OpenBrandAnalysis);
+            ShowEquipmentAnalysisCommand = new RelayCommand(OpenEquipmentAnalysis);
             //CurrentPage = new newModel(); // page mặc định
         }
 
+        void OpenEquipmentAnalysis(object obj)
+        {
+            CurrentPage = new EquipmentAnalysis();
+        }
+
+        void OpenBrandAnalysis(object obj)
+        {
+            CurrentPage = new BrandAnalysis();
+        }
+
+        void OpenVendorAnalysis(object obj)
+        {
+            CurrentPage = new VendorAnalysis();
+        }
+
+        void OpenModelAnalysis(object obj)
+        {
+            CurrentPage = new ModelAnalysis();
+        }
         void OpenModelPage(object obj)
         {
             CurrentPage = new newModel();
