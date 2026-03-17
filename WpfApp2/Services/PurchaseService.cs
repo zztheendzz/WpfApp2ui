@@ -4,58 +4,12 @@ using System.Collections.Generic;
 using System.Text;
 using WpfApp2.model;
 using WpfApp2.modelDTO;
-
 namespace WpfApp2.Services
 {
-    public class SearchService
+    public class PurchaseService 
     {
         DatabaseService _db = new DatabaseService();
 
-        public IEnumerable<SearchResult> GlobalSearch(string keyword)
-        {
-            using var conn = _db.GetConnection();
-
-            string pattern = "%" + string.Join("%", keyword.ToCharArray()) + "%";
-
-            var tables = conn.Query<string>(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
-            );
-
-            List<string> queries = new();
-
-            foreach (var table in tables)
-            {
-                var columns = conn.Query<dynamic>($"PRAGMA table_info({table})").ToList();
-
-                var idColumn = columns
-                    .FirstOrDefault(c => ((string)c.name).ToLower().Contains("id"))?.name;
-
-                if (idColumn == null)
-                    continue;
-
-                var textColumn = columns
-                    .FirstOrDefault(c => ((string)c.name).ToLower().Contains("name"))?.name
-                    ?? columns.First().name;
-
-                var whereParts = columns
-                    .Select(c => $"{c.name} LIKE @pattern");
-
-                string where = string.Join(" OR ", whereParts);
-
-                queries.Add($@"
-                SELECT 
-                    {idColumn} as Id,
-                    {textColumn} as Text,
-                    '{table}' as Source
-                FROM {table}
-                WHERE {where}
-            ");
-            }
-
-            string sql = string.Join(" UNION ", queries) + " LIMIT 20";
-
-            return conn.Query<SearchResult>(sql, new { pattern });
-        }
         public IEnumerable<PurchaseDto> Search(
             int? modelId,
             int? vendorId,
@@ -69,7 +23,7 @@ namespace WpfApp2.Services
             var sql = new StringBuilder(@"
         SELECT 
             p.Id,
-            m.ModelName,
+            m.ModelCode AS ModelName,
             v.VendorName,
             e.EquipmentName,
             c.CategoryName,
@@ -85,7 +39,7 @@ namespace WpfApp2.Services
         LEFT JOIN Equipment e ON p.EquipmentId = e.Id
         LEFT JOIN Category c ON p.CategoryId = c.Id
         WHERE 1=1
-    ");
+        ");
 
             if (modelId.HasValue)
                 sql.Append(" AND p.ModelId = @modelId");
@@ -117,20 +71,77 @@ namespace WpfApp2.Services
 
             return conn.Query<PurchaseDto>(
                 sql.ToString(),
-                new
-                {
-                    modelId,
-                    vendorId,
-                    equipmentId,
-                    categoryId,
-                    from,
-                    to,
-                    minPrice,
-                    maxPrice
-                });
+                new { modelId, vendorId, equipmentId, categoryId, from, to, minPrice, maxPrice });
         }
-    }
+    
 
+            public IEnumerable<PurchaseDto> GetPurchaseDTO()
+        {
+            using var conn = _db.GetConnection();
+
+            string sql = @"
+    SELECT
+        p.Id,
+        m.ModelName,
+        v.VendorName,
+        e.EquipmentName,
+        p.Quantity,
+        p.UnitPrice,
+        p.TotalPrice,
+        p.CurrencyCode,
+        p.PurchaseDate,
+        p.CreateAt,
+        u.UserName,
+        p.Note
+    FROM PurchaseHistory p
+    LEFT JOIN Model m ON p.ModelId = m.Id
+    LEFT JOIN Vendor v ON p.VendorId = v.Id
+    LEFT JOIN Equipment e ON p.EquipmentId = e.Id
+    LEFT JOIN User u ON p.UserId = u.Id
+    ";
+            return conn.Query<PurchaseDto>(sql);
+        }
+
+
+        public void Delete(int id)
+        {
+            using var conn = _db.GetConnection();
+
+            string sql = "DELETE FROM Model WHERE Id = @Id";
+
+            conn.Execute(sql, new { Id = id });
+        }
+
+        public void Edit(PurchaseDto purchase)
+        {
+            using var conn = _db.GetConnection();
+
+            string sql = @"
+        UPDATE Model
+        SET 
+            ModelCode = @ModelCode,
+            BrandId = @BrandId,
+            IsActive = @IsActive
+        WHERE Id = @Id
+        ";
+
+            conn.Execute(sql, purchase);
+        }
+
+        public int Add(PurchaseDto purchase)
+        {
+            using var conn = _db.GetConnection();
+
+            string sql = @"
+    INSERT INTO Model (ModelCode, BrandId, IsActive)
+    VALUES (@ModelCode, @BrandId, @IsActive);
+
+    SELECT last_insert_rowid();
+    ";
+            return conn.ExecuteScalar<int>(sql, purchase);
+        }
+
+    }
 
 
 }

@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using WpfApp2.model;
 using WpfApp2.Services;
-using WpfApp2.viewmodel.common;
+
 
 namespace WpfApp2.viewmodel
 {
-    class UserViewModel : BaseCrudViewModel<User>
+    class UserViewModel 
     {
 
-        public UserViewModel() : base(new BaseService<User>())
-        {
 
-        }
 
 
     }

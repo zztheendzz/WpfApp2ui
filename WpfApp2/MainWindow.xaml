@@ -23,7 +23,7 @@
         <!-- TopBar -->
         <Border Grid.Row="0"
         Grid.ColumnSpan="2"
-        Background="Gray"
+        Background="LightSlateGray"
         Padding="10">
 
             <Grid>
@@ -155,13 +155,13 @@
                 <!-- Data Management -->
                 <Expander Header="Data Management" 
                   Foreground="Black">
-                    <StackPanel Background="Gray" >
-                        <Button Background="Gray" Content="Model" Height="35" Command="{Binding ShowModelPageCommand}"/>
-                        <Button Background="Gray" Content="Brand" Height="35" Command="{Binding ShowBrandlPageCommand}"/>
+                    <StackPanel  >
+                        <Button  Content="Model" Height="35" Command="{Binding ShowModelPageCommand}"/>
+                        <Button  Content="Brand" Height="35" Command="{Binding ShowBrandlPageCommand}"/>
                         <Button Content="Vendor" Height="35" Command="{Binding ShowVendorPageCommand}" />
                         <Button Content="Equipment" Height="35" Command="{Binding ShowEquipmentPageCommand}" />
                         <Button Content="Category" Height="35" Command="{Binding ShowCategoryPageCommand}" />
-                        <Button Content="Puchase History" Height="35" Command="{Binding ShowPuchaseHistoryPageCommand}" />
+                        <Button Content="Purchase History" Height="35" Command="{Binding ShowPuchaseHistoryPageCommand}" />
                         <Button Content="Currency" Height="35" Command="{Binding ShowCurrencyPageCommand}"/>
                     </StackPanel>
                 </Expander>

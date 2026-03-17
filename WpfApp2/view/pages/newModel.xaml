@@ -63,7 +63,7 @@
 
                 <!-- DATA GRID -->
                 <DataGrid Grid.Row="0"
-                      ItemsSource="{Binding Items}"
+                      ItemsSource="{Binding Models}"
                       SelectedItem="{Binding SelectedItem}"
                       AutoGenerateColumns="False"
                       IsReadOnly="True">
@@ -88,8 +88,11 @@
                         <DataGridTextColumn Header="Model Code"
                                         Binding="{Binding ModelCode}"/>
 
+                        <DataGridTextColumn Header="Model Name"
+                                        Binding="{Binding ModelName}"/>
+
                         <DataGridTextColumn Header="Brand"
-                                        Binding="{Binding BrandId}"/>
+                                        Binding="{Binding BrandName}"/>
 
                         <DataGridTextColumn Header="Active"
                                         Binding="{Binding IsActive}"/>

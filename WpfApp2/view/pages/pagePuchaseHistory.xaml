@@ -22,30 +22,74 @@
 
         <!-- TOOLBAR -->
         <StackPanel Grid.Row="0"
-                    Orientation="Horizontal"
-                    Margin="0,0,0,10">
+            Orientation="Horizontal"
+            Margin="0,0,0,10"
+            VerticalAlignment="Center">
 
             <Button Content="Add"
-                    Width="80"
-                    Command="{Binding AddCommand}"/>
+            Width="80"
+            Command="{Binding AddCommand}"/>
 
             <!-- Search -->
-            <TextBox Width="200"
-                     Margin="20,0,0,0"
-                     VerticalContentAlignment="Center"
-                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox Width="160"
+             Margin="20,0,0,0"
+             VerticalContentAlignment="Center"
+             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+             materialDesign:HintAssist.Hint="Search"/>
 
-            <!-- Brand Filter -->
-            <ListBox Width="150"
-                     Margin="20,0,0,0"
-                     ItemsSource="{Binding BrandList}"
-                     SelectionMode="Multiple"/>
+            <!-- Model -->
+            <ComboBox Width="140"
+              Margin="10,0,0,0"
+              ItemsSource="{Binding ModelList}"
+              SelectedItem="{Binding SelectedModel}"
+              DisplayMemberPath="ModelCode"
+              materialDesign:HintAssist.Hint="Model"/>
 
-            <!-- Category Filter -->
-            <ListBox Width="150"
-                     Margin="10,0,0,0"
-                     ItemsSource="{Binding CategoryList}"
-                     SelectionMode="Multiple"/>
+            <!-- Vendor -->
+            <ComboBox Width="150"
+              Margin="10,0,0,0"
+              ItemsSource="{Binding VendorList}"
+              SelectedItem="{Binding SelectedVendor}"
+              DisplayMemberPath="VendorName"
+                      materialDesign:HintAssist.Hint="Vendor"/>
+
+            <!-- Equipment -->
+            <ComboBox Width="150"
+              Margin="10,0,0,0"
+              ItemsSource="{Binding EquipmentList}"
+              SelectedItem="{Binding SelectedEquipment}"
+              DisplayMemberPath="EquipmentName"
+                      materialDesign:HintAssist.Hint="Equipment"/>
+
+            <!-- Category -->
+            <ComboBox Width="150"
+              Margin="10,0,0,0"
+              ItemsSource="{Binding CategoryList}"
+              SelectedItem="{Binding SelectedCategory}"
+              DisplayMemberPath="CategoryName"
+                      materialDesign:HintAssist.Hint="Category"/>
+
+            <!-- Date -->
+            <DatePicker Width="140"
+                Margin="10,0,0,0"
+                SelectedDate="{Binding DateFrom}"
+                        materialDesign:HintAssist.Hint="Date From"/>
+
+            <DatePicker Width="140"
+                Margin="5,0,0,0"
+                SelectedDate="{Binding DateTo}"
+                        materialDesign:HintAssist.Hint="Date To"/>
+
+            <!-- Price -->
+            <TextBox Width="80"
+             Margin="10,0,0,0"
+             Text="{Binding PriceMin}"
+             materialDesign:HintAssist.Hint="Min"/>
+
+            <TextBox Width="80"
+             Margin="5,0,0,0"
+             Text="{Binding PriceMax}"
+             materialDesign:HintAssist.Hint="Max"/>
 
         </StackPanel>
 
@@ -60,7 +104,7 @@
 
             <!-- DATA GRID -->
             <DataGrid Grid.Row="0"
-                      ItemsSource="{Binding Items}"
+                      ItemsSource="{Binding purchases}"
                       SelectedItem="{Binding SelectedItem}"
                       AutoGenerateColumns="False"
                       IsReadOnly="True">
@@ -83,13 +127,13 @@
                                         Binding="{Binding Id}"/>
 
                     <DataGridTextColumn Header="Model"
-                                        Binding="{Binding ModelId}"/>
+                                        Binding="{Binding ModelName}"/>
 
                     <DataGridTextColumn Header="Vendor"
-                                        Binding="{Binding VendorId}"/>
+                                        Binding="{Binding VendorName}"/>
 
                     <DataGridTextColumn Header="Equipment"
-                                        Binding="{Binding EquipmentId}"/>
+                                        Binding="{Binding EquipmentName}"/>
 
                     <DataGridTextColumn Header="Quantity"
                                         Binding="{Binding Quantity}"/>

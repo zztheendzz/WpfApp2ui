@@ -21,8 +21,9 @@
 
   <ItemGroup>
     <Folder Include="Services\common\" />
-    <Folder Include="style\" />
     <Folder Include="Services\DatabaseServices\" />
+    <Folder Include="style\" />
+    <Folder Include="viewmodel\common\" />
   </ItemGroup>
 
   <ItemGroup>
