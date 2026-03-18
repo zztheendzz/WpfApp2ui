@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using WpfApp2.model;
+using WpfApp2.modelDto;
 using WpfApp2.modelDTO;
 
 namespace WpfApp2.Services
@@ -129,8 +130,42 @@ namespace WpfApp2.Services
                     maxPrice
                 });
         }
+
+        public IEnumerable<SearchResultDto> SearchBrand(string keyword)
+        {
+            using var conn = _db.GetConnection();
+
+            string pattern = "%" + keyword + "%";
+
+            var brands = conn.Query<Brand>(
+                "SELECT * FROM Brand WHERE BrandName LIKE @pattern LIMIT 20",
+                new { pattern });
+
+            return brands.Select(b => new SearchResultDto
+            {   Id = b.Id,
+                Source = "Brand",
+                Text = b.BrandName,
+                Data = b
+            });
+        }
+        public IEnumerable<SearchResultDto> SearchVendor(string keyword)
+        {
+            using var conn = _db.GetConnection();
+
+            string pattern = "%" + keyword + "%";
+
+            var brands = conn.Query<Vendor>(
+                "SELECT * FROM Vendor WHERE VendorName LIKE @pattern LIMIT 20",
+                new { pattern });
+
+            return brands.Select(b => new SearchResultDto
+            {
+                Id = b.Id,
+                Source = "Brand",
+                Text = b.VendorName,
+                Data = b
+            });
+        }
     }
-
-
-
 }
+
