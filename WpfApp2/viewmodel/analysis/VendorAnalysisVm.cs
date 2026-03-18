@@ -6,27 +6,25 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using WpfApp2.command; // chứa RelayCommand
-using WpfApp2.model; // model cơ bản như BrandDto, PurchaseDto
-using WpfApp2.modelDto; // model DTO khác
-using WpfApp2.modelDTO; // có thể trùng hoặc mở rộng DTO
-using WpfApp2.modelDTO.analysysDto; // DTO dùng để phân tích brand
-using WpfApp2.Services; // chứa BrandService, SearchService
-using WpfApp2.Services.analysisService; // chứa BrandAnalysisSv
+using WpfApp2.command;
+using WpfApp2.model;
+using WpfApp2.modelDTO;
+using WpfApp2.modelDTO.analysysDto;
+using WpfApp2.Services;
+using WpfApp2.Services.analysisService;
 
 namespace WpfApp2.viewmodel.analysis
 {
-
-    public class BrandAnalysisVm : INotifyPropertyChanged
+    class VendorAnalysisVm : INotifyPropertyChanged
     {
-        
+
         private SearchService _searchService = new SearchService();
 
-      
+
         public ObservableCollection<SearchResultDto> SearchSuggestions { get; set; }
             = new ObservableCollection<SearchResultDto>();
 
-   
+
         private string _globalSearchText;
         public string GlobalSearchText
         {
@@ -34,7 +32,7 @@ namespace WpfApp2.viewmodel.analysis
             set
             {
                 _globalSearchText = value;
-                OnPropertyChanged(); 
+                OnPropertyChanged();
 
                 UpdateSuggestions();
             }
@@ -53,7 +51,7 @@ namespace WpfApp2.viewmodel.analysis
             }
 
             // Lấy danh sách Brand phù hợp với từ khóa
-            var results = _searchService.SearchBrand(GlobalSearchText);
+            var results = _searchService.SearchVendor(GlobalSearchText);
 
             // Thêm từng item vào ObservableCollection để UI tự động cập nhật
             foreach (var item in results)
@@ -76,19 +74,20 @@ namespace WpfApp2.viewmodel.analysis
                     OnPropertyChanged(); // thông báo UI
                     if (value != null)
                     {
-  
+
                         // Nếu Data là BrandDto, lấy Id và tên hiển thị
-                        if (value.Data is Brand brand)
+                        if (value.Data is Vendor vendor)
                         {
-                            SelectedBrandId = brand.Id;
-                            GlobalSearchText = brand.BrandName;
+                            SelectedVendorId = vendor.Id;
+                            GlobalSearchText = vendor.VendorName;
 
-                        }else if (value.Data is BrandDto brandDto)
+                        }
+                        else if (value.Data is VendorDto vendorDto)
                         {
-                            SelectedBrandId = brandDto.Id;
-                            GlobalSearchText = brandDto.BrandName;
+                            SelectedVendorId = vendorDto.Id;
+                            GlobalSearchText = vendorDto.VendorName;
 
-                        }   
+                        }
 
                         // Đóng dropdown khi chọn xong
                         IsSearchDropDownOpen = false;
@@ -113,44 +112,44 @@ namespace WpfApp2.viewmodel.analysis
             }
         }
 
-        // Service dùng để phân tích dữ liệu theo Brand
-        private readonly BrandAnalysisSv _service;
+        // Service dùng để phân tích dữ liệu theo 
+        private readonly VendorAnalysisSv _service;
 
         // Command cho nút phân tích
         public ICommand AnalyzeCommand { get; set; }
 
         // Id brand được chọn
-        private int _selectedBrandId;
-        public int SelectedBrandId
+        private int _selectedVendorId;
+        public int SelectedVendorId
         {
-            get => _selectedBrandId;
+            get => _selectedVendorId;
             set
             {
-                _selectedBrandId = value;
+                _selectedVendorId = value;
                 OnPropertyChanged(); // thông báo UI
             }
         }
 
         // List brand dùng cho ComboBox hoặc UI khác
-        public ObservableCollection<BrandDto> Brands { get; set; }
-        public ObservableCollection<BrandDto> BrandsSearch { get; set; }
+        public ObservableCollection<VendorDto> Vendors { get; set; }
+        public ObservableCollection<VendorDto> VendorSearch { get; set; }
 
         // Constructor
-        public BrandAnalysisVm()
+        public VendorAnalysisVm()
         {
-            _service = new BrandAnalysisSv(); // init service phân tích
+            _service = new VendorAnalysisSv(); // init service phân tích
 
-            var brandService = new BrandService(); // init service Brand
-            var list = brandService.GetBrandDTO(); // lấy danh sách brand từ service
+            var vendorService = new VendorService(); // init service Brand
+            var list = vendorService.GetVendorDTO(); // lấy danh sách brand từ service
 
-            Brands = new ObservableCollection<BrandDto>(list); // danh sách hiển thị
-            BrandsSearch = new ObservableCollection<BrandDto>(list); // danh sách dùng search
+            Vendors = new ObservableCollection<VendorDto>(list); // danh sách hiển thị
+            VendorSearch = new ObservableCollection<VendorDto>(list); // danh sách dùng search
             AnalyzeCommand = new RelayCommand(_ => LoadData()); // gán command nút phân tích
         }
 
         // Property chứa dữ liệu phân tích brand
-        private BrandAnalysisDto _analysis;
-        public BrandAnalysisDto Analysis
+        private VendorAnalysisDto _analysis;
+        public VendorAnalysisDto Analysis
         {
             get => _analysis;
             set
@@ -163,11 +162,13 @@ namespace WpfApp2.viewmodel.analysis
         // Load dữ liệu phân tích dựa trên SelectedBrandId
         private void LoadData()
         {
-            if (SelectedBrandId == 0) return; // nếu chưa chọn brand => thoát
+            if (SelectedVendorId == 0) return; // nếu chưa chọn brand => thoát
 
 
-            Analysis = _service.GetBrandAnalysis(SelectedBrandId); // gọi service lấy dữ liệu
-            String  _globalSearchText;
+            Analysis = _service.GetVendorAnalysis(SelectedVendorId);
+
+            // gọi service lấy dữ liệu
+            String search = _globalSearchText;
         }
 
         // INotifyPropertyChanged implementation

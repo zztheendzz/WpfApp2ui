@@ -100,7 +100,7 @@
             <!-- Purchased Parts -->
             <TextBlock FontWeight="Bold" Margin="0,20,0,5">
                 <Run Text="Danh sách linh kiện đã mua - "/>
-                <Run Text="{Binding search}"/>
+                <Run Text="{Binding Analysis.BrandName}"/>
             </TextBlock>
 
             <DataGrid ItemsSource="{Binding Analysis.Items}"

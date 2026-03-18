@@ -18,10 +18,23 @@
                    VerticalAlignment="Center"
                    Margin="0,0,10,0"/>
 
-                <ComboBox Width="200"
-                  ItemsSource="{Binding Vendors}"
-                  SelectedItem="{Binding SelectedVendor}"
-                  DisplayMemberPath="VendorName"/>
+
+                <ComboBox Width="300"
+                      IsEditable="True"
+                      IsTextSearchEnabled="False"
+                      StaysOpenOnEdit="True"
+                      IsDropDownOpen="{Binding IsSearchDropDownOpen}"
+                      ItemsSource="{Binding SearchSuggestions}"
+                      Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}">
+
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Text}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+
+                </ComboBox>
 
                 <Button Content="Phân tích"
                 Width="100"
@@ -44,7 +57,7 @@
                     <StackPanel>
                         <TextBlock Text="Tổng giá trị mua"
                            Foreground="White"/>
-                        <TextBlock Text="{Binding TotalAmount}"
+                        <TextBlock Text="{Binding Analysis.TotalPrice}"
                            FontSize="16"
                            FontWeight="Bold"
                            Foreground="White"/>
@@ -59,7 +72,7 @@
                     <StackPanel>
                         <TextBlock Text="Số lần cung cấp"
                            Foreground="White"/>
-                        <TextBlock Text="{Binding SupplyCount}"
+                        <TextBlock Text="{Binding Analysis.SupplyCount}"
                            FontSize="16"
                            FontWeight="Bold"
                            Foreground="White"/>
@@ -74,7 +87,7 @@
                     <StackPanel>
                         <TextBlock Text="Số linh kiện"
                            Foreground="White"/>
-                        <TextBlock Text="{Binding PartCount}"
+                        <TextBlock Text="{Binding Analysis.TotalQuantity}"
                            FontSize="16"
                            FontWeight="Bold"
                            Foreground="White"/>
@@ -89,28 +102,53 @@
                FontWeight="Bold"
                Margin="0,20,0,5"/>
 
-            <DataGrid ItemsSource="{Binding PurchasedParts}"
-              AutoGenerateColumns="False">
+            <DataGrid ItemsSource="{Binding Analysis.Items}"
+              AutoGenerateColumns="False" IsReadOnly="True" >
 
                 <DataGrid.Columns>
+
+                    <DataGridTextColumn Header="ID"
+                                       Binding="{Binding Id}"/>
 
                     <DataGridTextColumn Header="Model"
                                 Binding="{Binding ModelName}"/>
 
-                    <DataGridTextColumn Header="Brand"
-                                Binding="{Binding BrandName}"/>
-
                     <DataGridTextColumn Header="Equipment"
                                 Binding="{Binding EquipmentName}"/>
 
-                    <DataGridTextColumn Header="Category"
-                                Binding="{Binding CategoryName}"/>
-
                     <DataGridTextColumn Header="Price"
-                                Binding="{Binding Price}"/>
+                                Binding="{Binding TotalPrice}"/>
 
                     <DataGridTextColumn Header="Date"
-                                Binding="{Binding Date}"/>
+                                Binding="{Binding PurchaseDate}"/>
+                    
+                    <DataGridTextColumn Header="Equipment"
+                                       Binding="{Binding EquipmentName}"/>
+
+                    <DataGridTextColumn Header="Quantity"
+                                       Binding="{Binding Quantity}"/>
+
+                    <DataGridTextColumn Header="UnitPrice"
+                                       Binding="{Binding UnitPrice}"/>
+
+                    <DataGridTextColumn Header="Tota lPrice"
+                                       Binding="{Binding TotalPrice}"/>
+
+                    <DataGridTextColumn Header="Currency"
+                                       Binding="{Binding CurrencyCode}"/>
+
+                    <DataGridTextColumn Header="Purchase Date"
+                                      Binding="{Binding PurchaseDate}"/>
+
+                    <DataGridTextColumn Header="Creat At"
+                                      Binding="{Binding CreateAt}"/>
+
+                    <DataGridTextColumn Header="User"
+                                      Binding="{Binding UserId}"/>
+
+
+                    <DataGridTextColumn Header="Note"
+                                       Binding="{Binding Note}"/>
 
                 </DataGrid.Columns>
 

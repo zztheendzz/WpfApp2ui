@@ -151,17 +151,14 @@ namespace WpfApp2.Services
         public IEnumerable<SearchResultDto> SearchVendor(string keyword)
         {
             using var conn = _db.GetConnection();
-
             string pattern = "%" + keyword + "%";
-
-            var brands = conn.Query<Vendor>(
+            var vendors = conn.Query<Vendor>(
                 "SELECT * FROM Vendor WHERE VendorName LIKE @pattern LIMIT 20",
                 new { pattern });
-
-            return brands.Select(b => new SearchResultDto
+            return vendors.Select(b => new SearchResultDto
             {
                 Id = b.Id,
-                Source = "Brand",
+                Source = "Vendor",
                 Text = b.VendorName,
                 Data = b
             });

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace WpfApp2.modelDTO
 {
-    internal class UserDto
+    public class UserDto
     {
         public int Id { get; set; }
 
