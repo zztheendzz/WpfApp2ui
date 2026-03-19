@@ -10,7 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using WpfApp2.viewmodel.analysis;
 namespace WpfApp2.view.analysis
 {
     /// <summary>
@@ -21,6 +21,7 @@ namespace WpfApp2.view.analysis
         public EquipmentAnalysis()
         {
             InitializeComponent();
+            DataContext= new EquipmentAnalysisVm();
         }
     }
 }

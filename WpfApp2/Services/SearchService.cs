@@ -163,6 +163,39 @@ namespace WpfApp2.Services
                 Data = b
             });
         }
+
+        public IEnumerable<SearchResultDto> SearchEquipment(string keyword)
+        {
+            using var conn = _db.GetConnection();
+            string pattern = "%" + keyword + "%";
+            var equipment = conn.Query<Equipment>(
+                "SELECT * FROM Equipment WHERE EquipmentName LIKE @pattern LIMIT 20",
+                new { pattern });
+            return equipment.Select(b => new SearchResultDto
+            {
+                Id = b.Id,
+                Source = "Equipment",
+                Text = b.EquipmentName,
+                Data = b
+            });
+        }
+
+        public IEnumerable<SearchResultDto> SearchModel(string keyword)
+        {
+            using var conn = _db.GetConnection();
+            string pattern = "%" + keyword + "%";
+            var equipment = conn.Query<Model>(
+                "SELECT * FROM Model WHERE ModelName LIKE @pattern LIMIT 20",
+                new { pattern });
+            return equipment.Select(b => new SearchResultDto
+            {
+                Id = b.Id,
+                Source = "Model",
+                Text = b.ModelName,
+                Data = b
+            });
+        }
+
     }
 }
 

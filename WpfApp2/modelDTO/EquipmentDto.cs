@@ -5,7 +5,7 @@ using System.Text;
 
 namespace WpfApp2.modelDTO
 {
-    internal class EquipmentDto
+    public class EquipmentDto
     {
         public int Id { get; set; }
 

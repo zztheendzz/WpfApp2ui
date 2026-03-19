@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Input;
 using WpfApp2.command;
 using WpfApp2.model;
+using WpfApp2.modelDto;
 using WpfApp2.modelDTO;
 using WpfApp2.modelDTO.analysysDto;
 using WpfApp2.Services;
@@ -15,139 +16,161 @@ using WpfApp2.Services.analysisService;
 
 namespace WpfApp2.viewmodel.analysis
 {
-    public class ModelAnalysisVm
+    public class ModelAnalysisVm : INotifyPropertyChanged
     {
-        private readonly ModelAnalysisSv _service;
 
-        public ICommand AnalyzeModelCommand { get; set; }
-        public ObservableCollection<ModelDto> Models { get; set; }
+        private SearchService _searchService = new SearchService();
 
-        public ObservableCollection<ModelDto> FilteredModels { get; set; }
 
-        private string _searchText;
-        public string SearchText
+        public ObservableCollection<SearchResultDto> SearchSuggestions { get; set; }
+            = new ObservableCollection<SearchResultDto>();
+
+
+        private string _globalSearchText;
+        public string GlobalSearchText
         {
-            get => _searchText;
+            get => _globalSearchText;
             set
             {
-                _searchText = value;
+                _globalSearchText = value;
                 OnPropertyChanged();
-                FilterModel();
+
+                UpdateSuggestions();
             }
         }
 
-        public ModelDto SelectedModel { get; set; }
+        // Hàm cập nhật gợi ý tìm kiếm dựa trên GlobalSearchText
+        private void UpdateSuggestions()
+        {
+            SearchSuggestions.Clear(); // xóa các gợi ý cũ
 
+            if (string.IsNullOrWhiteSpace(GlobalSearchText) || GlobalSearchText.Length < 2)
+            {
+
+                IsSearchDropDownOpen = false;
+                return;
+            }
+
+            // Lấy danh sách Brand phù hợp với từ khóa
+            var results = _searchService.SearchModel(GlobalSearchText);
+
+            // Thêm từng item vào ObservableCollection để UI tự động cập nhật
+            foreach (var item in results)
+                SearchSuggestions.Add(item);
+
+
+            IsSearchDropDownOpen = SearchSuggestions.Count > 0;
+        }
+
+        // Selected item khi người dùng chọn từ gợi ý
+        private SearchResultDto _selectedSearchResult;
+        public SearchResultDto SelectedSearchResult
+        {
+            get => _selectedSearchResult;
+            set
+            {
+                if (_selectedSearchResult != value)
+                {
+                    _selectedSearchResult = value;
+                    OnPropertyChanged(); // thông báo UI
+                    if (value != null)
+                    {
+
+                        // Nếu Data là BrandDto, lấy Id và tên hiển thị
+                        if (value.Data is Model model)
+                        {
+                            SelectedModelId = model.Id;
+                            GlobalSearchText = model.ModelName;
+
+                        }
+                        else if (value.Data is ModelDto modelDto)
+                        {
+                            SelectedModelId = modelDto.Id;
+                            GlobalSearchText = modelDto.ModelName;
+
+                        }
+
+                        // Đóng dropdown khi chọn xong
+                        IsSearchDropDownOpen = false;
+
+                        // Load dữ liệu phân tích cho brand đã chọn
+                        LoadData();
+                    }
+                }
+            }
+        }
+
+        // Dropdown có đang mở hay không
+        private bool _isSearchDropDownOpen;
+        public bool IsSearchDropDownOpen
+        {
+            get => _isSearchDropDownOpen;
+            set
+            {
+                _isSearchDropDownOpen = value;
+                OnPropertyChanged(); // thông báo UI
+            }
+        }
+
+        // Service dùng để phân tích dữ liệu theo Brand
+        private readonly ModelAnalysisSv _service;
+
+        // Command cho nút phân tích
+        public ICommand AnalyzeCommand { get; set; }
+
+        // Id brand được chọn
+        private int _selectedModelId;
+        public int SelectedModelId
+        {
+            get => _selectedModelId;
+            set
+            {
+                _selectedModelId = value;
+                OnPropertyChanged(); // thông báo UI
+            }
+        }
+
+        // List brand dùng cho ComboBox hoặc UI khác
+        public ObservableCollection<ModelDto> Models { get; set; }
+        public ObservableCollection<ModelDto> ModelsSearch { get; set; }
+
+        // Constructor
         public ModelAnalysisVm()
         {
-            AnalyzeModelCommand = new RelayCommand(analysisModel);
-            var db = new DatabaseService().GetConnection();
-            _service = new ModelAnalysisSv(db);
+            _service = new ModelAnalysisSv(); // init service phân tích
 
-            VendorPrices = new ObservableCollection<ModelAnalysisDto>();
-            PurchaseHistory = new ObservableCollection<PurchaseDto>();
+            var modelService = new ModelService(); // init service Brand
+            var list = modelService.GetModelDTO(); // lấy danh sách brand từ service
+
+            Models = new ObservableCollection<ModelDto>(list); // danh sách hiển thị
+            ModelsSearch = new ObservableCollection<ModelDto>(list); // danh sách dùng search
+            AnalyzeCommand = new RelayCommand(_ => LoadData()); // gán command nút phân tích
         }
 
-
-        public void analysisModel(Object obj)
+        // Property chứa dữ liệu phân tích brand
+        private ModelAnalysisDto _analysis;
+        public ModelAnalysisDto Analysis
         {
-            if (SelectedModel == null) return;
-
-            var summary = _service.GetSummary(SelectedModel.Id);
-
-            LastPrice = summary.lastPrice;
-            MinPrice = summary.minPrice;
-            MaxPrice = summary.maxPrice;
-            AvgPrice = summary.avgPrice;
-
-            VendorPrices = new ObservableCollection<ModelAnalysisDto>(
-                _service.GetVendorPrices(SelectedModel.Id)
-            );
-
-            PurchaseHistory = new ObservableCollection<PurchaseDto>(
-                _service.GetPurchaseHistory(SelectedModel.Id)
-            );
-
-
-
-            OnPropertyChanged(nameof(VendorPrices));
-            OnPropertyChanged(nameof(LastPrice));
-            OnPropertyChanged(nameof(MinPrice));
-            OnPropertyChanged(nameof(MaxPrice));
-            OnPropertyChanged(nameof(AvgPrice));
-        }
-
-
-        private void FilterModel()
-        {
-            if (string.IsNullOrWhiteSpace(SearchText))
+            get => _analysis;
+            set
             {
-                FilteredModels = new ObservableCollection<ModelDto>(Models);
+                _analysis = value;
+                OnPropertyChanged(); // thông báo UI khi dữ liệu phân tích thay đổi
             }
-            else
-            {
-               FilteredModels = new ObservableCollection<ModelDto>(
-                    Models.Where(x => x.ModelName.ToLower().Contains(SearchText.ToLower()))
-                );
-            }
-
-            OnPropertyChanged(nameof(FilteredModels));
         }
 
-        // Summary
-        private decimal _lastPrice;
-        public decimal LastPrice
+        // Load dữ liệu phân tích dựa trên SelectedBrandId
+        private void LoadData()
         {
-            get => _lastPrice;
-            set { _lastPrice = value; OnPropertyChanged(); }
+            if (SelectedModelId == 0) return; // nếu chưa chọn brand => thoát
+
+
+            Analysis = _service.GetModelAnalysis(SelectedModelId); // gọi service lấy dữ liệu
         }
 
-        private decimal _minPrice;
-        public decimal MinPrice
-        {
-            get => _minPrice;
-            set { _minPrice = value; OnPropertyChanged(); }
-        }
-
-        private decimal _maxPrice;
-        public decimal MaxPrice
-        {
-            get => _maxPrice;
-            set { _maxPrice = value; OnPropertyChanged(); }
-        }
-
-        private decimal _avgPrice;
-        public decimal AvgPrice
-        {
-            get => _avgPrice;
-            set { _avgPrice = value; OnPropertyChanged(); }
-        }
-
-        public ObservableCollection<ModelAnalysisDto> VendorPrices { get; set; }
-
-        public ObservableCollection<PurchaseDto> PurchaseHistory { get; set; }
-
-        public void Load(int modelId)
-        {
-            var summary = _service.GetSummary(modelId);
-
-            LastPrice = summary.lastPrice;
-            MinPrice = summary.minPrice;
-            MaxPrice = summary.maxPrice;
-            AvgPrice = summary.avgPrice;
-
-            VendorPrices.Clear();
-            foreach (var v in _service.GetVendorPrices(modelId))
-                VendorPrices.Add(v);
-
-            PurchaseHistory.Clear();
-            foreach (var p in _service.GetPurchaseHistory(modelId))
-                PurchaseHistory.Add(p);
-        }
-
+        // INotifyPropertyChanged implementation
         public event PropertyChangedEventHandler PropertyChanged;
-
-        void OnPropertyChanged([CallerMemberName] string name = null)
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }

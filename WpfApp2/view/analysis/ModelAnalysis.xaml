@@ -23,10 +23,23 @@
              Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>-->
 
                 <!-- Combobox model -->
-                <ComboBox Width="200"
-              ItemsSource="{Binding FilteredModels}"
-              SelectedItem="{Binding SelectedModel}"
-              DisplayMemberPath="Name"/>
+                <ComboBox Width="300"
+          IsEditable="True"
+          IsTextSearchEnabled="False"
+          StaysOpenOnEdit="True"
+          IsDropDownOpen="{Binding IsSearchDropDownOpen}"
+          ItemsSource="{Binding SearchSuggestions}"
+          Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
+          SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}">
+
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Text}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+
+                </ComboBox>
+
 
                 <Button Content="Phân tích"
             Width="100"
@@ -47,7 +60,7 @@
                 <Border Background="#2C3E50" Margin="5" Padding="10">
                     <StackPanel>
                         <TextBlock Text="Giá gần nhất" Foreground="White"/>
-                        <TextBlock Text="{Binding LastPrice}"
+                        <TextBlock Text="{Binding Analysis.LatestPrice}"
                            FontSize="16"
                            FontWeight="Bold"
                            Foreground="White"/>
@@ -57,7 +70,7 @@
                 <Border Grid.Column="1" Background="#2C3E50" Margin="5" Padding="10">
                     <StackPanel>
                         <TextBlock Text="Giá thấp nhất" Foreground="White"/>
-                        <TextBlock Text="{Binding MinPrice}"
+                        <TextBlock Text="{Binding Analysis.MinPrice}"
                            FontSize="16"
                            FontWeight="Bold"
                            Foreground="White"/>
@@ -67,22 +80,22 @@
                 <Border Grid.Column="2" Background="#2C3E50" Margin="5" Padding="10">
                     <StackPanel>
                         <TextBlock Text="Giá cao nhất" Foreground="White"/>
-                        <TextBlock Text="{Binding MaxPrice}"
+                        <TextBlock Text="{Binding Analysis.MaxPrice}"
                            FontSize="16"
                            FontWeight="Bold"
                            Foreground="White"/>
                     </StackPanel>
                 </Border>
 
-                <Border Grid.Column="3" Background="#2C3E50" Margin="5" Padding="10">
+                <!--<Border Grid.Column="3" Background="#2C3E50" Margin="5" Padding="10">
                     <StackPanel>
                         <TextBlock Text="Giá trung bình" Foreground="White"/>
-                        <TextBlock Text="{Binding AvgPrice}"
+                        <TextBlock Text="{Binding Analysis.AvgPrice}"
                            FontSize="16"
                            FontWeight="Bold"
                            Foreground="White"/>
                     </StackPanel>
-                </Border>
+                </Border>-->
             </Grid>
 
 
@@ -91,7 +104,8 @@
                FontWeight="Bold"
                Margin="0,20,0,5"/>
 
-            <DataGrid ItemsSource="{Binding VendorPrices}"
+            <DataGrid ItemsSource="{Binding Analysis.Vendors}" 
+              IsReadOnly="True"
               AutoGenerateColumns="False"
               Height="200">
 
@@ -99,8 +113,8 @@
                     <DataGridTextColumn Header="Vendor"
                                 Binding="{Binding VendorName}"/>
 
-                    <DataGridTextColumn Header="Giá gần nhất"
-                                Binding="{Binding LatestPrice}"/>
+                    <!--<DataGridTextColumn Header="Giá gần nhất"
+                                Binding="{Binding LatestPrice}"/>-->
 
                     <DataGridTextColumn Header="Giá thấp nhất"
                                 Binding="{Binding MinPrice}"/>
@@ -116,25 +130,44 @@
                FontWeight="Bold"
                Margin="0,20,0,5"/>
 
-            <DataGrid ItemsSource="{Binding PurchaseHistory}"
-              AutoGenerateColumns="False">
+            <DataGrid ItemsSource="{Binding Analysis.Items}"
+              AutoGenerateColumns="False" IsReadOnly="True" >
 
                 <DataGrid.Columns>
 
-                    <DataGridTextColumn Header="Date"
-                                Binding="{Binding Date}"/>
+                    <DataGridTextColumn Header="ID"
+                                        Binding="{Binding Id}"/>
 
                     <DataGridTextColumn Header="Vendor"
-                                Binding="{Binding VendorName}"/>
+                                        Binding="{Binding VendorName}"/>
 
                     <DataGridTextColumn Header="Equipment"
-                                Binding="{Binding EquipmentName}"/>
+                                        Binding="{Binding EquipmentName}"/>
 
-                    <DataGridTextColumn Header="Category"
-                                Binding="{Binding CategoryName}"/>
+                    <DataGridTextColumn Header="Quantity"
+                                        Binding="{Binding Quantity}"/>
 
-                    <DataGridTextColumn Header="Price"
-                                Binding="{Binding Price}"/>
+                    <DataGridTextColumn Header="UnitPrice"
+                                        Binding="{Binding UnitPrice}"/>
+
+                    <DataGridTextColumn Header="Tota lPrice"
+                                        Binding="{Binding TotalPrice}"/>
+
+                    <DataGridTextColumn Header="Currency"
+                                        Binding="{Binding CurrencyCode}"/>
+
+                    <DataGridTextColumn Header="Purchase Date"
+                                       Binding="{Binding PurchaseDate}"/>
+
+                    <DataGridTextColumn Header="Creat At"
+                                       Binding="{Binding CreateAt}"/>
+
+                    <DataGridTextColumn Header="User"
+                                       Binding="{Binding UserId}"/>
+
+
+                    <DataGridTextColumn Header="Note"
+                                        Binding="{Binding Note}"/>
 
                 </DataGrid.Columns>
             </DataGrid>

@@ -30,8 +30,8 @@ namespace WpfApp2.viewmodel
 
             //purchases = new ObservableCollection<PurchaseDto>(purchaseService.GetPurchaseDTO());
 
-            //PurchasesView = CollectionViewSource.GetDefaultView(purchases);
-            //PurchasesView.Filter = FilterPurchase;
+           // PurchasesView = CollectionViewSource.GetDefaultView(purchases);
+           // PurchasesView.Filter = FilterPurchase;
 
             EditCommand = new RelayCommand(x => Edit((PurchaseDto)x));
             DeleteCommand = new RelayCommand(x => Delete((PurchaseDto)x));

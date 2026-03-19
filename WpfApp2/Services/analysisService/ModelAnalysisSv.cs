@@ -1,93 +1,115 @@
 ﻿using Dapper;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Text;
+using System.Linq;
 using WpfApp2.modelDTO;
+using WpfApp2.modelDTO.analysisDto;
 using WpfApp2.modelDTO.analysysDto;
-
 namespace WpfApp2.Services.analysisService
 {
     public class ModelAnalysisSv
     {
-
-        public readonly IDbConnection _db;
-
-        public ModelAnalysisSv(IDbConnection db)
+        public DatabaseService _db = new DatabaseService();
+        public ModelAnalysisDto GetModelAnalysis(int modelId)
         {
-            _db = db;
-        }
+            using var conn = _db.GetConnection();
 
-
-
-        public (decimal lastPrice, decimal minPrice, decimal maxPrice, decimal avgPrice) GetSummary(int modelId)
-        {
             string sql = @"
-            SELECT 
-                MIN(UnitPrice) MinPrice,
-                MAX(UnitPrice) MaxPrice,
-                AVG(UnitPrice) AvgPrice
-            FROM PurchaseHistory
-            WHERE ModelId = @modelId";
+-- 1. SUMMARY
+SELECT 
+    m.Id AS ModelId,
+    m.ModelName,
 
-            var summary = _db.QueryFirst(sql, new { modelId });
+    (
+        SELECT ph.UnitPrice
+        FROM PurchaseHistory ph
+        WHERE ph.ModelId = m.Id
+        ORDER BY ph.PurchaseDate DESC
+        LIMIT 1
+    ) AS LatestPrice,
 
-            string lastSql = @"
-            SELECT UnitPrice
-            FROM PurchaseHistory
-            WHERE ModelId = @modelId
-            ORDER BY PurchaseDate DESC
-            LIMIT 1";
+    IFNULL(MIN(p.UnitPrice), 0) AS MinPrice,
+    IFNULL(MAX(p.UnitPrice), 0) AS MaxPrice,
+    IFNULL(AVG(p.UnitPrice), 0) AS AvgPrice,
 
-            decimal lastPrice = _db.QueryFirstOrDefault<decimal>(lastSql, new { modelId });
+    v.Id AS BestVendorId,
+    v.VendorName AS BestVendorName,
+    ph_min.UnitPrice AS BestVendorPrice
 
-            return (lastPrice, summary.MinPrice, summary.MaxPrice, summary.AvgPrice);
-        }
+FROM Model m
+LEFT JOIN PurchaseHistory p ON p.ModelId = m.Id
 
-        // 2. Vendor comparison
-        public IEnumerable<ModelAnalysisDto> GetVendorPrices(int modelId)
-        {
-            string sql = @"
-            SELECT
-                v.VendorName,
-                MIN(p.UnitPrice) MinPrice,
-                MAX(p.UnitPrice) MaxPrice,
-                (
-                    SELECT UnitPrice
-                    FROM PurchaseHistory p2
-                    WHERE p2.ModelId = p.ModelId
-                    AND p2.VendorId = p.VendorId
-                    ORDER BY p2.PurchaseDate DESC
-                    LIMIT 1
-                ) LastPrice
-            FROM PurchaseHistory p
-            JOIN Vendor v ON p.VendorId = v.Id
-            WHERE p.ModelId = @modelId
-            GROUP BY p.VendorId";
+LEFT JOIN PurchaseHistory ph_min 
+    ON ph_min.ModelId = m.Id
+    AND ph_min.UnitPrice = (
+        SELECT MIN(p2.UnitPrice)
+        FROM PurchaseHistory p2
+        WHERE p2.ModelId = m.Id
+    )
 
-            return _db.Query<ModelAnalysisDto>(sql, new { modelId });
-        }
+LEFT JOIN Vendor v ON v.Id = ph_min.VendorId
 
-        // 3. Purchase history
-        public IEnumerable<PurchaseDto> GetPurchaseHistory(int modelId)
-        {
-            string sql = @"
-            SELECT
-                p.PurchaseDate Date,
-                v.VendorName,
-                e.EquipmentName,
-                c.CategoryName,
-                p.UnitPrice Price
-            FROM PurchaseHistory p
-            JOIN Vendor v ON p.VendorId = v.Id
-            JOIN Equipment e ON p.EquipmentId = e.Id
-            JOIN Model m ON p.ModelId = m.Id
-            JOIN Category c ON m.CategoryId = c.Id
-            WHERE p.ModelId = @modelId
-            ORDER BY p.PurchaseDate DESC";
+WHERE m.Id = @modelId
+GROUP BY m.Id;
 
-            return _db.Query<PurchaseDto>(sql, new { modelId });
+-- 2. VENDOR COMPARISON
+SELECT
+    v.Id AS VendorId,
+    v.VendorName,
+
+    IFNULL(MIN(p.UnitPrice), 0) AS MinPrice,
+    IFNULL(MAX(p.UnitPrice), 0) AS MaxPrice,
+    IFNULL(AVG(p.UnitPrice), 0) AS AvgPrice
+
+FROM PurchaseHistory p
+LEFT JOIN Vendor v ON v.Id = p.VendorId
+
+WHERE p.ModelId = @modelId
+GROUP BY v.Id
+ORDER BY AvgPrice;
+
+-- 3. PURCHASE HISTORY 🔥
+SELECT
+    p.Id,
+    m.ModelName,
+    e.EquipmentName,
+    b.BrandName,
+    c.CategoryName,
+    v.VendorName,
+
+    p.Quantity,
+    p.UnitPrice,
+    IFNULL(p.Quantity * p.UnitPrice, 0) AS TotalPrice,
+
+    p.CurrencyCode,
+    p.PurchaseDate,
+    p.CreateAt,
+    u.UserName,
+    p.Note
+
+FROM PurchaseHistory p
+LEFT JOIN Model m ON p.ModelId = m.Id
+LEFT JOIN Equipment e ON p.EquipmentId = e.Id
+LEFT JOIN Brand b ON m.BrandId = b.Id
+LEFT JOIN Category c ON m.CategoryId = c.Id
+LEFT JOIN Vendor v ON p.VendorId = v.Id
+LEFT JOIN [User] u ON p.UserId = u.Id
+
+WHERE p.ModelId = @modelId
+
+ORDER BY p.PurchaseDate DESC;
+";
+
+            using var multi = conn.QueryMultiple(sql, new { modelId });
+
+            var summary = multi.ReadFirstOrDefault<ModelAnalysisDto>();
+            var vendors = multi.Read<VendorPriceDto>().ToList();
+            var history = multi.Read<PurchaseDto>().ToList();
+
+            summary.Vendors = vendors;
+            summary.Items = history;
+
+            return summary;
         }
     }
 }
-    
