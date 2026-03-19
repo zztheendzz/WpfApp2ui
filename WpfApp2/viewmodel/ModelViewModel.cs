@@ -60,7 +60,7 @@ namespace WpfApp2.viewmodel
         }
         public void Add()
         {
-            var model = new ModelDto();   // object mới
+            var model = new ModelDto();
 
             var dialog = new edit(model);
 
@@ -70,9 +70,11 @@ namespace WpfApp2.viewmodel
 
                 int newId = service.Add(model);
 
-                model.Id = newId;
+                // 🔥 LẤY LẠI DATA ĐÃ JOIN
+                var newItem = service.GetModelDTO()
+                                     .FirstOrDefault(x => x.Id == newId);
 
-                Models.Add(model);
+                Models.Add(newItem); // ✅ FIX Ở ĐÂY
             }
         }
 

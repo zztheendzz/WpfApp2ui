@@ -22,7 +22,8 @@
           IsDropDownOpen="{Binding IsSearchDropDownOpen}"
           ItemsSource="{Binding SearchSuggestions}"
           Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
-          SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}">
+          SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}"
+          IsSynchronizedWithCurrentItem="False">
 
                     <ComboBox.ItemTemplate>
                         <DataTemplate>

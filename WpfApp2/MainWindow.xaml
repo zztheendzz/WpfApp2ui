@@ -186,7 +186,7 @@
 
                     <StackPanel>
 
-                        <Button Content="Excel Upload" Height="35"/>
+                        <Button Content="Excel Upload" Height="35" Command="{Binding ShowImportExcelCommand}"  />
 
                     </StackPanel>
 

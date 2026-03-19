@@ -29,6 +29,8 @@ namespace WpfApp2.viewmodel
         public ICommand ShowBrandAnalysisCommand { get; set; }
 
         public ICommand ShowEquipmentAnalysisCommand { get; set; }
+        public ICommand ShowImportExcelCommand { get; set; }
+        
 
         private object _currentPage;
         public object CurrentPage
@@ -55,9 +57,15 @@ namespace WpfApp2.viewmodel
             ShowVendorAnalysisCommand = new RelayCommand(OpenVendorAnalysis);
             ShowBrandAnalysisCommand = new RelayCommand(OpenBrandAnalysis);
             ShowEquipmentAnalysisCommand = new RelayCommand(OpenEquipmentAnalysis);
+            ShowImportExcelCommand = new RelayCommand(OpenPageImportExcel);
+
             //CurrentPage = new newModel(); // page mặc định
         }
 
+        void OpenPageImportExcel(object obj)
+        {
+            CurrentPage = new pageImportExcel();
+        }
         void OpenEquipmentAnalysis(object obj)
         {
             CurrentPage = new EquipmentAnalysis();

@@ -22,7 +22,7 @@ namespace WpfApp2.viewmodel.analysis
         
         private SearchService _searchService = new SearchService();
 
-      
+        private bool _isSelecting;
         public ObservableCollection<SearchResultDto> SearchSuggestions { get; set; }
             = new ObservableCollection<SearchResultDto>();
 
@@ -34,7 +34,9 @@ namespace WpfApp2.viewmodel.analysis
             set
             {
                 _globalSearchText = value;
-                OnPropertyChanged(); 
+                OnPropertyChanged();
+
+                if (_isSelecting) return; // 🔥 chặn loop
 
                 UpdateSuggestions();
             }
@@ -73,33 +75,32 @@ namespace WpfApp2.viewmodel.analysis
                 if (_selectedSearchResult != value)
                 {
                     _selectedSearchResult = value;
-                    OnPropertyChanged(); // thông báo UI
+                    OnPropertyChanged();
+
                     if (value != null)
                     {
-  
-                        // Nếu Data là BrandDto, lấy Id và tên hiển thị
+                        _isSelecting = true;
+
                         if (value.Data is Brand brand)
                         {
                             SelectedBrandId = brand.Id;
                             GlobalSearchText = brand.BrandName;
-
-                        }else if (value.Data is BrandDto brandDto)
+                        }
+                        else if (value.Data is BrandDto brandDto)
                         {
                             SelectedBrandId = brandDto.Id;
                             GlobalSearchText = brandDto.BrandName;
+                        }
 
-                        }   
+                        _isSelecting = false;
 
-                        // Đóng dropdown khi chọn xong
                         IsSearchDropDownOpen = false;
-
-                        // Load dữ liệu phân tích cho brand đã chọn
                         LoadData();
-                        OnPropertyChanged();
                     }
                 }
             }
         }
+        
 
         // Dropdown có đang mở hay không
         private bool _isSearchDropDownOpen;

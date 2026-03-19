@@ -12,8 +12,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WpfApp2.model;
+using WpfApp2.Services;
 using WpfApp2.viewmodel;
 using static System.Net.Mime.MediaTypeNames;
+using Dapper;
 
 namespace WpfApp2.view.dialog
 {
@@ -26,8 +29,15 @@ namespace WpfApp2.view.dialog
         {
             InitializeComponent();
             DataContext = model;
-
+            LoadBrand();
             GenerateForm(model);
+        }
+        private List<Brand> _brandList; 
+         public DatabaseService _db = new DatabaseService();
+        private void LoadBrand()
+        {
+            using var conn = _db.GetConnection();
+            _brandList = conn.Query<Brand>("SELECT Id, BrandName FROM Brand").ToList();
         }
         void GenerateForm(object model)
         {
@@ -36,26 +46,51 @@ namespace WpfApp2.view.dialog
             foreach (var prop in properties)
             {
                 if (prop.Name == "Id") continue;
+                if (prop.Name == "BrandName") continue;
 
                 var label = new TextBlock
                 {
-                    Text = GetDisplayName(prop),
+                    Text = prop.Name == "BrandId" ? "Brand" : GetDisplayName(prop),
                     Margin = new Thickness(0, 10, 0, 2)
                 };
 
-                var textbox = new TextBox
-                {
-                    Margin = new Thickness(0, 0, 0, 10)
-                };
-
-                textbox.SetBinding(TextBox.TextProperty,
-                    new Binding(prop.Name)
-                    {
-                        Mode = BindingMode.TwoWay
-                    });
-
                 FormPanel.Children.Add(label);
-                FormPanel.Children.Add(textbox);
+
+                // 🔥 CASE BRAND → COMBOBOX
+                if (prop.Name == "BrandId")
+                {
+                    var combo = new ComboBox
+                    {
+                        Margin = new Thickness(0, 0, 0, 10),
+                        ItemsSource = _brandList,
+                        DisplayMemberPath = "BrandName",
+                        SelectedValuePath = "Id"
+                    };
+
+                    combo.SetBinding(ComboBox.SelectedValueProperty,
+                        new Binding("BrandId")   // ✅ bind đúng field DB cần
+                        {
+                            Mode = BindingMode.TwoWay
+                        });
+
+                    FormPanel.Children.Add(combo);
+                }
+                else
+                {
+                    // 🔥 DEFAULT → TEXTBOX
+                    var textbox = new TextBox
+                    {
+                        Margin = new Thickness(0, 0, 0, 10)
+                    };
+
+                    textbox.SetBinding(TextBox.TextProperty,
+                        new Binding(prop.Name)
+                        {
+                            Mode = BindingMode.TwoWay
+                        });
+
+                    FormPanel.Children.Add(textbox);
+                }
             }
         }
 

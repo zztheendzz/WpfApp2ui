@@ -10,20 +10,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using WpfApp2.viewmodel.analysis;
 
-namespace WpfApp2.view.analysis
+namespace WpfApp2.view.pages
 {
     /// <summary>
-    /// Interaction logic for BrandAnalysis.xaml
+    /// Interaction logic for pageImportExcel.xaml
     /// </summary>
-    public partial class BrandAnalysis : Page
+    public partial class pageImportExcel : Page
     {
-        public BrandAnalysis()
+        public pageImportExcel()
         {
             InitializeComponent();
-            DataContext = new BrandAnalysisVm();
         }
-
     }
 }

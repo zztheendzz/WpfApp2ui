@@ -61,8 +61,8 @@ LEFT JOIN Brand b ON m.BrandId = b.Id
             using var conn = _db.GetConnection();
 
             string sql = @"
-    INSERT INTO Model (ModelCode, BrandId, IsActive)
-    VALUES (@ModelCode, @BrandId, @IsActive);
+    INSERT INTO Model (ModelCode, BrandId,ModelName, IsActive)
+    VALUES (@ModelCode, @BrandId,@ModelName ,@IsActive);
 
     SELECT last_insert_rowid();
     ";
