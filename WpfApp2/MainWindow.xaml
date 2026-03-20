@@ -160,7 +160,6 @@
                         <Button  Content="Brand" Height="35" Command="{Binding ShowBrandlPageCommand}"/>
                         <Button Content="Vendor" Height="35" Command="{Binding ShowVendorPageCommand}" />
                         <Button Content="Equipment" Height="35" Command="{Binding ShowEquipmentPageCommand}" />
-                        <Button Content="Category" Height="35" Command="{Binding ShowCategoryPageCommand}" />
                         <Button Content="Purchase History" Height="35" Command="{Binding ShowPuchaseHistoryPageCommand}" />
                         <Button Content="Currency" Height="35" Command="{Binding ShowCurrencyPageCommand}"/>
                     </StackPanel>

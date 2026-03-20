@@ -14,15 +14,13 @@ namespace WpfApp2.Services
             using var conn = _db.GetConnection();
 
             string sql = @"
-SELECT 
-    m.Id,
-    m.BrandName,
-    CASE 
-        WHEN m.IsActive = 1 THEN 1 
-        ELSE 0 
-    END AS IsActive
-    FROM Brand m
-    ";
+                SELECT 
+                    m.Id,
+                    m.BrandName,
+                    m.IsActive
+                    FROM Brand m
+                WHERE IsActive = 1
+                    ";
             return conn.Query<BrandDto>(sql);
         }
 
@@ -31,7 +29,7 @@ SELECT
         {
             using var conn = _db.GetConnection();
 
-            string sql = "DELETE FROM Brand WHERE Id = @Id";
+            string sql = " UPDATE Brand SET IsActive = 0 WHERE Id = @Id";
 
             conn.Execute(sql, new { Id = id });
         }
@@ -43,8 +41,7 @@ SELECT
             string sql = @"
         UPDATE Brand
         SET 
-            Brandname = @BrandName,
-            IsActive = @IsActive
+            Brandname = @BrandName
         WHERE Id = @Id
         ";
 

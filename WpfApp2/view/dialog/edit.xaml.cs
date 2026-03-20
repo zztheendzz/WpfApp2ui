@@ -1,46 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using WpfApp2.model;
-using WpfApp2.Services;
-using WpfApp2.viewmodel;
-using static System.Net.Mime.MediaTypeNames;
-using Dapper;
 
 namespace WpfApp2.view.dialog
 {
-    /// <summary>
-    /// Interaction logic for edit.xaml
-    /// </summary>
     public partial class edit : Window
     {
-        private readonly DatabaseService _db = new();
-
-        // 🔥 CONFIG FK
-        private Dictionary<string, (string Table, string Display)> _lookupMap
-            = new()
+        // 🔥 CONFIG FK (chỉ để biết field nào là FK)
+        private Dictionary<string, string> _lookupMap = new()
         {
-        { "BrandId", ("Brand", "BrandName") },
-        { "CategoryId", ("Category", "CategoryName") },
-        { "VendorId", ("Vendor", "VendorName") },
-        { "EquipmentId", ("Equipment", "EquipmentName") },
-        { "UserId", ("User", "UserName") },
-        { "CurrencyCode", ("Currency", "Name") } // special: key không phải Id
+            { "ModelId", "ModelName" },
+            { "BrandId", "BrandName" },
+            { "CategoryId", "CategoryName" },
+            { "VendorId", "VendorName" },
+            { "EquipmentId", "EquipmentName" },
+            { "UserId", "UserName" },
+            { "CurrencyCode", "Name" }
         };
-
-        // 🔥 CACHE (tránh query nhiều lần)
-        private Dictionary<string, List<dynamic>> _cache = new();
 
         public edit(object model)
         {
@@ -56,13 +37,16 @@ namespace WpfApp2.view.dialog
 
             foreach (var prop in props)
             {
+                // ❌ bỏ field không cần
+                if (prop.PropertyType == typeof(bool)) continue;
                 if (prop.Name == "Id") continue;
-                if (prop.Name.EndsWith("Name"))
+
+                // ❌ bỏ Name nếu có Id tương ứng
+                if (prop.Name.EndsWith("Id"))
                 {
                     var fkName = prop.Name.Replace("Name", "Id");
-
                     if (props.Any(p => p.Name == fkName))
-                        continue; // bỏ BrandName, VendorName...
+                        continue;
                 }
 
                 // LABEL
@@ -79,47 +63,30 @@ namespace WpfApp2.view.dialog
 
         FrameworkElement CreateControl(PropertyInfo prop)
         {
-            // 🔥 FK → COMBOBOX
+            // 🔥 FK → ComboBox (NHƯNG chỉ bind Name)
             if (_lookupMap.ContainsKey(prop.Name))
             {
-                var (table, display) = _lookupMap[prop.Name];
-                var data = LoadLookup(table, display);
+                var nameProp = prop.Name.Replace("Id", "Name");
 
                 var combo = new ComboBox
                 {
-                    ItemsSource = data,
-                    DisplayMemberPath = display,
-                    SelectedValuePath = prop.Name == "CurrencyCode" ? "Code" : "Id",
+                    IsEditable = true,
+                    IsTextSearchEnabled = true,
+                    StaysOpenOnEdit = true,
                     Margin = new Thickness(0, 0, 0, 10)
                 };
 
-                combo.SetBinding(ComboBox.SelectedValueProperty,
-                    new Binding(prop.Name)
+                combo.SetBinding(ComboBox.TextProperty,
+                    new Binding(nameProp)
                     {
-                        Mode = BindingMode.TwoWay
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
                     });
 
                 return combo;
             }
 
-            // 🔥 BOOL → CHECKBOX
-            if (prop.PropertyType == typeof(bool))
-            {
-                var check = new CheckBox
-                {
-                    Margin = new Thickness(0, 0, 0, 10)
-                };
-
-                check.SetBinding(CheckBox.IsCheckedProperty,
-                    new Binding(prop.Name)
-                    {
-                        Mode = BindingMode.TwoWay
-                    });
-
-                return check;
-            }
-
-            // 🔥 DATE → DATEPICKER
+            // 🔥 DATE
             if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
             {
                 var date = new DatePicker
@@ -136,7 +103,7 @@ namespace WpfApp2.view.dialog
                 return date;
             }
 
-            // 🔥 DEFAULT → TEXTBOX
+            // 🔥 DEFAULT
             var textbox = new TextBox
             {
                 Margin = new Thickness(0, 0, 0, 10)
@@ -152,26 +119,9 @@ namespace WpfApp2.view.dialog
             return textbox;
         }
 
-        List<dynamic> LoadLookup(string table, string display)
-        {
-            string key = $"{table}_{display}";
-
-            if (_cache.ContainsKey(key))
-                return _cache[key];
-
-            using var conn = _db.GetConnection();
-
-            var data = conn.Query(
-                $"SELECT * FROM {table}"
-            ).ToList();
-
-            _cache[key] = data;
-
-            return data;
-        }
-
         private void Save_Click(object sender, RoutedEventArgs e)
         {
+            // 🔥 Không xử lý gì → DTO đã có data
             DialogResult = true;
         }
 

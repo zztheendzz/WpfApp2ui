@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Windows.Input;
 using WpfApp2.command;
 using WpfApp2.model;
 using WpfApp2.modelDto;
 using WpfApp2.Services;
-using WpfApp2.Services;
 using WpfApp2.view.dialog;
 
 
-namespace WpfApp2.viewmodel
+namespace WpfApp2.viewmodel.tableVm
 {
 
-    class BrandViewModel 
+    public class BrandViewModel : INotifyPropertyChanged
     {
         public ICommand EditCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
@@ -59,7 +57,7 @@ namespace WpfApp2.viewmodel
         public void Add()
         {
             var brand = new BrandDto();   // object mới
-
+            brand.IsActive = true;
             var dialog = new edit(brand);
 
             if (dialog.ShowDialog() == true)

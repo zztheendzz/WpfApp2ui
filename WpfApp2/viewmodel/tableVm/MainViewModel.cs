@@ -12,15 +12,14 @@ using WpfApp2.Services;
 using WpfApp2.view.analysis;
 using WpfApp2.view.pages;
 
-namespace WpfApp2.viewmodel
+namespace WpfApp2.viewmodel.tableVm
 {
-    class MainViewModel : INotifyPropertyChanged
+    public class MainViewModel : INotifyPropertyChanged
     {
         public ICommand ShowModelPageCommand { get; set; }
         public ICommand ShowBrandlPageCommand { get; set; }
         public ICommand ShowUserPageCommand { get; set; }
         public ICommand ShowEquipmentPageCommand { get; set; }
-        public ICommand ShowCategoryPageCommand { get; set; }
         public ICommand ShowPuchaseHistoryPageCommand { get; set; }
         public ICommand ShowVendorPageCommand { get; set; }
 
@@ -50,7 +49,6 @@ namespace WpfApp2.viewmodel
             ShowBrandlPageCommand = new RelayCommand(OpenBrandPage);
             ShowUserPageCommand = new RelayCommand(OpenUserPage);
             ShowEquipmentPageCommand = new RelayCommand(OpenEquipmentPage);
-            ShowCategoryPageCommand = new RelayCommand(OpenPuchaseHistoryPage);
             ShowPuchaseHistoryPageCommand = new RelayCommand(OpenVendorPage);
             ShowVendorPageCommand = new RelayCommand(OpenCurrencyPage);
             ShowModelAnalysisCommand = new RelayCommand(OpenModelAnalysis);
@@ -94,10 +92,7 @@ namespace WpfApp2.viewmodel
         {
             CurrentPage = new pageBrand();
         }
-        void OpenCategoryPage(object obj)
-        {
-           // CurrentPage = new pageCurrency();
-        }
+
         void OpenUserPage(object obj)
         {
            // CurrentPage = new pageUser();
@@ -106,10 +101,7 @@ namespace WpfApp2.viewmodel
         {
             CurrentPage = new pageEquipment();
         }
-        void OpenPuchaseHistoryPage(object obj)
-        {
-            CurrentPage = new pageCategory();
-        }
+
         void OpenVendorPage(object obj)
         {
             CurrentPage = new pagePuchaseHistory();

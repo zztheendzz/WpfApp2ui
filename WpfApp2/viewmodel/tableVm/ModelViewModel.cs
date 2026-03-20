@@ -17,9 +17,9 @@ using WpfApp2.view.dialog;
 using WpfApp2.view.pages;
 using static MaterialDesignThemes.Wpf.Theme.ToolBar;
 
-namespace WpfApp2.viewmodel
+namespace WpfApp2.viewmodel.tableVm
 {
-    class ModelViewModel : INotifyPropertyChanged
+    public class ModelViewModel : INotifyPropertyChanged
     {
         public ICommand EditCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
@@ -61,7 +61,7 @@ namespace WpfApp2.viewmodel
         public void Add()
         {
             var model = new ModelDto();
-
+            model.IsActive=true;
             var dialog = new edit(model);
 
             if (dialog.ShowDialog() == true)

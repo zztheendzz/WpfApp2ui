@@ -14,16 +14,13 @@ namespace WpfApp2.Services
             using var conn = _db.GetConnection();
 
             string sql = @"
-SELECT 
-    m.Id,
-    m.EquipmentName,
-    CASE 
-        WHEN m.IsActive = 1 THEN 1 
-        ELSE 0 
-    END AS IsActive
-FROM Equipment m
-
-    ";
+                SELECT 
+                    m.Id,
+                    m.EquipmentName,
+                    m.IsActive
+                FROM Equipment m
+                where m.IsActive = 1
+                    ";
             return conn.Query<EquipmentDto>(sql);
         }
 
@@ -32,7 +29,12 @@ FROM Equipment m
         {
             using var conn = _db.GetConnection();
 
-            string sql = "DELETE FROM Equipment WHERE Id = @Id";
+            string sql = @"
+        UPDATE Equipment
+        SET 
+            IsActive = 0
+        WHERE Id = @Id
+        ";
 
             conn.Execute(sql, new { Id = id });
         }
@@ -44,8 +46,7 @@ FROM Equipment m
             string sql = @"
         UPDATE Equipment
         SET 
-            EquipmentName = @EquipmentName,
-            IsActive = @IsActive
+            EquipmentName = @EquipmentName
         WHERE Id = @Id
         ";
 

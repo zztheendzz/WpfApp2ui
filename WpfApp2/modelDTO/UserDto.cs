@@ -9,7 +9,7 @@ namespace WpfApp2.modelDTO
     {
         public int Id { get; set; }
 
-        public string LoginId { get; set; }
+        public int LoginId { get; set; }
 
         public string PasswordHash { get; set; }
 

@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApp2.viewmodel;
-
+using WpfApp2.viewmodel.tableVm;
 namespace WpfApp2.view.pages
 {
     /// <summary>

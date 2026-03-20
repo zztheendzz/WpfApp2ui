@@ -5,9 +5,9 @@ using WpfApp2.model;
 using WpfApp2.Services;
 
 
-namespace WpfApp2.viewmodel
+namespace WpfApp2.viewmodel.tableVm
 {
-    class UserViewModel 
+    public class UserViewModel 
     {
 
 

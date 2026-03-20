@@ -13,10 +13,10 @@ using WpfApp2.modelDTO;
 using WpfApp2.Services;
 using WpfApp2.view.dialog;
 
-namespace WpfApp2.viewmodel
+namespace WpfApp2.viewmodel.tableVm
 {
 
-    class PurchaseViewModel: INotifyPropertyChanged
+    public class PurchaseViewModel: INotifyPropertyChanged
     {
         public ICommand EditCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
@@ -46,7 +46,7 @@ namespace WpfApp2.viewmodel
                     SelectedModel?.Id,
                     SelectedVendor?.Id,
                     SelectedEquipment?.Id,
-                    SelectedCategory?.Id,
+                    //SelectedCategory?.Id,
                     DateFrom,
                     DateTo,
                     MinPrice,
@@ -148,17 +148,17 @@ namespace WpfApp2.viewmodel
         }
 
         // CATEGORY
-        private CategoryDto _selectedCategory;
-        public CategoryDto SelectedCategory
-        {
-            get => _selectedCategory;
-            set
-            {
-                _selectedCategory = value;
-                OnPropertyChanged();
-                PurchasesView.Refresh();
-            }
-        }
+        //private CategoryDto _selectedCategory;
+        //public CategoryDto SelectedCategory
+        //{
+        //    get => _selectedCategory;
+        //    set
+        //    {
+        //        _selectedCategory = value;
+        //        OnPropertyChanged();
+        //        PurchasesView.Refresh();
+        //    }
+        //}
 
         // DATE
         private DateTime? _dateFrom;

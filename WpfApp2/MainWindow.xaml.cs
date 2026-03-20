@@ -14,7 +14,7 @@ using WpfApp2.Services;
 using WpfApp2.view.analysis;
 using WpfApp2.view.pages;
 using WpfApp2.viewmodel;
-
+using WpfApp2.viewmodel.tableVm;
 namespace WpfApp2
 {
     /// <summary>

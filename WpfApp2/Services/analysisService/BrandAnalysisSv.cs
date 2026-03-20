@@ -31,7 +31,6 @@ SELECT
     m.ModelName,
     v.VendorName,
     e.EquipmentName,
-    c.CategoryName,
     p.Quantity,
     p.UnitPrice,
     IFNULL(p.Quantity * p.UnitPrice, 0) AS TotalPrice,
@@ -44,7 +43,6 @@ FROM PurchaseHistory p
 LEFT JOIN Model m ON p.ModelId = m.Id
 LEFT JOIN Vendor v ON p.VendorId = v.Id
 LEFT JOIN Equipment e ON p.EquipmentId = e.Id
-LEFT JOIN Category c ON m.CategoryId = c.Id   -- ✅ FIX
 LEFT JOIN [User] u ON p.UserId = u.Id
 WHERE m.BrandId = @brandId                    -- ✅ FIX
 ORDER BY m.id DESC;

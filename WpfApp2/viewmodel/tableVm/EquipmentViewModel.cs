@@ -12,10 +12,10 @@ using WpfApp2.Services;
 using WpfApp2.view.dialog;
 using WpfApp2.modelDTO;
 
-namespace WpfApp2.viewmodel
+namespace WpfApp2.viewmodel.tableVm
 {
 
-    class EquipmentViewModel : INotifyPropertyChanged
+    public class EquipmentViewModel : INotifyPropertyChanged
     {
         public ICommand EditCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
@@ -58,7 +58,7 @@ namespace WpfApp2.viewmodel
         public void Add()
         {
             var equioment = new EquipmentDto();   // object mới
-
+            equioment.IsActive = true; // thiết lập giá trị mặc định
             var dialog = new edit(equioment);
 
             if (dialog.ShowDialog() == true)

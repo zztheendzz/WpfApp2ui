@@ -13,9 +13,9 @@ using WpfApp2.view.dialog;
 
 using WpfApp2.view.pages;
 
-namespace WpfApp2.viewmodel
+namespace WpfApp2.viewmodel.tableVm
 {
-    class VendorViewModel:INotifyPropertyChanged
+    public class VendorViewModel:INotifyPropertyChanged
     {
         public ICommand EditCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
@@ -58,7 +58,7 @@ namespace WpfApp2.viewmodel
         public void Add()
         {
             var vendor = new VendorDto();   // object mới
-
+           vendor.IsActive = true;
             var dialog = new edit(vendor);
 
             if (dialog.ShowDialog() == true)

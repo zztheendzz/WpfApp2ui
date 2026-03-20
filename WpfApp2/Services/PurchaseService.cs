@@ -15,7 +15,7 @@ namespace WpfApp2.Services
             int? modelId,
             int? vendorId,
             int? equipmentId,
-            int? categoryId,
+            //int? categoryId,
             DateTime? from,
             DateTime? to,
             decimal? minPrice,
@@ -51,8 +51,8 @@ WHERE 1=1
             if (equipmentId.HasValue)
                 sql.Append(" AND p.EquipmentId = @equipmentId");
 
-            if (categoryId.HasValue)
-                sql.Append(" AND p.CategoryId = @categoryId");
+            //if (categoryId.HasValue)
+            //    sql.Append(" AND p.CategoryId = @categoryId");
 
             if (from.HasValue)
                 sql.Append(" AND p.PurchaseDate >= @from");
@@ -72,7 +72,7 @@ WHERE 1=1
 
             return conn.Query<PurchaseDto>(
                 sql.ToString(),
-                new { modelId, vendorId, equipmentId, categoryId, from, to, minPrice, maxPrice });
+                new { modelId, vendorId, equipmentId, /*categoryId,*/ from, to, minPrice, maxPrice });
         }
 
 
@@ -141,18 +141,19 @@ WHERE Id = @Id
         }
 
 
+
+
         // ADD
         public int Add(PurchaseDto purchase)
         {
             using var conn = _db.GetConnection();
 
             string sql = @"
-INSERT INTO PurchaseHistory
-(ModelId, VendorId, EquipmentId, Quantity, UnitPrice, CurrencyCode, PurchaseDate, Note)
-VALUES
-(@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @CurrencyCode, @PurchaseDate, @Note);
-
-SELECT last_insert_rowid();
+                INSERT INTO PurchaseHistory
+                (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, CurrencyCode, PurchaseDate, Note)
+                VALUES
+                (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @CurrencyCode, @PurchaseDate, @Note);
+                SELECT last_insert_rowid();
 ";
 
             return conn.ExecuteScalar<int>(sql, purchase);

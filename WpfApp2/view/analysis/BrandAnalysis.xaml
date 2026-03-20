@@ -121,9 +121,6 @@
                     <DataGridTextColumn Header="Equipment"
                                 Binding="{Binding EquipmentName}"/>
 
-                    <!--<DataGridTextColumn Header="Category"
-                                Binding="{Binding CategoryName}"/>-->
-
                     <DataGridTextColumn Header="Price"
                                 Binding="{Binding TotalPrice}"/>
 

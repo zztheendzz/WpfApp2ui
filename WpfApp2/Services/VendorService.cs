@@ -14,14 +14,11 @@ namespace WpfApp2.Services
         using var conn = _db.GetConnection();
 
         string sql = @"
-SELECT 
-    m.Id,
-    m.VendorName,
-    CASE 
-        WHEN m.IsActive = 1 THEN 1 
-        ELSE 0 
-    END AS IsActive
-FROM Vendor m
+            SELECT 
+                m.Id,
+                m.VendorName
+            FROM Vendor m
+            where m.IsActive = 1
     ";
         return conn.Query<VendorDto>(sql);
     }
@@ -31,9 +28,14 @@ FROM Vendor m
     {
         using var conn = _db.GetConnection();
 
-        string sql = "DELETE FROM Vendor WHERE Id = @Id";
+            string sql = @"
+        UPDATE Vendor
+        SET 
+            IsActive = 0
+        WHERE Id = @Id
+        ";
 
-        conn.Execute(sql, new { Id = id });
+            conn.Execute(sql, new { Id = id });
     }
 
     public void Edit(VendorDto vendor)
@@ -43,8 +45,7 @@ FROM Vendor m
         string sql = @"
         UPDATE Vendor
         SET 
-            VendorName = @VendorName,
-            IsActive = @IsActive
+            VendorName = @VendorName
         WHERE Id = @Id
         ";
 
