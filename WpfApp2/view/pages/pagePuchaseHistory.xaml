@@ -111,7 +111,7 @@
 
             <!-- DATA GRID -->
             <DataGrid Grid.Row="0"
-                      ItemsSource="{Binding PurchasesView}"
+                      ItemsSource="{Binding purchases}"
                       SelectedItem="{Binding SelectedItem}"
                       AutoGenerateColumns="False"
                       IsReadOnly="True">

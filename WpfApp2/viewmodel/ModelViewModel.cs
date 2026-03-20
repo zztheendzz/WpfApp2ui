@@ -66,6 +66,7 @@ namespace WpfApp2.viewmodel
 
             if (dialog.ShowDialog() == true)
             {
+
                 ModelService service = new ModelService();
 
                 int newId = service.Add(model);

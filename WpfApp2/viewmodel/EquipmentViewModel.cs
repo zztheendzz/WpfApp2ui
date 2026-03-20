@@ -67,9 +67,10 @@ namespace WpfApp2.viewmodel
 
                 int newId = equipmentService.Add(equioment);
 
-                equioment.Id = newId;
+                var newItem = equipmentService.GetEquipmentDto()
+                                                   .FirstOrDefault(x => x.Id == newId);
 
-                equipmentService.Add(equioment);
+                Equipments.Add(newItem);
             }
         }
 

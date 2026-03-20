@@ -25,73 +25,149 @@ namespace WpfApp2.view.dialog
     /// </summary>
     public partial class edit : Window
     {
+        private readonly DatabaseService _db = new();
+
+        // 🔥 CONFIG FK
+        private Dictionary<string, (string Table, string Display)> _lookupMap
+            = new()
+        {
+        { "BrandId", ("Brand", "BrandName") },
+        { "CategoryId", ("Category", "CategoryName") },
+        { "VendorId", ("Vendor", "VendorName") },
+        { "EquipmentId", ("Equipment", "EquipmentName") },
+        { "UserId", ("User", "UserName") },
+        { "CurrencyCode", ("Currency", "Name") } // special: key không phải Id
+        };
+
+        // 🔥 CACHE (tránh query nhiều lần)
+        private Dictionary<string, List<dynamic>> _cache = new();
+
         public edit(object model)
         {
             InitializeComponent();
             DataContext = model;
-            LoadBrand();
+
             GenerateForm(model);
         }
-        private List<Brand> _brandList; 
-         public DatabaseService _db = new DatabaseService();
-        private void LoadBrand()
-        {
-            using var conn = _db.GetConnection();
-            _brandList = conn.Query<Brand>("SELECT Id, BrandName FROM Brand").ToList();
-        }
+
         void GenerateForm(object model)
         {
-            var properties = model.GetType().GetProperties();
+            var props = model.GetType().GetProperties();
 
-            foreach (var prop in properties)
+            foreach (var prop in props)
             {
                 if (prop.Name == "Id") continue;
-                if (prop.Name == "BrandName") continue;
-
-                var label = new TextBlock
+                if (prop.Name.EndsWith("Name"))
                 {
-                    Text = prop.Name == "BrandId" ? "Brand" : GetDisplayName(prop),
+                    var fkName = prop.Name.Replace("Name", "Id");
+
+                    if (props.Any(p => p.Name == fkName))
+                        continue; // bỏ BrandName, VendorName...
+                }
+
+                // LABEL
+                FormPanel.Children.Add(new TextBlock
+                {
+                    Text = SplitName(prop.Name),
                     Margin = new Thickness(0, 10, 0, 2)
+                });
+
+                // CONTROL
+                FormPanel.Children.Add(CreateControl(prop));
+            }
+        }
+
+        FrameworkElement CreateControl(PropertyInfo prop)
+        {
+            // 🔥 FK → COMBOBOX
+            if (_lookupMap.ContainsKey(prop.Name))
+            {
+                var (table, display) = _lookupMap[prop.Name];
+                var data = LoadLookup(table, display);
+
+                var combo = new ComboBox
+                {
+                    ItemsSource = data,
+                    DisplayMemberPath = display,
+                    SelectedValuePath = prop.Name == "CurrencyCode" ? "Code" : "Id",
+                    Margin = new Thickness(0, 0, 0, 10)
                 };
 
-                FormPanel.Children.Add(label);
-
-                // 🔥 CASE BRAND → COMBOBOX
-                if (prop.Name == "BrandId")
-                {
-                    var combo = new ComboBox
+                combo.SetBinding(ComboBox.SelectedValueProperty,
+                    new Binding(prop.Name)
                     {
-                        Margin = new Thickness(0, 0, 0, 10),
-                        ItemsSource = _brandList,
-                        DisplayMemberPath = "BrandName",
-                        SelectedValuePath = "Id"
-                    };
+                        Mode = BindingMode.TwoWay
+                    });
 
-                    combo.SetBinding(ComboBox.SelectedValueProperty,
-                        new Binding("BrandId")   // ✅ bind đúng field DB cần
-                        {
-                            Mode = BindingMode.TwoWay
-                        });
-
-                    FormPanel.Children.Add(combo);
-                }
-                else
-                {
-                    // 🔥 DEFAULT → TEXTBOX
-                    var textbox = new TextBox
-                    {
-                        Margin = new Thickness(0, 0, 0, 10)
-                    };
-
-                    textbox.SetBinding(TextBox.TextProperty,
-                        new Binding(prop.Name)
-                        {
-                            Mode = BindingMode.TwoWay
-                        });
-
-                    FormPanel.Children.Add(textbox);
-                }
+                return combo;
             }
+
+            // 🔥 BOOL → CHECKBOX
+            if (prop.PropertyType == typeof(bool))
+            {
+                var check = new CheckBox
+                {
+                    Margin = new Thickness(0, 0, 0, 10)
+                };
+
+                check.SetBinding(CheckBox.IsCheckedProperty,
+                    new Binding(prop.Name)
+                    {
+                        Mode = BindingMode.TwoWay
+                    });
+
+                return check;
+            }
+
+            // 🔥 DATE → DATEPICKER
+            if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
+            {
+                var date = new DatePicker
+                {
+                    Margin = new Thickness(0, 0, 0, 10)
+                };
+
+                date.SetBinding(DatePicker.SelectedDateProperty,
+                    new Binding(prop.Name)
+                    {
+                        Mode = BindingMode.TwoWay
+                    });
+
+                return date;
+            }
+
+            // 🔥 DEFAULT → TEXTBOX
+            var textbox = new TextBox
+            {
+                Margin = new Thickness(0, 0, 0, 10)
+            };
+
+            textbox.SetBinding(TextBox.TextProperty,
+                new Binding(prop.Name)
+                {
+                    Mode = BindingMode.TwoWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                });
+
+            return textbox;
+        }
+
+        List<dynamic> LoadLookup(string table, string display)
+        {
+            string key = $"{table}_{display}";
+
+            if (_cache.ContainsKey(key))
+                return _cache[key];
+
+            using var conn = _db.GetConnection();
+
+            var data = conn.Query(
+                $"SELECT * FROM {table}"
+            ).ToList();
+
+            _cache[key] = data;
+
+            return data;
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
@@ -103,19 +179,10 @@ namespace WpfApp2.view.dialog
         {
             DialogResult = false;
         }
+
         public static string SplitName(string name)
         {
             return Regex.Replace(name, "([a-z])([A-Z])", "$1 $2");
-        }
-
-        string GetDisplayName(PropertyInfo prop)
-        {
-            var attr = prop.GetCustomAttribute<DisplayNameAttribute>();
-
-            if (attr != null)
-                return attr.DisplayName;
-
-            return SplitName(prop.Name);
         }
     }
 }

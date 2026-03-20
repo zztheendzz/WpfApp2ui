@@ -28,7 +28,7 @@ namespace WpfApp2.viewmodel
         {
             PurchaseService purchaseService = new PurchaseService();
 
-            //purchases = new ObservableCollection<PurchaseDto>(purchaseService.GetPurchaseDTO());
+            purchases = new ObservableCollection<PurchaseDto>(purchaseService.GetPurchaseDTO());
 
            // PurchasesView = CollectionViewSource.GetDefaultView(purchases);
            // PurchasesView.Filter = FilterPurchase;
@@ -261,7 +261,10 @@ namespace WpfApp2.viewmodel
 
                 purchase.Id = newId;
 
-                purchases.Add(purchase);
+                var newItem = purchaseService.GetPurchaseDTO()
+                                                   .FirstOrDefault(x => x.Id == newId);
+
+                purchases.Add(newItem);
             }
         }
 

@@ -87,7 +87,6 @@ SELECT
     m.ModelCode,
     v.VendorName,
     e.EquipmentName,
-    c.CategoryName,
     p.Quantity,
     p.UnitPrice,
     p.Quantity * p.UnitPrice AS TotalPrice,
@@ -100,7 +99,6 @@ FROM PurchaseHistory p
 LEFT JOIN Model m ON p.ModelId = m.Id
 LEFT JOIN Vendor v ON p.VendorId = v.Id
 LEFT JOIN Equipment e ON p.EquipmentId = e.Id
-LEFT JOIN Category c ON p.CategoryId = c.Id
 LEFT JOIN User u ON p.UserId = u.Id
 ORDER BY p.PurchaseDate DESC
 ";
@@ -131,7 +129,6 @@ SET
     ModelId = @ModelId,
     VendorId = @VendorId,
     EquipmentId = @EquipmentId,
-    CategoryId = @CategoryId,
     Quantity = @Quantity,
     UnitPrice = @UnitPrice,
     CurrencyCode = @CurrencyCode,
@@ -151,9 +148,9 @@ WHERE Id = @Id
 
             string sql = @"
 INSERT INTO PurchaseHistory
-(ModelId, VendorId, EquipmentId, CategoryId, Quantity, UnitPrice, CurrencyCode, PurchaseDate, Note)
+(ModelId, VendorId, EquipmentId, Quantity, UnitPrice, CurrencyCode, PurchaseDate, Note)
 VALUES
-(@ModelId, @VendorId, @EquipmentId, @CategoryId, @Quantity, @UnitPrice, @CurrencyCode, @PurchaseDate, @Note);
+(@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @CurrencyCode, @PurchaseDate, @Note);
 
 SELECT last_insert_rowid();
 ";
