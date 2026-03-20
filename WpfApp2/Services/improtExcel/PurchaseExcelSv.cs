@@ -18,9 +18,13 @@ namespace WpfApp2.Services.improtExcel
         // ===== NORMALIZE =====
         private string Normalize(string s)
         {
-            return string.IsNullOrWhiteSpace(s)
-                ? ""
-                : s.Trim().Replace(" ", "").ToUpper();
+            if (string.IsNullOrWhiteSpace(s)) return "";
+
+            return new string(s
+                .Trim()
+                .ToUpper()
+                .Where(c => !char.IsWhiteSpace(c)) // 🔥 ăn hết mọi loại space
+                .ToArray());
         }
 
         // ===== MAIN INSERT =====
@@ -38,7 +42,9 @@ namespace WpfApp2.Services.improtExcel
 
                 var vendorDict = GetDictionary("SELECT Id, VendorName AS Name FROM Vendor");
                 var brandDict = GetDictionary("SELECT Id, BrandName AS Name FROM Brand");
-                var modelDict = GetDictionary("SELECT Id, ModelName AS Name FROM Model");
+
+                // 🔥 FIX: dùng ModelCode làm key
+                var modelDict = GetDictionary("SELECT Id, ModelCode AS Name FROM Model");
 
                 using var conn = _db.GetConnection();
 
@@ -48,7 +54,7 @@ namespace WpfApp2.Services.improtExcel
                 foreach (var row in importPurchases)
                 {
                     var modelName = Normalize(row.ModelName);
-                    var brandName = Normalize(row.Brand);
+                    var modelCode = Normalize(row.ModelCode);
                     var vendorName = Normalize(row.Vendor);
 
                     // ===== HANDLE VENDOR TRỐNG =====
@@ -62,9 +68,16 @@ namespace WpfApp2.Services.improtExcel
 
                     int vendorId = GetOrCreateVendor(conn, vendorDict, row.Vendor);
                     int brandId = GetOrCreateBrand(conn, brandDict, row.Brand);
-                    int modelId = GetOrCreateModel(conn, modelDict, row.ModelName, brandId);
 
-                    // ===== INSERT PURCHASE =====
+                    // 🔥 FIX: truyền modelCode
+                    int modelId = GetOrCreateModel(
+                        conn,
+                        modelDict,
+                        row.ModelName,
+                        row.ModelCode,
+                        brandId
+                    );
+
                     conn.Execute(@"
 INSERT INTO PurchaseHistory
 (ModelId, VendorId, Quantity, UnitPrice, TotalPrice, PurchaseDate)
@@ -102,8 +115,8 @@ VALUES
                 return id;
 
             id = conn.ExecuteScalar<int>(@"
-INSERT INTO Vendor(VendorName,IsActive)
-VALUES(@Name,1);
+INSERT INTO Vendor(VendorName, IsActive)
+VALUES(@Name, 1);
 SELECT last_insert_rowid();",
                 new { Name = name });
 
@@ -120,8 +133,8 @@ SELECT last_insert_rowid();",
                 return id;
 
             id = conn.ExecuteScalar<int>(@"
-INSERT INTO Brand(BrandName,IsActive)
-VALUES(@Name,1);
+INSERT INTO Brand(BrandName, IsActive)
+VALUES(@Name, 1);
 SELECT last_insert_rowid();",
                 new { Name = name });
 
@@ -129,19 +142,31 @@ SELECT last_insert_rowid();",
             return id;
         }
 
-        private int GetOrCreateModel(IDbConnection conn, Dictionary<string, int> dict, string name, int brandId)
+        private int GetOrCreateModel(
+            IDbConnection conn,
+            Dictionary<string, int> dict,
+            string name,
+            string modelCode,
+            int brandId)
         {
-            var key = Normalize(name);
+            // 🔥 FIX: dùng ModelCode làm key
+            var key = Normalize(modelCode);
+
             if (string.IsNullOrEmpty(key)) return 0;
 
             if (dict.TryGetValue(key, out int id))
                 return id;
 
             id = conn.ExecuteScalar<int>(@"
-INSERT INTO Model(ModelName, BrandId,IsActive)
-VALUES(@Name, @BrandId,1);
+INSERT INTO Model(ModelName, ModelCode, BrandId, IsActive)
+VALUES(@Name, @ModelCode, @BrandId,1);
 SELECT last_insert_rowid();",
-                new { Name = name, BrandId = brandId });
+                new
+                {
+                    Name = name,
+                    ModelCode = modelCode,
+                    BrandId = brandId
+                });
 
             dict[key] = id;
             return id;
@@ -160,7 +185,7 @@ SELECT last_insert_rowid();",
                 );
         }
 
-        // ===== READ EXCEL =====
+        // ===== READ EXCEL ===== (giữ nguyên)
         public List<ImportPurchase> ReadExcel(string filePath)
         {
             var result = new List<ImportPurchase>();
@@ -175,6 +200,7 @@ SELECT last_insert_rowid();",
                 if (row.Cells().Any(c => Normalize(c.GetValue<string>()) == "NO"))
                 {
                     headerRow = row.RowNumber();
+
                     break;
                 }
             }
@@ -190,6 +216,7 @@ SELECT last_insert_rowid();",
                 var key = Normalize(cell.GetValue<string>());
                 if (!string.IsNullOrEmpty(key))
                     headerMap[key] = cell.Address.ColumnNumber;
+
             }
 
             int currentRow = headerRow + 1;
