@@ -20,7 +20,7 @@ namespace WpfApp2.viewmodel.tableVm
         public ICommand ShowBrandlPageCommand { get; set; }
         public ICommand ShowUserPageCommand { get; set; }
         public ICommand ShowEquipmentPageCommand { get; set; }
-        public ICommand ShowPuchaseHistoryPageCommand { get; set; }
+        public ICommand ShowPurchaseHistoryPageCommand { get; set; }
         public ICommand ShowVendorPageCommand { get; set; }
 
         public ICommand ShowModelAnalysisCommand { get; set; }
@@ -29,7 +29,8 @@ namespace WpfApp2.viewmodel.tableVm
 
         public ICommand ShowEquipmentAnalysisCommand { get; set; }
         public ICommand ShowImportExcelCommand { get; set; }
-        
+        public ICommand ShowPurchaseAnalysisPageCommand { get; set; }
+
 
         private object _currentPage;
         public object CurrentPage
@@ -49,15 +50,23 @@ namespace WpfApp2.viewmodel.tableVm
             ShowBrandlPageCommand = new RelayCommand(OpenBrandPage);
             ShowUserPageCommand = new RelayCommand(OpenUserPage);
             ShowEquipmentPageCommand = new RelayCommand(OpenEquipmentPage);
-            ShowPuchaseHistoryPageCommand = new RelayCommand(OpenVendorPage);
+            ShowPurchaseHistoryPageCommand = new RelayCommand(OpenVendorPage);
             ShowVendorPageCommand = new RelayCommand(OpenCurrencyPage);
             ShowModelAnalysisCommand = new RelayCommand(OpenModelAnalysis);
             ShowVendorAnalysisCommand = new RelayCommand(OpenVendorAnalysis);
             ShowBrandAnalysisCommand = new RelayCommand(OpenBrandAnalysis);
             ShowEquipmentAnalysisCommand = new RelayCommand(OpenEquipmentAnalysis);
             ShowImportExcelCommand = new RelayCommand(OpenPageImportExcel);
+            ShowPurchaseAnalysisPageCommand = new RelayCommand(OpenPagePurchaseAnalysis);
 
             //CurrentPage = new newModel(); // page mặc định
+        }
+
+
+        public void OpenPagePurchaseAnalysis(object obj)
+        {
+            CurrentPage = new PurchaseAnalysis();
+
         }
 
         void OpenPageImportExcel(object obj)

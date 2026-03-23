@@ -33,7 +33,6 @@ SELECT
     e.EquipmentName    AS EquipmentName,   -- 🔥 thiết bị cha
 
     b.BrandName,
-    c.CategoryName,
 
     p.Quantity,
     p.UnitPrice,
@@ -49,7 +48,7 @@ FROM PurchaseHistory p
 LEFT JOIN Model m ON p.ModelId = m.Id
 LEFT JOIN Equipment e ON p.EquipmentId = e.Id
 LEFT JOIN Brand b ON m.BrandId = b.Id
-LEFT JOIN Category c ON m.CategoryId = c.Id
+
 LEFT JOIN [User] u ON p.UserId = u.Id
 
 WHERE p.VendorId = @vendorId

@@ -74,7 +74,6 @@ SELECT
     m.ModelName,
     e.EquipmentName,
     b.BrandName,
-    c.CategoryName,
     v.VendorName,
 
     p.Quantity,
@@ -91,7 +90,6 @@ FROM PurchaseHistory p
 LEFT JOIN Model m ON p.ModelId = m.Id
 LEFT JOIN Equipment e ON p.EquipmentId = e.Id
 LEFT JOIN Brand b ON m.BrandId = b.Id
-LEFT JOIN Category c ON m.CategoryId = c.Id
 LEFT JOIN Vendor v ON p.VendorId = v.Id
 LEFT JOIN [User] u ON p.UserId = u.Id
 

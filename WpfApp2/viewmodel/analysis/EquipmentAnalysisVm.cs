@@ -130,7 +130,7 @@ namespace WpfApp2.viewmodel.analysis
             }
         }
 
-        // List brand dùng cho ComboBox hoặc UI khác
+        // List  dùng cho ComboBox hoặc UI khác
         public ObservableCollection<EquipmentDto> Equipments { get; set; }
         public ObservableCollection<EquipmentDto> EquipmentsSearch { get; set; }
 
@@ -147,7 +147,7 @@ namespace WpfApp2.viewmodel.analysis
             AnalyzeCommand = new RelayCommand(_ => LoadData()); // gán command nút phân tích
         }
 
-        // Property chứa dữ liệu phân tích brand
+        // Property chứa dữ liệu phân tích 
         private EquipmentAnalysisDto _analysis;
         public EquipmentAnalysisDto Analysis
         {

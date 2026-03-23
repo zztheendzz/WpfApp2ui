@@ -22,24 +22,24 @@ namespace WpfApp2.Services
             decimal? maxPrice)
         {
             var sql = new StringBuilder(@"
-SELECT 
-    p.Id,
-    m.ModelCode,
-    v.VendorName,
-    e.EquipmentName,
-    c.CategoryName,
-    p.Quantity,
-    p.UnitPrice,
-    p.Quantity * p.UnitPrice AS TotalPrice,
-    p.CurrencyCode,
-    p.PurchaseDate,
-    p.Note
-FROM PurchaseHistory p
-LEFT JOIN Model m ON p.ModelId = m.Id
-LEFT JOIN Vendor v ON p.VendorId = v.Id
-LEFT JOIN Equipment e ON p.EquipmentId = e.Id
-LEFT JOIN Category c ON p.CategoryId = c.Id
-WHERE 1=1
+                SELECT 
+                    p.Id,
+                    m.ModelCode,
+                    v.VendorName,
+                    e.EquipmentName,
+                    c.CategoryName,
+                    p.Quantity,
+                    p.UnitPrice,
+                    p.Quantity * p.UnitPrice AS TotalPrice,
+                    p.CurrencyCode,
+                    p.PurchaseDate,
+                    p.Note
+                FROM PurchaseHistory p
+                LEFT JOIN Model m ON p.ModelId = m.Id
+                LEFT JOIN Vendor v ON p.VendorId = v.Id
+                LEFT JOIN Equipment e ON p.EquipmentId = e.Id
+                LEFT JOIN Category c ON p.CategoryId = c.Id
+                WHERE 1=1
 ");
 
             if (modelId.HasValue)
@@ -76,37 +76,55 @@ WHERE 1=1
         }
 
 
-        // GET ALL
+     
         public IEnumerable<PurchaseDto> GetPurchaseDTO()
         {
             using var conn = _db.GetConnection();
 
             string sql = @"
-SELECT
-    p.Id,
-    m.ModelCode,
-    v.VendorName,
-    e.EquipmentName,
-    p.Quantity,
-    p.UnitPrice,
-    p.Quantity * p.UnitPrice AS TotalPrice,
-    p.CurrencyCode,
-    p.PurchaseDate,
-    p.CreateAt,
-    u.UserName,
-    p.Note
-FROM PurchaseHistory p
-LEFT JOIN Model m ON p.ModelId = m.Id
-LEFT JOIN Vendor v ON p.VendorId = v.Id
-LEFT JOIN Equipment e ON p.EquipmentId = e.Id
-LEFT JOIN User u ON p.UserId = u.Id
-ORDER BY p.PurchaseDate DESC
+                    SELECT
+                        p.Id,
+                        p.Quantity,
+                        p.UnitPrice,
+                        p.Quantity * p.UnitPrice AS TotalPrice,
+                        p.CurrencyCode,
+                        p.PurchaseDate,
+                        p.Note,
+                        p.CreateAt,
+
+                        p.ModelId,
+                        m.ModelName,
+
+                        p.VendorId,
+                        v.VendorName,
+
+                        p.EquipmentId,
+                        e.EquipmentName
+
+                    FROM PurchaseHistory p
+                    LEFT JOIN Model m ON p.ModelId = m.Id
+                    LEFT JOIN Vendor v ON p.VendorId = v.Id
+                    LEFT JOIN Equipment e ON p.VendorId = e.Id
+                    ORDER BY p.PurchaseDate DESC
 ";
+
+            /*
+                             SELECT 
+                                m.Id,
+                                m.ModelCode,
+                                m.BrandId,        -- FK (int)
+                                m.ModelName,
+                                b.BrandName       -- lấy từ bảng Brand
+                            FROM Model m
+                            LEFT JOIN Brand b ON m.BrandId = b.Id
+                            WHERE m.IsActive = 1
+
+
+
+             */
 
             return conn.Query<PurchaseDto>(sql);
         }
-
-
         // DELETE
         public void Delete(int id)
         {
@@ -117,24 +135,23 @@ ORDER BY p.PurchaseDate DESC
             conn.Execute(sql, new { Id = id });
         }
 
-
         // EDIT
         public void Edit(PurchaseDto purchase)
         {
             using var conn = _db.GetConnection();
 
             string sql = @"
-UPDATE PurchaseHistory
-SET
-    ModelId = @ModelId,
-    VendorId = @VendorId,
-    EquipmentId = @EquipmentId,
-    Quantity = @Quantity,
-    UnitPrice = @UnitPrice,
-    CurrencyCode = @CurrencyCode,
-    PurchaseDate = @PurchaseDate,
-    Note = @Note
-WHERE Id = @Id
+                UPDATE PurchaseHistory
+                SET
+                    ModelId = @ModelId,
+                    VendorId = @VendorId,
+                    EquipmentId = @EquipmentId,
+                    Quantity = @Quantity,
+                    UnitPrice = @UnitPrice,
+                    CurrencyCode = @CurrencyCode,
+                    PurchaseDate = @PurchaseDate,
+                    Note = @Note
+                WHERE Id = @Id
 ";
 
             conn.Execute(sql, purchase);
@@ -146,17 +163,22 @@ WHERE Id = @Id
         // ADD
         public int Add(PurchaseDto purchase)
         {
+            string currentTime = GetCurrentDateTime();
             using var conn = _db.GetConnection();
 
             string sql = @"
                 INSERT INTO PurchaseHistory
-                (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, CurrencyCode, PurchaseDate, Note)
+                (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, CurrencyCode, PurchaseDate, Note,CreateAt)
                 VALUES
-                (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @CurrencyCode, @PurchaseDate, @Note);
+                (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @CurrencyCode, @PurchaseDate, @Note,@currentTime);
                 SELECT last_insert_rowid();
 ";
 
             return conn.ExecuteScalar<int>(sql, purchase);
+        }
+        public string GetCurrentDateTime()
+        {
+            return DateTime.Now.ToString("HH:mm dd/MM/yyyy");
         }
     }
 }

@@ -10,8 +10,9 @@ namespace WpfApp2.Services
 {
     public class SearchService
     {
-        DatabaseService _db = new DatabaseService();
+        private readonly DatabaseService _db = new ();
 
+        // ================= GLOBAL SEARCH =================
         public IEnumerable<SearchResult> GlobalSearch(string keyword)
         {
             using var conn = _db.GetConnection();
@@ -44,61 +45,72 @@ namespace WpfApp2.Services
                 string where = string.Join(" OR ", whereParts);
 
                 queries.Add($@"
-                SELECT 
-                    {idColumn} as Id,
-                    {textColumn} as Text,
-                    '{table}' as Source
-                FROM {table}
-                WHERE {where}
-            ");
+                    SELECT 
+                        {idColumn} as Id,
+                        {textColumn} as Text,
+                        '{table}' as Source
+                    FROM {table}
+                    WHERE {where}
+                ");
             }
 
             string sql = string.Join(" UNION ", queries) + " LIMIT 20";
 
             return conn.Query<SearchResult>(sql, new { pattern });
         }
-        public IEnumerable<PurchaseDto> Search(
-            int? modelId,
-            int? vendorId,
+
+        // ================= PURCHASE SEARCH (MAIN) =================
+        public IEnumerable<PurchaseDto> SearchPurchase(
+            string model,
+            string vendor,
             int? equipmentId,
-            int? categoryId,
             DateTime? from,
             DateTime? to,
             decimal? minPrice,
             decimal? maxPrice)
         {
             var sql = new StringBuilder(@"
-        SELECT 
-            p.Id,
-            m.ModelName,
-            v.VendorName,
-            e.EquipmentName,
-            c.CategoryName,
-            p.Quantity,
-            p.UnitPrice,
-            p.Quantity * p.UnitPrice AS TotalPrice,
-            p.CurrencyCode,
-            p.PurchaseDate,
-            p.Note
-        FROM Purchase p
-        LEFT JOIN Model m ON p.ModelId = m.Id
-        LEFT JOIN Vendor v ON p.VendorId = v.Id
-        LEFT JOIN Equipment e ON p.EquipmentId = e.Id
-        LEFT JOIN Category c ON p.CategoryId = c.Id
-        WHERE 1=1
-    ");
+                SELECT 
+                    p.Id,
+                    m.ModelName,
+                    v.VendorName,
+                    e.EquipmentName,
+                    p.Quantity,
+                    p.UnitPrice,
+                    p.Quantity * p.UnitPrice AS TotalPrice,
+                    p.CurrencyCode,
+                    p.PurchaseDate,
+                    p.Note
+                FROM Purchase p
+                LEFT JOIN Model m ON p.ModelId = m.Id
+                LEFT JOIN Vendor v ON p.VendorId = v.Id
+                LEFT JOIN Equipment e ON p.EquipmentId = e.Id
 
-            if (modelId.HasValue)
-                sql.Append(" AND p.ModelId = @modelId");
+                WHERE 1=1
+            ");
 
-            if (vendorId.HasValue)
-                sql.Append(" AND p.VendorId = @vendorId");
+            var param = new DynamicParameters();
 
+            // 🔍 Model search (text)
+            if (!string.IsNullOrWhiteSpace(model))
+            {
+                string pattern = "%" + string.Join("%", model.ToLower().Trim().ToCharArray()) + "%";
+                sql.Append(" AND LOWER(m.ModelName) LIKE @model");
+                param.Add("model", pattern);
+            }
+
+            // 🔍 Vendor search (text)
+            if (!string.IsNullOrWhiteSpace(vendor))
+            {
+                string pattern = "%" + string.Join("%", vendor.ToLower().Trim().ToCharArray()) + "%";
+                sql.Append(" AND LOWER(v.VendorName) LIKE @vendor");
+                param.Add("vendor", pattern);
+            }
+
+            // 🎯 Filter khác
             if (equipmentId.HasValue)
                 sql.Append(" AND p.EquipmentId = @equipmentId");
 
-            if (categoryId.HasValue)
-                sql.Append(" AND p.CategoryId = @categoryId");
 
             if (from.HasValue)
                 sql.Append(" AND p.PurchaseDate >= @from");
@@ -116,25 +128,22 @@ namespace WpfApp2.Services
 
             using var conn = _db.GetConnection();
 
-            return conn.Query<PurchaseDto>(
-                sql.ToString(),
-                new
-                {
-                    modelId,
-                    vendorId,
-                    equipmentId,
-                    categoryId,
-                    from,
-                    to,
-                    minPrice,
-                    maxPrice
-                });
+            return conn.Query<PurchaseDto>(sql.ToString(), new
+            {
+                model = param.ParameterNames.Contains("model") ? param.Get<string>("model") : null,
+                vendor = param.ParameterNames.Contains("vendor") ? param.Get<string>("vendor") : null,
+                equipmentId,
+                from,
+                to,
+                minPrice,
+                maxPrice
+            });
         }
 
+        // ================= BRAND =================
         public IEnumerable<SearchResultDto> SearchBrand(string keyword)
         {
             using var conn = _db.GetConnection();
-
             string pattern = "%" + keyword + "%";
 
             var brands = conn.Query<Brand>(
@@ -142,60 +151,69 @@ namespace WpfApp2.Services
                 new { pattern });
 
             return brands.Select(b => new SearchResultDto
-            {   Id = b.Id,
+            {
+                Id = b.Id,
                 Source = "Brand",
                 Text = b.BrandName,
                 Data = b
             });
         }
+
+        // ================= VENDOR =================
         public IEnumerable<SearchResultDto> SearchVendor(string keyword)
         {
             using var conn = _db.GetConnection();
             string pattern = "%" + keyword + "%";
+
             var vendors = conn.Query<Vendor>(
                 "SELECT * FROM Vendor WHERE VendorName LIKE @pattern LIMIT 20",
                 new { pattern });
-            return vendors.Select(b => new SearchResultDto
+
+            return vendors.Select(v => new SearchResultDto
             {
-                Id = b.Id,
+                Id = v.Id,
                 Source = "Vendor",
-                Text = b.VendorName,
-                Data = b
+                Text = v.VendorName,
+                Data = v
             });
         }
 
+        // ================= EQUIPMENT =================
         public IEnumerable<SearchResultDto> SearchEquipment(string keyword)
         {
             using var conn = _db.GetConnection();
             string pattern = "%" + keyword + "%";
+
             var equipment = conn.Query<Equipment>(
                 "SELECT * FROM Equipment WHERE EquipmentName LIKE @pattern LIMIT 20",
                 new { pattern });
-            return equipment.Select(b => new SearchResultDto
+
+            return equipment.Select(e => new SearchResultDto
             {
-                Id = b.Id,
+                Id = e.Id,
                 Source = "Equipment",
-                Text = b.EquipmentName,
-                Data = b
+                Text = e.EquipmentName,
+                Data = e
             });
         }
 
+        // ================= MODEL =================
         public IEnumerable<SearchResultDto> SearchModel(string keyword)
         {
             using var conn = _db.GetConnection();
             string pattern = "%" + keyword + "%";
-            var equipment = conn.Query<Model>(
+
+            var models = conn.Query<Model>(
                 "SELECT * FROM Model WHERE ModelName LIKE @pattern LIMIT 20",
                 new { pattern });
-            return equipment.Select(b => new SearchResultDto
+
+            return models.Select(m => new SearchResultDto
             {
-                Id = b.Id,
+                Id = m.Id,
                 Source = "Model",
-                Text = b.ModelName,
-                Data = b
+                Text = m.ModelName,
+                Data = m
             });
         }
-
     }
 }
-

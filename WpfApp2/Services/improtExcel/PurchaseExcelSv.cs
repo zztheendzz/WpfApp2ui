@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using WpfApp2.model.modelImportExcel;
+using System;
 
 namespace WpfApp2.Services.improtExcel
 {
@@ -53,6 +54,7 @@ namespace WpfApp2.Services.improtExcel
 
                 foreach (var row in importPurchases)
                 {
+                    string createAt = GetCurrentDateTime();
                     var modelName = Normalize(row.ModelName);
                     var modelCode = Normalize(row.ModelCode);
                     var vendorName = Normalize(row.Vendor);
@@ -80,9 +82,9 @@ namespace WpfApp2.Services.improtExcel
 
                     conn.Execute(@"
 INSERT INTO PurchaseHistory
-(ModelId, VendorId, Quantity, UnitPrice, TotalPrice, PurchaseDate)
+(ModelId, VendorId, Quantity, UnitPrice, TotalPrice, PurchaseDate,CreateAt)
 VALUES
-(@ModelId, @VendorId, @Quantity, @UnitPrice, @TotalPrice, @PurchaseDate)",
+(@ModelId, @VendorId, @Quantity, @UnitPrice, @TotalPrice, @PurchaseDate,@CreateAt)",
                     new
                     {
                         ModelId = modelId,
@@ -90,7 +92,8 @@ VALUES
                         Quantity = row.Quantity,
                         UnitPrice = row.UnitPrice,
                         TotalPrice = row.Quantity * row.UnitPrice,
-                        PurchaseDate = DateTime.Now
+                        PurchaseDate = DateTime.Now,
+                        CreateAt= createAt
                     });
 
                     success++;
@@ -278,5 +281,9 @@ SELECT last_insert_rowid();",
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
         #endregion
+        public string GetCurrentDateTime()
+        {
+            return DateTime.Now.ToString("HH:mm dd/MM/yyyy");
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using WpfApp2.command;
@@ -30,8 +31,9 @@ namespace WpfApp2.viewmodel.tableVm
 
             purchases = new ObservableCollection<PurchaseDto>(purchaseService.GetPurchaseDTO());
 
-           // PurchasesView = CollectionViewSource.GetDefaultView(purchases);
-           // PurchasesView.Filter = FilterPurchase;
+
+            // PurchasesView = CollectionViewSource.GetDefaultView(purchases);
+            // PurchasesView.Filter = FilterPurchase;
 
             EditCommand = new RelayCommand(x => Edit((PurchaseDto)x));
             DeleteCommand = new RelayCommand(x => Delete((PurchaseDto)x));
@@ -147,19 +149,6 @@ namespace WpfApp2.viewmodel.tableVm
             }
         }
 
-        // CATEGORY
-        //private CategoryDto _selectedCategory;
-        //public CategoryDto SelectedCategory
-        //{
-        //    get => _selectedCategory;
-        //    set
-        //    {
-        //        _selectedCategory = value;
-        //        OnPropertyChanged();
-        //        PurchasesView.Refresh();
-        //    }
-        //}
-
         // DATE
         private DateTime? _dateFrom;
         public DateTime? DateFrom
@@ -267,6 +256,7 @@ namespace WpfApp2.viewmodel.tableVm
                 purchases.Add(newItem);
             }
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)

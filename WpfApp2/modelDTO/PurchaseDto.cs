@@ -7,8 +7,6 @@ namespace WpfApp2.modelDTO
     public class PurchaseDto
     {
         public int Id { get; set; }
-
-
         public int ModelId { get; set; }
         public string ModelName { get; set; }
 

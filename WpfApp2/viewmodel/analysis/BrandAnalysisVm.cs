@@ -23,6 +23,8 @@ namespace WpfApp2.viewmodel.analysis
         private SearchService _searchService = new SearchService();
 
         private bool _isSelecting;
+
+        //obj goi y tim kiem
         public ObservableCollection<SearchResultDto> SearchSuggestions { get; set; }
             = new ObservableCollection<SearchResultDto>();
 

@@ -133,7 +133,7 @@
 
                     <StackPanel>
 
-                        <Button Content="Price Overview" Command="{Binding ShowPuchaseHistoryPageCommand }"
+                        <Button Content="Purchase Analysis" Command="{Binding ShowPurchaseAnalysisPageCommand }"
                         Height="35"/>
 
                         <Button Content="Model Price Analysis" Command="{Binding ShowModelAnalysisCommand}"
@@ -160,7 +160,7 @@
                         <Button  Content="Brand" Height="35" Command="{Binding ShowBrandlPageCommand}"/>
                         <Button Content="Vendor" Height="35" Command="{Binding ShowVendorPageCommand}" />
                         <Button Content="Equipment" Height="35" Command="{Binding ShowEquipmentPageCommand}" />
-                        <Button Content="Purchase History" Height="35" Command="{Binding ShowPuchaseHistoryPageCommand}" />
+                        <Button Content="Purchase History" Height="35" Command="{Binding ShowPurchaseHistoryPageCommand}" />
                         <Button Content="Currency" Height="35" Command="{Binding ShowCurrencyPageCommand}"/>
                     </StackPanel>
                 </Expander>
