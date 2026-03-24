@@ -7,6 +7,7 @@
       xmlns:vm="clr-namespace:WpfApp2.viewmodel.analysis"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PurchaseAnalysis">
@@ -49,6 +50,7 @@
                             <TextBlock Text="{Binding Text}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
+                    
 
                 </ComboBox>
 
@@ -69,7 +71,11 @@
                             <TextBlock Text="{Binding Text}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
-
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="GotFocus">
+                            <i:InvokeCommandAction Command="{Binding VendorFocusCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                 </ComboBox>
 
                 <!-- EQUIPMENT -->
@@ -99,7 +105,7 @@
                 <!-- Clear -->
                 <Button Content="Clear"
                           Margin="10"
-            Command="{Binding ClearFilterCommand}"/>
+            Command="{Binding ClearCommand}"/>
 
             </StackPanel>
 
@@ -110,12 +116,12 @@
                 VerticalAlignment="Center">
 
                 <DatePicker Width="140"
-                    SelectedDate="{Binding DateFrom}"
+                    SelectedDate="{Binding SelectedDateFrom}"
                     materialDesign:HintAssist.Hint="Date From"/>
 
                 <DatePicker Width="140"
                     Margin="10,0,0,0"
-                    SelectedDate="{Binding DateTo}"
+                    SelectedDate="{Binding SelectedDateTo}"
                     materialDesign:HintAssist.Hint="Date To"/>
 
                 <TextBox Width="80"
@@ -136,9 +142,14 @@
                  materialDesign:HintAssist.Hint="Max Price"/>
 
                 <xctk:DoubleUpDown Value="{Binding PriceMax, Mode=TwoWay}" 
+                   ClipValueToMinMax="True"
                    Width="80"
                    Margin="10,0,0,0"
                    Minimum="0"/>
+                <TextBlock Text="{Binding SelectedCount, StringFormat=Total Record: {0}}"
+                           Margin="30,0,0,0"
+                           VerticalAlignment="Center"
+                           FontSize="14"/>
 
             </StackPanel>
         </Grid>

@@ -106,7 +106,9 @@ namespace WpfApp2.Services.analysisService
             int? ModelId,
             int? VendorId,
             decimal? PriceMin,
-            decimal? PriceMax
+            decimal? PriceMax,
+            DateTime? DateFrom,
+            DateTime? DateTo
             )
         {
             string sql = @"
@@ -114,7 +116,8 @@ namespace WpfApp2.Services.analysisService
                     p.*,
                     m.ModelName,
                     v.VendorName,
-                    e.EquipmentName
+                    e.EquipmentName,
+                COUNT(*) OVER() AS TotalCount
                 FROM PurchaseHistory p
                 LEFT JOIN Model m ON p.ModelId = m.Id
                 LEFT JOIN Vendor v ON p.VendorId = v.Id
@@ -125,6 +128,8 @@ namespace WpfApp2.Services.analysisService
                     AND (@EquipmentId IS NULL OR p.EquipmentId = @EquipmentId)
                     AND (@PriceMin IS NULL OR p.TotalPrice >= @PriceMin)
                     AND (@PriceMax IS NULL OR p.TotalPrice <= @PriceMax)
+                    AND (@DateFrom IS NULL OR date(p.PurchaseDate) >= date(@DateFrom))
+                    AND (@DateTo IS NULL OR date(p.PurchaseDate) <= date(@DateTo))
     ";
 
             using var conn = _db.GetConnection();
@@ -135,7 +140,9 @@ namespace WpfApp2.Services.analysisService
                 VendorId = VendorId,
                 EquipmentId = EquipmentId,
                 PriceMin=PriceMin,
-                PriceMax=PriceMax
+                PriceMax=PriceMax,
+                DateFrom = DateFrom,
+                DateTo = DateTo
             };
 
             return conn.Query<PurchaseDto>(sql, param);

@@ -15,6 +15,12 @@ namespace WpfApp2.viewmodel.analysis
 {
     public class PurchaseAnalysisVm : INotifyPropertyChanged
     {
+
+
+        public ICommand SearchCommand { get; set; }
+        public ICommand ClearCommand { get; set; }
+        public ICommand VendorFocusCommand { get; set; }
+
         private readonly SearchService _searchService = new SearchService();
 
         #region ===================== Suggestions =====================
@@ -31,7 +37,7 @@ namespace WpfApp2.viewmodel.analysis
         #endregion
 
         #region ===================== Search Text =====================
-        private string _selectedModelTextCache;
+
 
         private bool _isSelecting;
         private string _searchModelText;
@@ -42,14 +48,7 @@ namespace WpfApp2.viewmodel.analysis
             {
                 _searchModelText = value;
                 OnPropertyChanged();
-
-                if (!string.IsNullOrEmpty(_selectedModelTextCache) &&
-                            value == _selectedModelTextCache)
-                {
-                    _selectedModelTextCache = null; // reset
-                    return;
-                }
-
+                if (_isSelecting) return; // ✅ FIX QUAN TRỌNG
                 UpdateModelSuggestions(value);
             }
         }
@@ -101,9 +100,8 @@ namespace WpfApp2.viewmodel.analysis
                 {
                     SelectedModelId = value.Id;
                     SearchModelText = value.Text;
-                    _selectedModelTextCache = value.Text; // 👉 cache text
                 }
-
+                MessageBox.Show("_selectedModel  " + _selectedModel);
                 _isSelecting = false;
             }
         }
@@ -122,6 +120,7 @@ namespace WpfApp2.viewmodel.analysis
                     SelectedVendorId = value.Id;
                     SearchVendorText = value.Text;
                 }
+
             }
         }
 
@@ -153,7 +152,7 @@ namespace WpfApp2.viewmodel.analysis
             set
             {
                 _selectedModelId = value;
-                LoadData();
+               // LoadData();
                 OnPropertyChanged();
             }
         }
@@ -165,7 +164,7 @@ namespace WpfApp2.viewmodel.analysis
             set
             {
                 _selectedVendorId = value;
-                LoadData();
+               // LoadData();
                 OnPropertyChanged();
             }
         }
@@ -183,6 +182,56 @@ namespace WpfApp2.viewmodel.analysis
         }
 
         #endregion
+
+        private DateTime? _dateFrom;
+        public DateTime? SelectedDateFrom
+        {
+            get => _dateFrom;
+            set
+            {
+                _dateFrom = value;
+                OnPropertyChanged();
+                MessageBox.Show("from" + _dateFrom);
+               // LoadData();
+            }
+        }
+        private DateTime? _dateTo;
+        public DateTime? SelectedDateTo
+        {
+            get => _dateTo;
+            set
+            {
+                _dateTo = value;
+                OnPropertyChanged();
+               // LoadData();
+            }
+        }
+
+
+        private void ValidateDate()
+        {
+            if (SelectedDateFrom.HasValue && SelectedDateTo.HasValue)
+            {
+                if (SelectedDateFrom > SelectedDateTo)
+                {
+                    Error = "From phải ≤ To";
+                    return;
+                }
+            }
+
+            Error = null;
+        }
+
+        private int? _count;
+        public int? SelectedCount
+        {
+            get => _count;
+            set
+            {
+                _count = value;
+                OnPropertyChanged();
+            }
+        }
 
         #region ===================== Update Suggestions =====================
 
@@ -230,9 +279,47 @@ namespace WpfApp2.viewmodel.analysis
 
         public PurchaseAnalysisVm()
         {
+            SearchCommand = new RelayCommand( Search);
+            ClearCommand = new RelayCommand(Clear);
             PurchaseDtos = new ObservableCollection<PurchaseDto>();
-            LoadData();
 
+        }
+
+        public void Search(Object obj)
+        {
+            LoadData();
+        }
+
+        public void Clear(Object obj)
+        {
+            SearchModelText = string.Empty;
+            SearchVendorText = string.Empty;
+            SearchEquipmentText = string.Empty;
+
+            // ===== Reset selected item =====
+            SelectedModel = null;
+            SelectedVendor = null;
+            SelectedEquipment = null;
+
+            // ===== Reset Id =====
+            SelectedModelId = 0;
+            SelectedVendorId = 0;
+            SelectedEquipmentId = 0;
+
+            // ===== Reset price =====
+            PriceMin = null;
+            PriceMax = null;
+
+            // ===== Clear error =====
+            Error = null;
+
+            // ===== Clear suggestions =====
+            ModelSuggestions.Clear();
+            VendorSuggestions.Clear();
+            EquipmentSuggestions.Clear();
+
+            // ===== Reload data (load all) =====
+            LoadData();
         }
 
 
@@ -246,11 +333,14 @@ namespace WpfApp2.viewmodel.analysis
                 SelectedModelId == 0 ? null : SelectedModelId,
                 SelectedVendorId == 0 ? null : SelectedVendorId,
                 _priceMin==0 ? null : PriceMin,
-                _priceMax==0 ? null : PriceMax
+                _priceMax==0 ? null : PriceMax,
+                SelectedDateFrom.HasValue ?  SelectedDateFrom: null ,
+                SelectedDateTo.HasValue? SelectedDateTo:null
 
             ).ToList();
             foreach (var item in list)
             { PurchaseDtos.Add(item);}
+            SelectedCount = list.Count;
         }
 
 
@@ -270,7 +360,7 @@ namespace WpfApp2.viewmodel.analysis
                 OnPropertyChanged();
 
                 ValidateRange();
-                Filter(); // gọi search
+               // Filter(); // gọi search
             }
         }
 
@@ -281,7 +371,6 @@ namespace WpfApp2.viewmodel.analysis
             get => _priceMax;
             set
             {
-                if (_priceMax == value) return;
 
                 // ❗ chỉ cho số dương
                 if (value < 0) value = 0;
@@ -290,7 +379,8 @@ namespace WpfApp2.viewmodel.analysis
                 OnPropertyChanged();
 
                 ValidateRange();
-                Filter(); // gọi search
+               // LoadData();
+               // Filter(); // gọi search
             }
         }
 
@@ -302,6 +392,8 @@ namespace WpfApp2.viewmodel.analysis
             {
                 _error = value;
                 OnPropertyChanged();
+                ValidateRange();
+                //LoadData() ;
             }
         }
 
@@ -325,7 +417,7 @@ namespace WpfApp2.viewmodel.analysis
         {
             if (!string.IsNullOrEmpty(Error)) return;
 
-
+            LoadData();
         }
 
         #region ===================== INotify =====================

@@ -1,14 +1,11 @@
 ﻿using ClosedXML.Excel;
 using Dapper;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using WpfApp2.model.modelImportExcel;
-using System;
+
 
 namespace WpfApp2.Services.improtExcel
 {
@@ -92,7 +89,7 @@ VALUES
                         Quantity = row.Quantity,
                         UnitPrice = row.UnitPrice,
                         TotalPrice = row.Quantity * row.UnitPrice,
-                        PurchaseDate = DateTime.Now,
+                        PurchaseDate = GetCurrentDate(),
                         CreateAt= createAt
                     });
 
@@ -283,7 +280,12 @@ SELECT last_insert_rowid();",
         #endregion
         public string GetCurrentDateTime()
         {
-            return DateTime.Now.ToString("HH:mm dd/MM/yyyy");
+            return DateTime.Now.ToString("HH:mm dd-MM-yyyy");
+        }
+
+        public string GetCurrentDate()
+        {
+            return DateTime.Now.ToString("yyyy-MM-dd");
         }
     }
 }
