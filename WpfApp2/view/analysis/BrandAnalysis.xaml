@@ -126,12 +126,6 @@
 
                     <DataGridTextColumn Header="Date"
                                 Binding="{Binding PurchaseDate}"/>
-                    
-                    <DataGridTextColumn Header="Vendor"
-                                       Binding="{Binding VendorName}"/>
-
-                    <DataGridTextColumn Header="Equipment"
-                                       Binding="{Binding EquipmentName}"/>
 
                     <DataGridTextColumn Header="Quantity"
                                        Binding="{Binding Quantity}"/>
@@ -139,7 +133,7 @@
                     <DataGridTextColumn Header="UnitPrice"
                                        Binding="{Binding UnitPrice}"/>
 
-                    <DataGridTextColumn Header="Tota lPrice"
+                    <DataGridTextColumn Header="Total Price"
                                        Binding="{Binding TotalPrice}"/>
 
                     <DataGridTextColumn Header="Currency"
@@ -148,7 +142,7 @@
                     <DataGridTextColumn Header="Purchase Date"
                                       Binding="{Binding PurchaseDate}"/>
 
-                    <DataGridTextColumn Header="Creat At"
+                    <DataGridTextColumn Header="Created"
                                       Binding="{Binding CreateAt}"/>
 
                     <DataGridTextColumn Header="User"

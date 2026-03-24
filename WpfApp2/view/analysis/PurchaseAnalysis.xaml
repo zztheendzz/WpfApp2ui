@@ -35,23 +35,21 @@
 
                 <!-- MODEL -->
                 <ComboBox Width="300"
-              Margin="10"
-              IsEditable="True"
-              IsTextSearchEnabled="False"
-              StaysOpenOnEdit="True"
-              ItemsSource="{Binding ModelSuggestions}"
-              Text="{Binding SearchModelText, UpdateSourceTrigger=PropertyChanged}"
-              SelectedItem="{Binding SelectedModel, Mode=TwoWay}"
-              IsDropDownOpen="{Binding IsModelDropdownOpen}"
-              materialDesign:HintAssist.Hint="Model">
-
-                    <ComboBox.ItemTemplate>
+          Margin="10"
+          IsEditable="True"
+          IsTextSearchEnabled="False"
+          StaysOpenOnEdit="True"
+          ItemsSource="{Binding ModelSuggestions}"
+          Text="{Binding SearchModelText, UpdateSourceTrigger=PropertyChanged}"
+          SelectedItem="{Binding SelectedModel, Mode=TwoWay}"
+          DisplayMemberPath="Text" 
+          IsDropDownOpen="{Binding IsModelDropdownOpen}"
+          materialDesign:HintAssist.Hint="Model">
+                    <!--<ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Text}" />
                         </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                    
-
+                    </ComboBox.ItemTemplate>-->
                 </ComboBox>
 
                 <!-- VENDOR -->
@@ -63,14 +61,15 @@
               ItemsSource="{Binding VendorSuggestions}"
               Text="{Binding SearchVendorText, UpdateSourceTrigger=PropertyChanged}"
               SelectedItem="{Binding SelectedVendor, Mode=TwoWay}"
+              DisplayMemberPath="Text" 
               IsDropDownOpen="{Binding IsVendorDropdownOpen}"
               materialDesign:HintAssist.Hint="Vendor">
 
-                    <ComboBox.ItemTemplate>
+                    <!--<ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Text}" />
                         </DataTemplate>
-                    </ComboBox.ItemTemplate>
+                    </ComboBox.ItemTemplate>-->
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="GotFocus">
                             <i:InvokeCommandAction Command="{Binding VendorFocusCommand}" />
@@ -170,18 +169,6 @@
                       AutoGenerateColumns="False"
                       IsReadOnly="True">
 
-                <!-- Center Cell Style -->
-                <DataGrid.CellStyle>
-                    <Style TargetType="DataGridCell">
-                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                        <Setter Property="VerticalContentAlignment" Value="Center"/>
-                    </Style>
-                </DataGrid.CellStyle>
-                <DataGrid.RowStyle >
-                    <Style TargetType="DataGridRow" >
-                        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-                    </Style>
-                </DataGrid.RowStyle>
                 <DataGrid.Columns>
 
                     <DataGridTextColumn Header="ID"

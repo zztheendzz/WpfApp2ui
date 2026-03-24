@@ -69,7 +69,7 @@
                       IsReadOnly="True">
 
                     <!-- Center Cell Style -->
-                    <DataGrid.CellStyle>
+                    <!--<DataGrid.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Setter Property="HorizontalContentAlignment" Value="Center"/>
                             <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -79,7 +79,7 @@
                         <Style TargetType="DataGridRow" >
                             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                         </Style>
-                    </DataGrid.RowStyle>
+                    </DataGrid.RowStyle>-->
                     <DataGrid.Columns>
 
                         <DataGridTextColumn Header="ID"

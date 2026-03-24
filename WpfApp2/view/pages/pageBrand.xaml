@@ -68,14 +68,6 @@
                       AutoGenerateColumns="False"
                       IsReadOnly="True">
 
-                <!-- Center Cell Style -->
-                <DataGrid.CellStyle>
-                    <Style TargetType="DataGridCell">
-                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                        <Setter Property="VerticalContentAlignment" Value="Center"/>
-                    </Style>
-                </DataGrid.CellStyle>
-
                 <DataGrid.Columns>
 
                     <DataGridTextColumn Header="ID"

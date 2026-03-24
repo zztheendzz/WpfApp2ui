@@ -14,8 +14,6 @@
         <vm:EquipmentViewModel/>
     </Page.DataContext>
     <Grid>
-
-
         <Grid Margin="20">
 
             <Grid.RowDefinitions>
@@ -23,7 +21,6 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <!-- TOOLBAR -->
             <StackPanel Grid.Row="0"
                     Orientation="Horizontal"
                     Margin="0,0,0,10">
@@ -69,7 +66,7 @@
                       IsReadOnly="True">
 
                     <!-- Center Cell Style -->
-                    <DataGrid.CellStyle>
+                    <!--<DataGrid.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Setter Property="HorizontalContentAlignment" Value="Center"/>
                             <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -79,16 +76,14 @@
                         <Style TargetType="DataGridRow" >
                             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                         </Style>
-                    </DataGrid.RowStyle>
+                    </DataGrid.RowStyle>-->
                     <DataGrid.Columns>
 
                         <DataGridTextColumn Header="ID"
                                         Binding="{Binding Id}"/>
 
-                        <DataGridTextColumn Header="Equipment"
+                        <DataGridTextColumn Header="Model Code"
                                         Binding="{Binding EquipmentName}"/>
-
-
                         <!-- EDIT -->
                         <DataGridTemplateColumn Header="Edit" Width="60">
 
