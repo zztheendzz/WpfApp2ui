@@ -24,5 +24,45 @@ namespace WpfApp2.view.analysis
             InitializeComponent();
             DataContext = new PurchaseAnalysisVm();
         }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var cb = sender as ComboBox;
+            if (cb != null)
+            {
+                cb.IsDropDownOpen = true;
+            }
+        }
+        private void ComboBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var cb = sender as ComboBox;
+            if (cb == null) return;
+
+            if (!cb.IsKeyboardFocusWithin)
+            {
+                cb.Focus();
+                e.Handled = true; // chỉ handle khi chưa focus
+            }
+
+            cb.IsDropDownOpen = true;
+        }
+        private void ComboBox_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+        {
+            var comboBox = sender as ComboBox;
+            if (comboBox == null) return;
+
+            comboBox.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                comboBox.ApplyTemplate();
+
+                var textBox = comboBox.Template.FindName("PART_EditableTextBox", comboBox) as TextBox;
+                if (textBox != null)
+                {
+                    textBox.Focus(); // quan trọng
+                    textBox.SelectionLength = 0;
+                    textBox.CaretIndex = textBox.Text.Length;
+                }
+            }), System.Windows.Threading.DispatcherPriority.ContextIdle);
+        }
     }
 }

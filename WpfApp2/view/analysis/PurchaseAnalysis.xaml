@@ -43,8 +43,9 @@
           Text="{Binding SearchModelText, UpdateSourceTrigger=PropertyChanged}"
           SelectedItem="{Binding SelectedModel, Mode=TwoWay}"
           DisplayMemberPath="Text" 
-          IsDropDownOpen="{Binding IsModelDropdownOpen}"
-          materialDesign:HintAssist.Hint="Model">
+          IsDropDownOpen="{Binding IsDropDownOpenM}"
+          PreviewMouseDown="ComboBox_PreviewMouseDown"
+          materialDesign:HintAssist.Hint="Model" SelectionChanged="ComboBox_SelectionChanged">
                     <!--<ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Text}" />
@@ -62,8 +63,9 @@
               Text="{Binding SearchVendorText, UpdateSourceTrigger=PropertyChanged}"
               SelectedItem="{Binding SelectedVendor, Mode=TwoWay}"
               DisplayMemberPath="Text" 
-              IsDropDownOpen="{Binding IsVendorDropdownOpen}"
-              materialDesign:HintAssist.Hint="Vendor">
+              IsDropDownOpen="{Binding IsDropDownOpenV}"
+              PreviewMouseDown="ComboBox_PreviewMouseDown"
+              materialDesign:HintAssist.Hint="Vendor" SelectionChanged="ComboBox_SelectionChanged_1">
 
                     <!--<ComboBox.ItemTemplate>
                         <DataTemplate>
@@ -86,7 +88,9 @@
               ItemsSource="{Binding EquipmentSuggestions}"
               Text="{Binding SearchEquipmentText, UpdateSourceTrigger=PropertyChanged}"
               SelectedItem="{Binding SelectedEquipment, Mode=TwoWay}"
-              IsDropDownOpen="{Binding IsEquipmentDropdownOpen}"
+              IsDropDownOpen="{Binding IsDropDownOpenE}"
+              DisplayMemberPath="Text" 
+              PreviewMouseDown="ComboBox_PreviewMouseDown"
               materialDesign:HintAssist.Hint="Equipment">
 
                     <!--<ComboBox.ItemTemplate>

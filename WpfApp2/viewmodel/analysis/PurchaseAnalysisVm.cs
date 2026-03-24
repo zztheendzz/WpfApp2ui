@@ -21,6 +21,28 @@ namespace WpfApp2.viewmodel.analysis
         private bool _isSelectingE;
         private bool _isSelectingV;
 
+        private bool _isDropDownOpenV;
+        public bool IsDropDownOpenV
+        {
+            get => _isDropDownOpenV;
+            set { _isDropDownOpenV = value; OnPropertyChanged(); }
+        }
+
+        private bool _isDropDownOpenM;
+
+        public bool IsDropDownOpenM
+        {
+            get => _isDropDownOpenM;
+            set { _isDropDownOpenM = value; OnPropertyChanged(); }
+        }
+        private bool _isDropDownOpenE;
+
+        public bool IsDropDownOpenE
+        {
+            get => _isDropDownOpenE;
+            set { _isDropDownOpenE = value; OnPropertyChanged(); }
+        }
+
         public ICommand SearchCommand { get; set; }
         public ICommand ClearCommand { get; set; }
         public ICommand VendorFocusCommand { get; set; }
@@ -253,9 +275,20 @@ namespace WpfApp2.viewmodel.analysis
 
         public void Search(object obj) => LoadData();
 
-        private void UpdateModelSuggestions(string t) { if (_isSelectingM || string.IsNullOrWhiteSpace(t) || t.Length < 2) { ModelSuggestions.Clear(); return; } var res = _searchService.SearchModel(t); ModelSuggestions.Clear(); foreach (var i in res) ModelSuggestions.Add(i); }
-        private void UpdateVendorSuggestions(string t) { if (_isSelectingV || string.IsNullOrWhiteSpace(t) || t.Length < 2) { VendorSuggestions.Clear(); return; } var res = _searchService.SearchVendor(t); VendorSuggestions.Clear(); foreach (var i in res) VendorSuggestions.Add(i); }
-        private void UpdateEquipmentSuggestions(string t) { if (_isSelectingE || string.IsNullOrWhiteSpace(t) || t.Length < 2) { EquipmentSuggestions.Clear(); return; } var res = _searchService.SearchEquipment(t); EquipmentSuggestions.Clear(); foreach (var i in res) EquipmentSuggestions.Add(i); }
+        private void UpdateModelSuggestions(string t) 
+        { 
+            if (_isSelectingM || string.IsNullOrWhiteSpace(t) || t.Length < 2) { ModelSuggestions.Clear(); return; }
+
+            var res = _searchService.SearchModel(t); ModelSuggestions.Clear(); foreach (var i in res) ModelSuggestions.Add(i);
+        }
+        private void UpdateVendorSuggestions(string t) { 
+            if (_isSelectingV || string.IsNullOrWhiteSpace(t) || t.Length < 2) { VendorSuggestions.Clear(); return; }
+
+            var res = _searchService.SearchVendor(t); VendorSuggestions.Clear(); foreach (var i in res) VendorSuggestions.Add(i); }
+        private void UpdateEquipmentSuggestions(string t) { 
+            if (_isSelectingE || string.IsNullOrWhiteSpace(t) || t.Length < 2) { EquipmentSuggestions.Clear(); return; }
+
+            var res = _searchService.SearchEquipment(t); EquipmentSuggestions.Clear(); foreach (var i in res) EquipmentSuggestions.Add(i); }
 
         private void ValidateDate() { if (SelectedDateFrom > SelectedDateTo) Error = "From phải ≤ To"; else Error = null; }
         private void ValidateRange() { if (PriceMin > PriceMax) Error = "Min phải ≤ Max"; else Error = null; }

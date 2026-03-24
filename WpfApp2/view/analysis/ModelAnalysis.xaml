@@ -30,13 +30,8 @@
           IsDropDownOpen="{Binding IsSearchDropDownOpen}"
           ItemsSource="{Binding SearchSuggestions}"
           Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
-          SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}">
-
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Text}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
+          SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}"
+          DisplayMemberPath="Text">
 
                 </ComboBox>
 

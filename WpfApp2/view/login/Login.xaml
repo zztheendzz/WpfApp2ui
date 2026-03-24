@@ -1,0 +1,36 @@
+﻿<Window x:Class="WpfApp2.view.login.Login"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp2.view.login"
+        mc:Ignorable="d"
+        Title="Login" Height="450" Width="800">
+    <Grid>
+        <Border CornerRadius="10" Background="White" Margin="30" Padding="20">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="ĐĂNG NHẬP" FontSize="24" FontWeight="Bold" 
+                       HorizontalAlignment="Center" Margin="0,0,0,20" Foreground="#333"/>
+
+                <TextBlock Text="Tài khoản nhân viên" Margin="0,10,0,5" Foreground="#666"/>
+                <TextBox x:Name="TxtUsername" Height="35" VerticalContentAlignment="Center"
+                     Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Text="Mật khẩu" Margin="0,15,0,5" Foreground="#666"/>
+                <PasswordBox x:Name="TxtPassword" Height="35" VerticalContentAlignment="Center"/>
+
+                <ProgressBar IsIndeterminate="True" Height="4" Margin="0,20,0,0" 
+                         Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                <Button Content="VÀO HỆ THỐNG" Height="45" Margin="0,20,0,0"
+                    Background="#2196F3" Foreground="White" FontWeight="Bold"
+                    Command="{Binding LoginCommand}"
+                    CommandParameter="{Binding ElementName=TxtPassword}"/>
+
+                <TextBlock Text="Quên mật khẩu? Liên hệ phòng IT" 
+                       HorizontalAlignment="Center" Margin="0,15,0,0" 
+                       Foreground="#999" FontSize="11" Cursor="Hand"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

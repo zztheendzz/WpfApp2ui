@@ -4,7 +4,10 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WpfApp2.view.analysis"
-      mc:Ignorable="d" 
+      xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+      mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="BrandAnalysis">
 
@@ -15,26 +18,22 @@
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
 
 
+                <TextBlock Text="Brand:"
+                   VerticalAlignment="Center"
+                   Margin="0,0,10,0"/>
+
+
                 <ComboBox Width="300"
-          IsEditable="True"
-          IsTextSearchEnabled="False"
-          StaysOpenOnEdit="True"
-          IsDropDownOpen="{Binding IsSearchDropDownOpen}"
-          ItemsSource="{Binding SearchSuggestions}"
-          Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
-          SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}"
-          IsSynchronizedWithCurrentItem="False">
-
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Text}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-
-                </ComboBox>
-
-
-
+                    Margin="10"
+                    IsEditable="True"
+                    IsTextSearchEnabled="False"
+                    StaysOpenOnEdit="True"
+                    ItemsSource="{Binding SearchSuggestions}"
+                    Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}"
+                    DisplayMemberPath="Text" 
+                    IsDropDownOpen="{Binding IsSearchDropDownOpen}"
+                    materialDesign:HintAssist.Hint="Vendor" SelectionChanged="ComboBox_SelectionChanged"/>
 
                 <Button Content="Phân tích"
                 Width="100"
@@ -88,10 +87,10 @@
                     <StackPanel>
                         <TextBlock Text="Tỷ lệ sử dụng"
                            Foreground="White"/>
-                        <TextBlock Text="{Binding }"
+                        <!--<TextBlock Text="{Binding }"
                            FontSize="16"
                            FontWeight="Bold"
-                           Foreground="White"/>
+                           Foreground="White"/>-->
                     </StackPanel>
                 </Border>
 
@@ -100,7 +99,7 @@
 
             <!-- Purchased Parts -->
             <TextBlock FontWeight="Bold" Margin="0,20,0,5">
-                <Run Text="Danh sách linh kiện đã mua - "/>
+                <Run Text="Danh sách linh kiện đã mua"/>
                 <Run Text="{Binding Analysis.BrandName}"/>
             </TextBlock>
 
@@ -151,9 +150,6 @@
 
                     <DataGridTextColumn Header="Note"
                                        Binding="{Binding Note}"/>
-
-
-
                 </DataGrid.Columns>
 
             </DataGrid>

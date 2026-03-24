@@ -25,5 +25,16 @@ namespace WpfApp2.view.analysis
             DataContext = new BrandAnalysisVm();
         }
 
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var cb = sender as ComboBox;
+            // Tìm TextBox bên trong ComboBox và hủy bôi đen
+            var textBox = cb?.Template.FindName("PART_EditableTextBox", cb) as TextBox;
+            if (textBox != null)
+            {
+                textBox.SelectionLength = 0; // Hủy bôi đen
+                textBox.CaretIndex = textBox.Text.Length; // Đưa con trỏ về cuối
+            }
+        }
     }
 }

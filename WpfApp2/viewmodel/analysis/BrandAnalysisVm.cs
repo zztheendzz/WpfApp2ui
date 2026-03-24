@@ -1,128 +1,90 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Windows;
 using System.Windows.Input;
-using WpfApp2.command; // chứa RelayCommand
-using WpfApp2.model; // model cơ bản như BrandDto, PurchaseDto
-using WpfApp2.modelDto; // model DTO khác
-using WpfApp2.modelDTO; // có thể trùng hoặc mở rộng DTO
-using WpfApp2.modelDTO.analysysDto; // DTO dùng để phân tích brand
-using WpfApp2.Services; // chứa BrandService, SearchService
-using WpfApp2.Services.analysisService; // chứa BrandAnalysisSv
+using WpfApp2.command;
+using WpfApp2.model;
+using WpfApp2.modelDto;
+using WpfApp2.modelDTO;
+using WpfApp2.modelDTO.analysysDto;
+using WpfApp2.Services;
+using WpfApp2.Services.analysisService;
 
 namespace WpfApp2.viewmodel.analysis
 {
-
     public class BrandAnalysisVm : INotifyPropertyChanged
     {
-        
-        private SearchService _searchService = new SearchService();
+        private readonly SearchService _searchService = new SearchService();
+        private readonly BrandAnalysisSv _service;
 
+        // Cờ chặn vòng lặp khi gán text từ kết quả chọn
         private bool _isSelecting;
 
-        //obj goi y tim kiem
+        public ICommand AnalyzeCommand { get; set; }
+
         public ObservableCollection<SearchResultDto> SearchSuggestions { get; set; }
             = new ObservableCollection<SearchResultDto>();
 
-   
+        public ObservableCollection<BrandDto> Brands { get; set; }
+
+        #region ===================== Properties =====================
+
         private string _globalSearchText;
         public string GlobalSearchText
         {
             get => _globalSearchText;
             set
             {
+                if (_globalSearchText == value) return;
                 _globalSearchText = value;
                 OnPropertyChanged();
 
-                if (_isSelecting) return; // 🔥 chặn loop
-
-                UpdateSuggestions();
+                // Chỉ cập nhật gợi ý nếu KHÔNG phải đang trong quá trình chọn item
+                if (!_isSelecting)
+                {
+                    UpdateSuggestions();
+                }
             }
         }
 
-        // Hàm cập nhật gợi ý tìm kiếm dựa trên GlobalSearchText
-        private void UpdateSuggestions()
-        {
-            SearchSuggestions.Clear(); // xóa các gợi ý cũ
-
-            if (string.IsNullOrWhiteSpace(GlobalSearchText) || GlobalSearchText.Length < 2)
-            {
-
-                IsSearchDropDownOpen = false;
-                return;
-            }
-
-            // Lấy danh sách Brand phù hợp với từ khóa
-            var results = _searchService.SearchBrand(GlobalSearchText);
-
-            // Thêm từng item vào ObservableCollection để UI tự động cập nhật
-            foreach (var item in results)
-                SearchSuggestions.Add(item);
-
-
-            IsSearchDropDownOpen = SearchSuggestions.Count > 0;
-        }
-
-        // Selected item khi người dùng chọn từ gợi ý
         private SearchResultDto _selectedSearchResult;
         public SearchResultDto SelectedSearchResult
         {
             get => _selectedSearchResult;
             set
             {
-                if (_selectedSearchResult != value)
+                if (_selectedSearchResult == value) return;
+
+                _isSelecting = true; // Bắt đầu chặn
+                _selectedSearchResult = value;
+                OnPropertyChanged();
+
+                if (value != null)
                 {
-                    _selectedSearchResult = value;
-                    OnPropertyChanged();
+                    SelectedBrandId = value.Id;
+                    _globalSearchText = value.Text; // Cập nhật text hiển thị
+                    OnPropertyChanged(nameof(GlobalSearchText));
 
-                    if (value != null)
-                    {
-                        _isSelecting = true;
-
-                        if (value.Data is Brand brand)
-                        {
-                            SelectedBrandId = brand.Id;
-                            GlobalSearchText = brand.BrandName;
-                        }
-                        else if (value.Data is BrandDto brandDto)
-                        {
-                            SelectedBrandId = brandDto.Id;
-                            GlobalSearchText = brandDto.BrandName;
-                        }
-
-                        _isSelecting = false;
-
-                        IsSearchDropDownOpen = false;
-                        LoadData();
-                    }
+                    IsSearchDropDownOpen = false;
+                    LoadData();
                 }
+                _isSelecting = false; // Mở chặn
             }
         }
-        
 
-        // Dropdown có đang mở hay không
         private bool _isSearchDropDownOpen;
         public bool IsSearchDropDownOpen
         {
             get => _isSearchDropDownOpen;
             set
             {
+                if (_isSearchDropDownOpen == value) return;
                 _isSearchDropDownOpen = value;
-                OnPropertyChanged(); // thông báo UI
+                OnPropertyChanged();
             }
         }
 
-        // Service dùng để phân tích dữ liệu theo Brand
-        private readonly BrandAnalysisSv _service;
-
-        // Command cho nút phân tích
-        public ICommand AnalyzeCommand { get; set; }
-
-        // Id brand được chọn
         private int _selectedBrandId;
         public int SelectedBrandId
         {
@@ -130,28 +92,10 @@ namespace WpfApp2.viewmodel.analysis
             set
             {
                 _selectedBrandId = value;
-                OnPropertyChanged(); // thông báo UI
+                OnPropertyChanged();
             }
         }
 
-        // List brand dùng cho ComboBox hoặc UI khác
-        public ObservableCollection<BrandDto> Brands { get; set; }
-        public ObservableCollection<BrandDto> BrandsSearch { get; set; }
-
-        // Constructor
-        public BrandAnalysisVm()
-        {
-            _service = new BrandAnalysisSv(); // init service phân tích
-
-            var brandService = new BrandService(); // init service Brand
-            var list = brandService.GetBrandDTO(); // lấy danh sách brand từ service
-
-            Brands = new ObservableCollection<BrandDto>(list); // danh sách hiển thị
-            BrandsSearch = new ObservableCollection<BrandDto>(list); // danh sách dùng search
-            AnalyzeCommand = new RelayCommand(_ => LoadData()); // gán command nút phân tích
-        }
-
-        // Property chứa dữ liệu phân tích brand
         private BrandAnalysisDto _analysis;
         public BrandAnalysisDto Analysis
         {
@@ -159,25 +103,57 @@ namespace WpfApp2.viewmodel.analysis
             set
             {
                 _analysis = value;
-                OnPropertyChanged(); // thông báo UI khi dữ liệu phân tích thay đổi
+                OnPropertyChanged();
             }
         }
 
-        // Load dữ liệu phân tích dựa trên SelectedBrandId
-        private void LoadData()
+        #endregion
+
+        public BrandAnalysisVm()
         {
-            if (SelectedBrandId == 0) return; // nếu chưa chọn brand => thoát
+            _service = new BrandAnalysisSv();
+            var brandService = new BrandService();
 
+            var list = brandService.GetBrandDTO();
+            Brands = new ObservableCollection<BrandDto>(list);
 
-            Analysis = _service.GetBrandAnalysis(SelectedBrandId); // gọi service lấy dữ liệu
-            String  _globalSearchText;
+            AnalyzeCommand = new RelayCommand(_ => LoadData());
         }
 
-        // INotifyPropertyChanged implementation
+        #region ===================== Methods =====================
+
+        private void UpdateSuggestions()
+        {
+            if (string.IsNullOrWhiteSpace(GlobalSearchText) || GlobalSearchText.Length < 2)
+            {
+                SearchSuggestions.Clear();
+                IsSearchDropDownOpen = false;
+                return;
+            }
+
+            var results = _searchService.SearchBrand(GlobalSearchText);
+
+            SearchSuggestions.Clear();
+            foreach (var item in results)
+            {
+                SearchSuggestions.Add(item);
+            }
+
+            IsSearchDropDownOpen = SearchSuggestions.Count > 0;
+        }
+
+        private void LoadData()
+        {
+            if (SelectedBrandId == 0) return;
+            Analysis = _service.GetBrandAnalysis(SelectedBrandId);
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+        #endregion
     }
 }
