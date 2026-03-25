@@ -1,0 +1,82 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:String x:Key="ph_ModelCode">부품 코드</sys:String>
+    <sys:String x:Key="ph_ModelName">부품명</sys:String>
+    <sys:String x:Key="ph_Vendor">공급사</sys:String>
+    <sys:String x:Key="ph_Equipment">설비</sys:String>
+    <sys:String x:Key="ph_DateFrom">시작일</sys:String>
+    <sys:String x:Key="ph_DateTo">종료일</sys:String>
+    <sys:String x:Key="ph_MinPrice">최저 가격</sys:String>
+    <sys:String x:Key="ph_MaxPrice">최고 가격</sys:String>
+
+    <sys:String x:Key="btn_Clear">필터 초기화</sys:String>
+    <sys:String x:Key="btn_Search">조회</sys:String>
+    <sys:String x:Key="btn_Add">신규 등록</sys:String>
+    <sys:String x:Key="btn_Analyze">분석</sys:String>
+    <sys:String x:Key="btn_Prev">◀</sys:String>
+    <sys:String x:Key="btn_Next">▶</sys:String>
+
+    <sys:String x:Key="dg_Id">번호</sys:String>
+    <sys:String x:Key="dg_Model">부품/모델</sys:String>
+    <sys:String x:Key="dg_Vendor">공급사</sys:String>
+    <sys:String x:Key="dg_Equipment">설비</sys:String>
+    <sys:String x:Key="dg_Quantity">수량</sys:String>
+    <sys:String x:Key="dg_UnitPrice">단가</sys:String>
+    <sys:String x:Key="dg_TotalPrice">총 금액</sys:String>
+    <sys:String x:Key="dg_Currency">통화</sys:String>
+    <sys:String x:Key="dg_PurchaseDate">구매일</sys:String>
+    <sys:String x:Key="dg_Note">비고</sys:String>
+    <sys:String x:Key="dg_Edit">수정</sys:String>
+    <sys:String x:Key="dg_Delete">삭제</sys:String>
+    <sys:String x:Key="dg_CreateAt">등록일</sys:String>
+    <sys:String x:Key="dg_User">담당자</sys:String>
+    <sys:String x:Key="dg_ModelCode">모델 코드</sys:String>
+
+    <sys:String x:Key="lbl_PurchaseHistory">구매 이력</sys:String>
+    <sys:String x:Key="lbl_Vendor">공급사:</sys:String>
+    <sys:String x:Key="lbl_Brand">브랜드:</sys:String>
+    <sys:String x:Key="lbl_TotalPurchaseValue">총 구매 금액</sys:String>
+    <sys:String x:Key="lbl_SupplyCount">공급 횟수</sys:String>
+    <sys:String x:Key="lbl_TotalParts">총 부품 수량</sys:String>
+    <sys:String x:Key="lbl_UsageRate">사용률</sys:String>
+    <sys:String x:Key="lbl_PurchasedPartsList">구매 부품 목록</sys:String>
+
+    <sys:String x:Key="msg_ConfirmDelete">이 기록을 삭제하시겠습니까?</sys:String>
+    <sys:String x:Key="msg_DeleteSuccess">삭제되었습니다!</sys:String>
+
+    <sys:String x:Key="lbl_Model">모델:</sys:String>
+    <sys:String x:Key="lbl_LatestPrice">최근 단가</sys:String>
+    <sys:String x:Key="lbl_MinPrice">최저가</sys:String>
+    <sys:String x:Key="lbl_MaxPrice">최고가</sys:String>
+    <sys:String x:Key="lbl_AvgPrice">평균 단가</sys:String>
+    <sys:String x:Key="lbl_VendorComparison">공급사별 가격 비교</sys:String>
+    <sys:String x:Key="lbl_TotalRecords">총 건수:</sys:String>
+
+
+    <sys:String x:Key="menu_Inquiry">조회 / 분석</sys:String>
+    <sys:String x:Key="menu_DataManagement">데이터 관리</sys:String>
+    <sys:String x:Key="menu_PriceManagement">가격 관리</sys:String>
+    <sys:String x:Key="menu_Excel">엑셀</sys:String>
+    <sys:String x:Key="menu_Settings">설정</sys:String>
+
+    <sys:String x:Key="sub_PurchaseAnalysis">구매 분석</sys:String>
+    <sys:String x:Key="sub_ModelAnalysis">모델별 가격 분석</sys:String>
+    <sys:String x:Key="sub_VendorAnalysis">공급사 분석</sys:String>
+    <sys:String x:Key="sub_BrandAnalysis">브랜드 분석</sys:String>
+    <sys:String x:Key="sub_EquipmentAnalysis">설비 분석</sys:String>
+    <sys:String x:Key="sub_Model">모델 관리</sys:String>
+    <sys:String x:Key="sub_Brand">브랜드 관리</sys:String>
+    <sys:String x:Key="sub_Vendor">공급사 관리</sys:String>
+    <sys:String x:Key="sub_Equipment">설비 관리</sys:String>
+    <sys:String x:Key="sub_PurchaseHistory">구매 이력</sys:String>
+    <sys:String x:Key="sub_Currency">통화 관리</sys:String>
+    <sys:String x:Key="sub_RegisterPrice">단가 등록</sys:String>
+    <sys:String x:Key="sub_EditPrice">단가 수정</sys:String>
+    <sys:String x:Key="sub_DeletePrice">단가 삭제</sys:String>
+    <sys:String x:Key="sub_ExcelUpload">엑셀 업로드</sys:String>
+    <sys:String x:Key="sub_Backup">데이터베이스 백업</sys:String>
+    <sys:String x:Key="sub_User">사용자 관리</sys:String>
+    <sys:String x:Key="sub_Language">언어 설정</sys:String>
+</ResourceDictionary>

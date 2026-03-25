@@ -30,7 +30,7 @@ namespace WpfApp2.viewmodel.tableVm
         public ICommand ShowEquipmentAnalysisCommand { get; set; }
         public ICommand ShowImportExcelCommand { get; set; }
         public ICommand ShowPurchaseAnalysisPageCommand { get; set; }
-
+        public ICommand ChangeLangCommand { get; set; }
 
         private object _currentPage;
         public object CurrentPage
@@ -58,10 +58,47 @@ namespace WpfApp2.viewmodel.tableVm
             ShowEquipmentAnalysisCommand = new RelayCommand(OpenEquipmentAnalysis);
             ShowImportExcelCommand = new RelayCommand(OpenPageImportExcel);
             ShowPurchaseAnalysisPageCommand = new RelayCommand(OpenPagePurchaseAnalysis);
-
+            ChangeLangCommand= new RelayCommand(p => ExecuteChangeLang(p));
             //CurrentPage = new newModel(); // page mặc định
         }
 
+        private void ExecuteChangeLang(object param)
+        {
+            // Ép kiểu từ object sang string
+            string langCode = param as string;
+
+            if (string.IsNullOrEmpty(langCode)) return;
+
+            // Logic đổi ResourceDictionary
+            ResourceDictionary dict = new ResourceDictionary();
+
+            switch (langCode)
+            {
+                case "vi-VN":
+                    dict.Source = new Uri("lang/Lang.vi.xaml", UriKind.Relative);
+                    break;
+                case "en-US":
+                    dict.Source = new Uri("lang/Lang.en.xaml", UriKind.Relative);
+                    break;
+                case "ko-KR":
+                    dict.Source = new Uri("lang/Lang.ko.xaml", UriKind.Relative);
+                    break;
+            }
+
+            // Xóa ngôn ngữ cũ và thêm ngôn ngữ mới vào App
+            var oldDict = Application.Current.Resources.MergedDictionaries
+                          .FirstOrDefault(d => d.Source != null &&
+                          (d.Source.OriginalString.Contains("Vietnamese") ||
+                           d.Source.OriginalString.Contains("English") ||
+                           d.Source.OriginalString.Contains("Korean")));
+
+            if (oldDict != null)
+            {
+                Application.Current.Resources.MergedDictionaries.Remove(oldDict);
+            }
+
+            Application.Current.Resources.MergedDictionaries.Add(dict);
+        }
 
         public void OpenPagePurchaseAnalysis(object obj)
         {

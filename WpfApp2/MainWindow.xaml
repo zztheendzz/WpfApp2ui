@@ -6,215 +6,149 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:WpfApp2"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Price Management System" Height="700" Width="1100">
 
-        <!-- Rows -->
+    <Window.Resources>
+        <Style x:Key="SidebarButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="15,0,0,0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#D5DBDB"/>
+                </Trigger>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="Background" Value="#1ABC9C"/>
+                    <Setter Property="Foreground" Value="DarkSlateGray"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="BorderThickness" Value="4,0,0,0"/>
+                    <Setter Property="BorderBrush" Value="#148F77"/>
+                </Trigger>
+
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="70"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Columns -->
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="230"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <!-- TopBar -->
-        <Border Grid.Row="0"
-        Grid.ColumnSpan="2"
-        Background="LightSlateGray"
-        Padding="10">
 
+        <Border Grid.Row="0" Grid.ColumnSpan="2" Background="LightSlateGray" Padding="10">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="350"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="200"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Logo + Title -->
-                <StackPanel Orientation="Horizontal"
-                    VerticalAlignment="Center">
-
-                    <StackPanel Margin="0,0,10,0"
-                        VerticalAlignment="Center">
-
-                        <Image Source="/Images/logo.jpg"
-                       Width="35"
-                       Height="25"
-                       HorizontalAlignment="Center"/>
-
-                        <TextBlock Text="Automation"
-                           FontSize="10"
-                           Foreground="White"
-                           HorizontalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <StackPanel Margin="0,0,10,0" VerticalAlignment="Center">
+                        <Image Source="/Images/logo.jpg" Width="35" Height="25" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Automation" FontSize="10" Foreground="White" HorizontalAlignment="Center"/>
                     </StackPanel>
-
-                    <TextBlock Text="Price Management System"
-                       Foreground="White"
-                       FontSize="18"
-                       VerticalAlignment="Center"/>
+                    <TextBlock Text="Price Management System" Foreground="White" FontSize="18" VerticalAlignment="Center" FontWeight="SemiBold"/>
                 </StackPanel>
 
-
-                <!-- Global Search -->
-                <StackPanel Grid.Column="1"
-            Orientation="Horizontal"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center">
-
-                    <ComboBox Width="300"
-              IsEditable="True"
-              IsTextSearchEnabled="False"
-              StaysOpenOnEdit="True"
-              IsDropDownOpen="{Binding IsSearchDropDownOpen}"
-              ItemsSource="{Binding SearchSuggestions}"
-              Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
-              SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}">
-
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <ComboBox Width="300" IsEditable="True" IsTextSearchEnabled="False" StaysOpenOnEdit="True"
+                              materialDesign:HintAssist.Hint="Global Search..."
+                              IsDropDownOpen="{Binding IsSearchDropDownOpen}"
+                              ItemsSource="{Binding SearchSuggestions}"
+                              Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Source}"
-                               FontWeight="Bold"
-                               Margin="0,0,10,0"/>
+                                    <TextBlock Text="{Binding Source}" FontWeight="Bold" Margin="0,0,10,0"/>
                                     <TextBlock Text="{Binding Text}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
-
                     </ComboBox>
-
-                    <Button Width="60"
-            Height="30"
-            Margin="5,0,0,0"
-            Command="{Binding GlobalSearchCommand}">
-
-                        <materialDesign:PackIcon Kind="Magnify"
-                                 Width="20"
-                                 Height="20"/>
+                    <Button Width="50" Height="30" Margin="5,0,0,0" Command="{Binding GlobalSearchCommand}" Style="{StaticResource MaterialDesignRaisedButton}">
+                        <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20"/>
                     </Button>
-
                 </StackPanel>
 
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                    
+                    <materialDesign:PopupBox PlacementMode="BottomAndAlignRightEdges" StaysOpen="False" Margin="0,0,15,0" ToolTip="Change Language">
+                        <materialDesign:PopupBox.ToggleContent>
+                            <materialDesign:PackIcon Kind="Translate" Width="24" Height="24" Foreground="White"/>
+                        </materialDesign:PopupBox.ToggleContent>
+                        <StackPanel Width="150">
+                            <Button Content="Tiếng Việt" Command="{Binding ChangeLangCommand}" CommandParameter="vi-VN"/>
+                            <Button Content="English" Command="{Binding ChangeLangCommand}" CommandParameter="en-US"/>
+                            <Button Content="한국어" Command="{Binding ChangeLangCommand}" CommandParameter="ko-KR"/>
+                        </StackPanel>
+                    </materialDesign:PopupBox>
 
-                <!-- User -->
-                <StackPanel Grid.Column="2"
-                    Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Right">
-
-                    <materialDesign:PackIcon Kind="Account"
-                                     Width="20"
-                                     Height="20"
-                                     Margin="0,0,5,0"/>
-
-                    <TextBlock Text="Admin"
-                       Foreground="White"
-                       VerticalAlignment="Center"/>
-
+                    <materialDesign:PackIcon Kind="AccountCircle" Width="24" Height="24" Margin="0,0,5,0" Foreground="White"/>
+                    <TextBlock Text="Admin" Foreground="White" VerticalAlignment="Center" FontWeight="Bold"/>
                 </StackPanel>
-
             </Grid>
         </Border>
 
-        <ScrollViewer Grid.Row="1"
-              Grid.Column="0"
-              VerticalScrollBarVisibility="Auto">
-            <!-- Sidebar -->
-            <StackPanel Grid.Row="1"
-                Grid.Column="0"
-                Background="#34495E">
+        <ScrollViewer Grid.Row="1" Grid.Column="0" VerticalScrollBarVisibility="Auto" Background="#34495E">
+            <StackPanel Margin="0,10,0,0">
 
-                <!-- Inquiry -->
-                <Expander Header="Inquiry / Analysis"
-                  Foreground="Black">
-
-                    <StackPanel>
-
-                        <Button Content="Purchase Analysis" Command="{Binding ShowPurchaseAnalysisPageCommand }"
-                        Height="35"/>
-
-                        <Button Content="Model Price Analysis" Command="{Binding ShowModelAnalysisCommand}"
-                        Height="35" />
-
-                        <Button Content="Vendor Analysis" Command="{Binding ShowVendorAnalysisCommand}"
-                        Height="35"/>
-
-                        <Button Content="Brand Analysis" Command="{Binding ShowBrandAnalysisCommand}"
-                        Height="35"/>
-
-                        <Button Content="Equipment Analysis" Command="{Binding ShowEquipmentAnalysisCommand}"
-                        Height="35"/>
-
-                    </StackPanel>
-
-                </Expander>
-
-                <!-- Data Management -->
-                <Expander Header="Data Management" 
-                  Foreground="Black">
-                    <StackPanel  >
-                        <Button  Content="Model" Height="35" Command="{Binding ShowModelPageCommand}"/>
-                        <Button  Content="Brand" Height="35" Command="{Binding ShowBrandlPageCommand}"/>
-                        <Button Content="Vendor" Height="35" Command="{Binding ShowVendorPageCommand}" />
-                        <Button Content="Equipment" Height="35" Command="{Binding ShowEquipmentPageCommand}" />
-                        <Button Content="Purchase History" Height="35" Command="{Binding ShowPurchaseHistoryPageCommand}" />
-                        <Button Content="Currency" Height="35" Command="{Binding ShowCurrencyPageCommand}"/>
+                <Expander Header="{DynamicResource menu_Inquiry}" Foreground="Black" Background="#ECF0F1" IsExpanded="True" Margin="5,2">
+                    <StackPanel Background="White">
+                        <Button Content="{DynamicResource sub_PurchaseAnalysis}" Command="{Binding ShowPurchaseAnalysisPageCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+                        <Button Content="{DynamicResource sub_ModelAnalysis}" Command="{Binding ShowModelAnalysisCommand}" Style="{StaticResource SidebarButtonStyle}" />
+                        <Button Content="{DynamicResource sub_VendorAnalysis}" Command="{Binding ShowVendorAnalysisCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+                        <Button Content="{DynamicResource sub_BrandAnalysis}" Command="{Binding ShowBrandAnalysisCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+                        <Button Content="{DynamicResource sub_EquipmentAnalysis}" Command="{Binding ShowEquipmentAnalysisCommand}" Style="{StaticResource SidebarButtonStyle}"/>
                     </StackPanel>
                 </Expander>
 
-                <!-- Price Management -->
-                <Expander Header="Price Management"
-                  Foreground="Black">
-
-                    <StackPanel>
-
-                        <Button Content="Register Price" Height="35"/>
-                        <Button Content="Edit Price" Height="35"/>
-                        <Button Content="Delete Price" Height="35"/>
-
+                <Expander Header="{DynamicResource menu_DataManagement}" Foreground="Black" Background="#ECF0F1" Margin="5,2">
+                    <StackPanel Background="White">
+                        <Button Content="{DynamicResource sub_Model}" Command="{Binding ShowModelPageCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+                        <Button Content="{DynamicResource sub_Brand}" Command="{Binding ShowBrandlPageCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+                        <Button Content="{DynamicResource sub_Vendor}" Command="{Binding ShowVendorPageCommand}" Style="{StaticResource SidebarButtonStyle}" />
+                        <Button Content="{DynamicResource sub_Equipment}" Command="{Binding ShowEquipmentPageCommand}" Style="{StaticResource SidebarButtonStyle}" />
+                        <Button Content="{DynamicResource sub_PurchaseHistory}" Command="{Binding ShowPurchaseHistoryPageCommand}" Style="{StaticResource SidebarButtonStyle}" />
+                        <Button Content="{DynamicResource sub_Currency}" Command="{Binding ShowCurrencyPageCommand}" Style="{StaticResource SidebarButtonStyle}"/>
                     </StackPanel>
-
                 </Expander>
 
-                <!-- Excel -->
-                <Expander Header="Excel"
-                  Foreground="Black">
-
-                    <StackPanel>
-
-                        <Button Content="Excel Upload" Height="35" Command="{Binding ShowImportExcelCommand}"  />
-
+                <Expander Header="{DynamicResource menu_PriceManagement}" Foreground="Black" Background="#ECF0F1" Margin="5,2">
+                    <StackPanel Background="White">
+                        <Button Content="{DynamicResource sub_RegisterPrice}" Style="{StaticResource SidebarButtonStyle}"/>
+                        <Button Content="{DynamicResource sub_EditPrice}" Style="{StaticResource SidebarButtonStyle}"/>
+                        <Button Content="{DynamicResource sub_DeletePrice}" Style="{StaticResource SidebarButtonStyle}"/>
                     </StackPanel>
-
                 </Expander>
 
-                <!-- Settings -->
-                <Expander Header="Settings"
-                  Foreground="Black">
-
-                    <StackPanel>
-
-                        <Button Content="Database Backup" Height="35"/>
-                        <Button Content="User" Height="35"/>
-                        <Button Content="Language" Height="35"/>
+                <Expander Header="{DynamicResource menu_Excel}" Foreground="Black" Background="#ECF0F1" Margin="5,2">
+                    <StackPanel Background="White">
+                        <Button Content="{DynamicResource sub_ExcelUpload}" Command="{Binding ShowImportExcelCommand}" Style="{StaticResource SidebarButtonStyle}"/>
                     </StackPanel>
+                </Expander>
 
+                <Expander Header="{DynamicResource menu_Settings}" Foreground="Black" Background="#ECF0F1" Margin="5,2">
+                    <StackPanel Background="White">
+                        <Button Content="{DynamicResource sub_Backup}" Style="{StaticResource SidebarButtonStyle}"/>
+                        <Button Content="{DynamicResource sub_User}" Style="{StaticResource SidebarButtonStyle}"/>
+                        <Button Content="{DynamicResource sub_Language}" Style="{StaticResource SidebarButtonStyle}"/>
+                    </StackPanel>
                 </Expander>
 
             </StackPanel>
         </ScrollViewer>
-        <Grid Grid.Row="1" Grid.Column="1">
 
-                <Grid>
-            <Frame   Content="{Binding CurrentPage}"
-           NavigationUIVisibility="Hidden"/>
-            </Grid>
-
+        <Grid Grid.Row="1" Grid.Column="1" Background="#F4F6F6">
+            <Frame Content="{Binding CurrentPage}" NavigationUIVisibility="Hidden" Margin="15"/>
         </Grid>
-        <!-- Main Frame -->
-
     </Grid>
 </Window>

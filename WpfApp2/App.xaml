@@ -10,6 +10,8 @@
                 <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="BlueGrey" SecondaryColor="Lime"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
                 <ResourceDictionary Source="view/style/DataGridStyles.xaml"/>
+                <ResourceDictionary Source="lang/Lang.vi.xaml"/>
+                <!--<ResourceDictionary Source="lang/Lang.vi.xaml"/>-->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

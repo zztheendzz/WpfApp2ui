@@ -11,166 +11,102 @@
     <Grid>
         <StackPanel Margin="20">
 
-            <!-- Filter -->
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                <TextBlock Text="Model:"
-               VerticalAlignment="Center"
-               Margin="0,0,10,0"/>
+                <TextBlock Text="{DynamicResource lbl_Model}"
+                           VerticalAlignment="Center"
+                           Margin="0,0,10,0"/>
 
-                <!-- Ô tìm kiếm -->
-                <!--<TextBox Width="150"
-             Margin="0,0,10,0"
-             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>-->
-
-                <!-- Combobox model -->
                 <ComboBox Width="300"
-          IsEditable="True"
-          IsTextSearchEnabled="False"
-          StaysOpenOnEdit="True"
-          IsDropDownOpen="{Binding IsSearchDropDownOpen}"
-          ItemsSource="{Binding SearchSuggestions}"
-          Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
-          SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}"
-          DisplayMemberPath="Text">
-
+                          IsEditable="True"
+                          IsTextSearchEnabled="False"
+                          StaysOpenOnEdit="True"
+                          IsDropDownOpen="{Binding IsSearchDropDownOpen}"
+                          ItemsSource="{Binding SearchSuggestions}"
+                          Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}"
+                          DisplayMemberPath="Text">
                 </ComboBox>
 
-
-                <Button Content="Phân tích"
-            Width="100"
-            Margin="10,0,0,0"
-            Command="{Binding AnalyzeModelCommand}"/>
+                <Button Content="{DynamicResource btn_Analyze}"
+                        Width="100"
+                        Margin="10,0,0,0"
+                        Command="{Binding AnalyzeModelCommand}"/>
             </StackPanel>
 
-
-            <!-- Price Summary -->
             <Grid Margin="0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
-                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <Border Background="#2C3E50" Margin="5" Padding="10">
+                <Border Background="#2C3E50" Margin="5" Padding="15" CornerRadius="5">
                     <StackPanel>
-                        <TextBlock Text="Giá gần nhất" Foreground="White"/>
+                        <TextBlock Text="{DynamicResource lbl_LatestPrice}" Foreground="White"/>
                         <TextBlock Text="{Binding Analysis.LatestPrice}"
-                           FontSize="16"
-                           FontWeight="Bold"
-                           Foreground="White"/>
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="White"/>
                     </StackPanel>
                 </Border>
 
-                <Border Grid.Column="1" Background="#2C3E50" Margin="5" Padding="10">
+                <Border Grid.Column="1" Background="#2C3E50" Margin="5" Padding="15" CornerRadius="5">
                     <StackPanel>
-                        <TextBlock Text="Giá thấp nhất" Foreground="White"/>
+                        <TextBlock Text="{DynamicResource lbl_MinPrice}" Foreground="White"/>
                         <TextBlock Text="{Binding Analysis.MinPrice}"
-                           FontSize="16"
-                           FontWeight="Bold"
-                           Foreground="White"/>
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="White"/>
                     </StackPanel>
                 </Border>
 
-                <Border Grid.Column="2" Background="#2C3E50" Margin="5" Padding="10">
+                <Border Grid.Column="2" Background="#2C3E50" Margin="5" Padding="15" CornerRadius="5">
                     <StackPanel>
-                        <TextBlock Text="Giá cao nhất" Foreground="White"/>
+                        <TextBlock Text="{DynamicResource lbl_MaxPrice}" Foreground="White"/>
                         <TextBlock Text="{Binding Analysis.MaxPrice}"
-                           FontSize="16"
-                           FontWeight="Bold"
-                           Foreground="White"/>
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="White"/>
                     </StackPanel>
                 </Border>
-
-                <!--<Border Grid.Column="3" Background="#2C3E50" Margin="5" Padding="10">
-                    <StackPanel>
-                        <TextBlock Text="Giá trung bình" Foreground="White"/>
-                        <TextBlock Text="{Binding Analysis.AvgPrice}"
-                           FontSize="16"
-                           FontWeight="Bold"
-                           Foreground="White"/>
-                    </StackPanel>
-                </Border>-->
             </Grid>
 
-
-            <!-- Vendor Comparison -->
-            <TextBlock Text="So sánh giá theo nhà cung cấp"
-               FontWeight="Bold"
-               Margin="0,20,0,5"/>
+            <TextBlock Text="{DynamicResource lbl_VendorComparison}"
+                       FontWeight="Bold"
+                       Margin="0,20,0,5"/>
 
             <DataGrid ItemsSource="{Binding Analysis.Vendors}" 
-              IsReadOnly="True"
-              AutoGenerateColumns="False"
-              Height="200">
-
+                      IsReadOnly="True"
+                      AutoGenerateColumns="False"
+                      Height="150">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Vendor"
-                                Binding="{Binding VendorName}"/>
-
-                    <!--<DataGridTextColumn Header="Giá gần nhất"
-                                Binding="{Binding LatestPrice}"/>-->
-
-                    <DataGridTextColumn Header="Giá thấp nhất"
-                                Binding="{Binding MinPrice}"/>
-
-                    <DataGridTextColumn Header="Giá cao nhất"
-                                Binding="{Binding MaxPrice}"/>
+                    <DataGridTextColumn Header="{DynamicResource dg_Vendor}" Binding="{Binding VendorName}"/>
+                    <DataGridTextColumn Header="{DynamicResource lbl_MinPrice}" Binding="{Binding MinPrice}"/>
+                    <DataGridTextColumn Header="{DynamicResource lbl_MaxPrice}" Binding="{Binding MaxPrice}"/>
                 </DataGrid.Columns>
             </DataGrid>
 
-
-            <!-- Purchase History -->
-            <TextBlock Text="Lịch sử mua hàng"
-               FontWeight="Bold"
-               Margin="0,20,0,5"/>
+            <TextBlock Text="{DynamicResource lbl_PurchaseHistory}"
+                       FontWeight="Bold"
+                       Margin="0,20,0,5"/>
 
             <DataGrid ItemsSource="{Binding Analysis.Items}"
-              AutoGenerateColumns="False" IsReadOnly="True" >
-
+                      AutoGenerateColumns="False" IsReadOnly="True" >
                 <DataGrid.Columns>
-
-                    <DataGridTextColumn Header="ID"
-                                        Binding="{Binding Id}"/>
-
-                    <DataGridTextColumn Header="Vendor"
-                                        Binding="{Binding VendorName}"/>
-
-                    <DataGridTextColumn Header="Equipment"
-                                        Binding="{Binding EquipmentName}"/>
-
-                    <DataGridTextColumn Header="Quantity"
-                                        Binding="{Binding Quantity}"/>
-
-                    <DataGridTextColumn Header="UnitPrice"
-                                        Binding="{Binding UnitPrice}"/>
-
-                    <DataGridTextColumn Header="Tota lPrice"
-                                        Binding="{Binding TotalPrice}"/>
-
-                    <DataGridTextColumn Header="Currency"
-                                        Binding="{Binding CurrencyCode}"/>
-
-                    <DataGridTextColumn Header="Purchase Date"
-                                       Binding="{Binding PurchaseDate}"/>
-
-                    <DataGridTextColumn Header="Creat At"
-                                       Binding="{Binding CreateAt}"/>
-
-                    <DataGridTextColumn Header="User"
-                                       Binding="{Binding UserId}"/>
-
-
-                    <DataGridTextColumn Header="Note"
-                                        Binding="{Binding Note}"/>
-
+                    <DataGridTextColumn Header="{DynamicResource dg_Id}" Binding="{Binding Id}"/>
+                    <DataGridTextColumn Header="{DynamicResource dg_Vendor}" Binding="{Binding VendorName}"/>
+                    <DataGridTextColumn Header="{DynamicResource dg_Equipment}" Binding="{Binding EquipmentName}"/>
+                    <DataGridTextColumn Header="{DynamicResource dg_Quantity}" Binding="{Binding Quantity}"/>
+                    <DataGridTextColumn Header="{DynamicResource dg_UnitPrice}" Binding="{Binding UnitPrice}"/>
+                    <DataGridTextColumn Header="{DynamicResource dg_TotalPrice}" Binding="{Binding TotalPrice}"/>
+                    <DataGridTextColumn Header="{DynamicResource dg_Currency}" Binding="{Binding CurrencyCode}"/>
+                    <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}" Binding="{Binding PurchaseDate}"/>
+                    <DataGridTextColumn Header="{DynamicResource dg_CreateAt}" Binding="{Binding CreateAt}"/>
+                    <DataGridTextColumn Header="{DynamicResource dg_User}" Binding="{Binding UserId}"/>
+                    <DataGridTextColumn Header="{DynamicResource dg_Note}" Width="*" Binding="{Binding Note}"/>
                 </DataGrid.Columns>
             </DataGrid>
 
         </StackPanel>
-
-
-
-
     </Grid>
 </Page>

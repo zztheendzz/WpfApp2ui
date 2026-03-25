@@ -1,0 +1,82 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:String x:Key="ph_ModelCode">Part Code</sys:String>
+    <sys:String x:Key="ph_ModelName">Part Name</sys:String>
+    <sys:String x:Key="ph_Vendor">Vendor</sys:String>
+    <sys:String x:Key="ph_Equipment">Equipment</sys:String>
+    <sys:String x:Key="ph_DateFrom">Date From</sys:String>
+    <sys:String x:Key="ph_DateTo">Date To</sys:String>
+    <sys:String x:Key="ph_MinPrice">Min Price</sys:String>
+    <sys:String x:Key="ph_MaxPrice">Max Price</sys:String>
+
+    <sys:String x:Key="btn_Clear">Clear Filters</sys:String>
+    <sys:String x:Key="btn_Search">Search</sys:String>
+    <sys:String x:Key="btn_Add">Add New</sys:String>
+    <sys:String x:Key="btn_Analyze">Analyze</sys:String>
+    <sys:String x:Key="btn_Prev">◀</sys:String>
+    <sys:String x:Key="btn_Next">▶</sys:String>
+
+    <sys:String x:Key="dg_Id">No.</sys:String>
+    <sys:String x:Key="dg_Model">Part/Model</sys:String>
+    <sys:String x:Key="dg_Vendor">Vendor</sys:String>
+    <sys:String x:Key="dg_Equipment">Equipment</sys:String>
+    <sys:String x:Key="dg_Quantity">Quantity</sys:String>
+    <sys:String x:Key="dg_UnitPrice">Unit Price</sys:String>
+    <sys:String x:Key="dg_TotalPrice">Total Price</sys:String>
+    <sys:String x:Key="dg_Currency">Currency</sys:String>
+    <sys:String x:Key="dg_PurchaseDate">Purchase Date</sys:String>
+    <sys:String x:Key="dg_Note">Note</sys:String>
+    <sys:String x:Key="dg_Edit">Edit</sys:String>
+    <sys:String x:Key="dg_Delete">Delete</sys:String>
+    <sys:String x:Key="dg_CreateAt">Created At</sys:String>
+    <sys:String x:Key="dg_User">Performed By</sys:String>
+    <sys:String x:Key="dg_ModelCode">Model Code</sys:String>
+
+    <sys:String x:Key="lbl_PurchaseHistory">Purchase History</sys:String>
+    <sys:String x:Key="lbl_Vendor">Vendor:</sys:String>
+    <sys:String x:Key="lbl_Brand">Brand:</sys:String>
+    <sys:String x:Key="lbl_TotalPurchaseValue">Total Purchase Value</sys:String>
+    <sys:String x:Key="lbl_SupplyCount">Supply Count</sys:String>
+    <sys:String x:Key="lbl_TotalParts">Total Parts</sys:String>
+    <sys:String x:Key="lbl_UsageRate">Usage Rate</sys:String>
+    <sys:String x:Key="lbl_PurchasedPartsList">Purchased Parts List</sys:String>
+
+    <sys:String x:Key="msg_ConfirmDelete">Are you sure you want to delete this record?</sys:String>
+    <sys:String x:Key="msg_DeleteSuccess">Deleted successfully!</sys:String>
+
+    <sys:String x:Key="lbl_Model">Model:</sys:String>
+    <sys:String x:Key="lbl_LatestPrice">Latest Price</sys:String>
+    <sys:String x:Key="lbl_MinPrice">Min Price</sys:String>
+    <sys:String x:Key="lbl_MaxPrice">Max Price</sys:String>
+    <sys:String x:Key="lbl_AvgPrice">Average Price</sys:String>
+    <sys:String x:Key="lbl_VendorComparison">Price Comparison by Vendor</sys:String>
+    <sys:String x:Key="lbl_TotalRecords">Total Records:</sys:String>
+
+    <sys:String x:Key="menu_Inquiry">Inquiry / Analysis</sys:String>
+    <sys:String x:Key="menu_DataManagement">Data Management</sys:String>
+    <sys:String x:Key="menu_PriceManagement">Price Management</sys:String>
+    <sys:String x:Key="menu_Excel">Excel</sys:String>
+    <sys:String x:Key="menu_Settings">Settings</sys:String>
+
+    <sys:String x:Key="sub_PurchaseAnalysis">Purchase Analysis</sys:String>
+    <sys:String x:Key="sub_ModelAnalysis">Model Price Analysis</sys:String>
+    <sys:String x:Key="sub_VendorAnalysis">Vendor Analysis</sys:String>
+    <sys:String x:Key="sub_BrandAnalysis">Brand Analysis</sys:String>
+    <sys:String x:Key="sub_EquipmentAnalysis">Equipment Analysis</sys:String>
+    <sys:String x:Key="sub_Model">Model</sys:String>
+    <sys:String x:Key="sub_Brand">Brand</sys:String>
+    <sys:String x:Key="sub_Vendor">Vendor</sys:String>
+    <sys:String x:Key="sub_Equipment">Equipment</sys:String>
+    <sys:String x:Key="sub_PurchaseHistory">Purchase History</sys:String>
+    <sys:String x:Key="sub_Currency">Currency</sys:String>
+    <sys:String x:Key="sub_RegisterPrice">Register Price</sys:String>
+    <sys:String x:Key="sub_EditPrice">Edit Price</sys:String>
+    <sys:String x:Key="sub_DeletePrice">Delete Price</sys:String>
+    <sys:String x:Key="sub_ExcelUpload">Excel Upload</sys:String>
+    <sys:String x:Key="sub_Backup">Database Backup</sys:String>
+    <sys:String x:Key="sub_User">User</sys:String>
+    <sys:String x:Key="sub_Language">Language</sys:String>
+
+</ResourceDictionary>

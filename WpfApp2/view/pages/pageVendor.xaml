@@ -7,157 +7,126 @@
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d"
       d:DesignHeight="450"
-      d:DesignWidth="800">
+      d:DesignWidth="800"
+      Title="pageVendor">
 
     <Page.DataContext>
         <vm:VendorViewModel/>
     </Page.DataContext>
 
     <Grid Margin="20">
-
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <!-- TOOLBAR -->
-        <StackPanel Grid.Row="0"
-                    Orientation="Horizontal"
-                    Margin="0,0,0,10">
+        <WrapPanel Grid.Row="0" Margin="0,0,0,10" VerticalAlignment="Center">
 
-            <Button Content="Add"
-                    Width="80"
-                    Command="{Binding AddCommand}"/>
+            <Button Content="{DynamicResource btn_Add}"
+                    MinWidth="100"
+                    Padding="15,6"
+                    HorizontalAlignment="Left"
+                    Command="{Binding AddCommand}"
+                    Margin="0,0,10,5"/>
 
-            <!-- Search -->
             <TextBox Width="200"
-                     Margin="20,0,0,0"
+                     Margin="10,0,10,5"
                      VerticalContentAlignment="Center"
+                     materialDesign:HintAssist.Hint="{DynamicResource ph_SearchHint}"
                      Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <!-- Brand Filter -->
             <ListBox Width="150"
-                     Margin="20,0,0,0"
+                     MaxHeight="100"
+                     Margin="10,0,10,5"
                      ItemsSource="{Binding BrandList}"
-                     SelectionMode="Multiple"/>
+                     SelectionMode="Multiple"
+                     ToolTip="{DynamicResource ph_Vendor}"/>
 
-            <!-- Category Filter -->
             <ListBox Width="150"
-                     Margin="10,0,0,0"
+                     MaxHeight="100"
+                     Margin="10,0,10,5"
                      ItemsSource="{Binding CategoryList}"
-                     SelectionMode="Multiple"/>
+                     SelectionMode="Multiple"
+                     ToolTip="{DynamicResource ph_Equipment}"/>
 
-        </StackPanel>
+        </WrapPanel>
 
-
-        <!-- TABLE + PAGINATION -->
         <Grid Grid.Row="1">
-
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- DATA GRID -->
             <DataGrid Grid.Row="0"
                       ItemsSource="{Binding Vendors}"
                       SelectedItem="{Binding SelectedItem}"
                       AutoGenerateColumns="False"
-                      IsReadOnly="True">
+                      IsReadOnly="True"
+                      ColumnHeaderHeight="40">
 
-                <!-- Center Cell Style -->
-                <DataGrid.CellStyle>
-                    <Style TargetType="DataGridCell">
-                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                        <Setter Property="VerticalContentAlignment" Value="Center"/>
-                    </Style>
-                </DataGrid.CellStyle>
-                <DataGrid.RowStyle >
-                    <Style TargetType="DataGridRow" >
-                        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-                    </Style>
-                </DataGrid.RowStyle>
                 <DataGrid.Columns>
-
-                    <DataGridTextColumn Header="ID"
+                    <DataGridTextColumn Header="{DynamicResource dg_Id}"
+                                        Width="Auto"
+                                        MinWidth="60"
                                         Binding="{Binding Id}"/>
 
-                    <DataGridTextColumn Header="Vendor"
+                    <DataGridTextColumn Header="{DynamicResource dg_Vendor}"
+                                        Width="*"
                                         Binding="{Binding VendorName}"/>
 
-                    <!-- EDIT -->
-                    <DataGridTemplateColumn Header="Edit" Width="60">
-
+                    <DataGridTemplateColumn Header="{DynamicResource dg_Edit}" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-
-                                <Button
-                                    Style="{StaticResource MaterialDesignIconButton}"
-                                    Command="{Binding DataContext.EditCommand,
-                                    RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                    CommandParameter="{Binding}">
-
-                                    <materialDesign:PackIcon Kind="Pencil" Width="16"/>
-
+                                <Button Style="{StaticResource MaterialDesignIconButton}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Width="30" Height="30"
+                                        Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}">
+                                    <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18"/>
                                 </Button>
-
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
-
                     </DataGridTemplateColumn>
 
-
-                    <!-- DELETE -->
-                    <DataGridTemplateColumn Header="Delete" Width="60">
-
+                    <DataGridTemplateColumn Header="{DynamicResource dg_Delete}" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-
-                                <Button
-                                    Style="{StaticResource MaterialDesignIconButton}"
-                                    Command="{Binding DataContext.DeleteCommand,
-                                    RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                    CommandParameter="{Binding}">
-
-                                    <materialDesign:PackIcon Kind="Delete" Width="16"/>
-
+                                <Button Style="{StaticResource MaterialDesignIconButton}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Width="30" Height="30"
+                                        Foreground="Red" 
+                                        Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}">
+                                    <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
                                 </Button>
-
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
-
                     </DataGridTemplateColumn>
 
                 </DataGrid.Columns>
-
             </DataGrid>
 
-
-            <!-- PAGINATION -->
             <StackPanel Grid.Row="1"
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
-                        Margin="0,10,0,0">
+                        Margin="0,15,0,0">
 
-                <Button Content="◀"
-                        Width="45"
-                        Height="25"
+                <Button Content="{DynamicResource btn_Prev}"
+                        Width="45" Height="28"
                         Command="{Binding PrevCommand}"/>
 
                 <TextBlock Text="{Binding CurrentPage}"
-                           Margin="10,0"
+                           Margin="20,0"
                            VerticalAlignment="Center"
-                           FontSize="14"/>
+                           FontWeight="Bold"
+                           FontSize="15"/>
 
-                <Button Content="▶"
-                        Width="45"
-                        Height="25"
+                <Button Content="{DynamicResource btn_Next}"
+                        Width="45" Height="28"
                         Command="{Binding NextCommand}"/>
-
             </StackPanel>
-
         </Grid>
-
     </Grid>
-
 </Page>
