@@ -11,6 +11,8 @@
     <sys:String x:Key="ph_MinPrice">최저 가격</sys:String>
     <sys:String x:Key="ph_MaxPrice">최고 가격</sys:String>
 
+    <sys:String x:Key="btn_SelectFile">파일 선택</sys:String>
+    <sys:String x:Key="btn_Import">데이터 가져오기</sys:String>
     <sys:String x:Key="btn_Clear">필터 초기화</sys:String>
     <sys:String x:Key="btn_Search">조회</sys:String>
     <sys:String x:Key="btn_Add">신규 등록</sys:String>

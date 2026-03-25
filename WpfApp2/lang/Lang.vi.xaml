@@ -10,7 +10,9 @@
     <sys:String x:Key="ph_DateTo">Đến ngày</sys:String>
     <sys:String x:Key="ph_MinPrice">Giá tối thiểu</sys:String>
     <sys:String x:Key="ph_MaxPrice">Giá tối đa</sys:String>
-
+    
+    <sys:String x:Key="btn_SelectFile">Chọn tệp</sys:String>
+    <sys:String x:Key="btn_Import">Nhập dữ liệu</sys:String>
     <sys:String x:Key="btn_Clear">Xóa bộ lọc</sys:String>
     <sys:String x:Key="btn_Search">Tìm kiếm</sys:String>
     <sys:String x:Key="btn_Add">Thêm mới</sys:String>

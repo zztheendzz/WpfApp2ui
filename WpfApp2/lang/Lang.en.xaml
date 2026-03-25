@@ -11,6 +11,9 @@
     <sys:String x:Key="ph_MinPrice">Min Price</sys:String>
     <sys:String x:Key="ph_MaxPrice">Max Price</sys:String>
 
+
+    <sys:String x:Key="btn_SelectFile">Select File</sys:String>
+    <sys:String x:Key="btn_Import">Import Data</sys:String>
     <sys:String x:Key="btn_Clear">Clear Filters</sys:String>
     <sys:String x:Key="btn_Search">Search</sys:String>
     <sys:String x:Key="btn_Add">Add New</sys:String>

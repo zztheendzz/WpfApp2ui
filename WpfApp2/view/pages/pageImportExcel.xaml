@@ -30,14 +30,14 @@
                      IsReadOnly="True"
                      Margin="0,0,10,0"/>
 
-            <Button Content="Chọn file"
+            <Button Content="{DynamicResource btn_SelectFile}"
                     Width="100"
                     Command="{Binding BrowseFileCommand}"/>
         </StackPanel>
 
         <!-- ====== IMPORT BUTTON ====== -->
         <Button Grid.Row="2"
-                Content="Import"
+                Content="{DynamicResource btn_Import}"
                 Height="35"
                 Width="120"
                 HorizontalAlignment="Left"
