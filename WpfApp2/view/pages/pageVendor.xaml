@@ -32,22 +32,31 @@
             <TextBox Width="200"
                      Margin="10,0,10,5"
                      VerticalContentAlignment="Center"
-                     materialDesign:HintAssist.Hint="{DynamicResource ph_SearchHint}"
-                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+                <materialDesign:HintAssist.Hint>
+                    <TextBlock Text="{DynamicResource ph_SearchHint}"/>
+                </materialDesign:HintAssist.Hint>
+            </TextBox>
 
             <ListBox Width="150"
                      MaxHeight="100"
                      Margin="10,0,10,5"
                      ItemsSource="{Binding BrandList}"
-                     SelectionMode="Multiple"
-                     ToolTip="{DynamicResource ph_Vendor}"/>
+                     SelectionMode="Multiple">
+                <ListBox.ToolTip>
+                    <TextBlock Text="{DynamicResource ph_Vendor}"/>
+                </ListBox.ToolTip>
+            </ListBox>
 
             <ListBox Width="150"
                      MaxHeight="100"
                      Margin="10,0,10,5"
                      ItemsSource="{Binding CategoryList}"
-                     SelectionMode="Multiple"
-                     ToolTip="{DynamicResource ph_Equipment}"/>
+                     SelectionMode="Multiple">
+                <ListBox.ToolTip>
+                    <TextBlock Text="{DynamicResource ph_Equipment}"/>
+                </ListBox.ToolTip>
+            </ListBox>
 
         </WrapPanel>
 
@@ -65,16 +74,22 @@
                       ColumnHeaderHeight="40">
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="{DynamicResource dg_Id}"
-                                        Width="Auto"
-                                        MinWidth="60"
-                                        Binding="{Binding Id}"/>
+                    <DataGridTextColumn Width="Auto" MinWidth="60" Binding="{Binding Id}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Id}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="{DynamicResource dg_Vendor}"
-                                        Width="*"
-                                        Binding="{Binding VendorName}"/>
+                    <DataGridTextColumn Width="*" Binding="{Binding VendorName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Vendor}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
 
-                    <DataGridTemplateColumn Header="{DynamicResource dg_Edit}" Width="80">
+                    <DataGridTemplateColumn Width="80">
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Edit}"/>
+                        </DataGridTemplateColumn.Header>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Style="{StaticResource MaterialDesignIconButton}"
@@ -89,7 +104,10 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="{DynamicResource dg_Delete}" Width="80">
+                    <DataGridTemplateColumn Width="80">
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Delete}"/>
+                        </DataGridTemplateColumn.Header>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Style="{StaticResource MaterialDesignIconButton}"

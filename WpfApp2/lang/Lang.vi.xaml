@@ -33,7 +33,8 @@
     <sys:String x:Key="dg_CreateAt">Ngày tạo</sys:String>
     <sys:String x:Key="dg_User">Người thực hiện</sys:String>
     <sys:String x:Key="dg_ModelCode">Mã sản phẩm</sys:String>
-    
+
+    <sys:String x:Key="lbl_Equipment">Thiết bị</sys:String>
     <sys:String x:Key="lbl_PurchaseHistory">Lịch sử mua hàng</sys:String>
     <sys:String x:Key="lbl_Vendor">Nhà cung cấp:</sys:String>
     <sys:String x:Key="lbl_Brand">Thương hiệu:</sys:String>

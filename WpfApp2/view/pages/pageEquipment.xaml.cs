@@ -24,6 +24,7 @@ namespace WpfApp2.view.pages
         {
             InitializeComponent();
             DataContext = new EquipmentViewModel();
+            this.Resources.MergedDictionaries.Add(Application.Current.Resources);
         }
     }
 }

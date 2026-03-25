@@ -7,13 +7,13 @@
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="1000"
-      Title="BrandAnalysis">
+      Title="EquipmentAnalysis">
 
     <Grid>
         <StackPanel Margin="20">
 
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                <TextBlock Text="{DynamicResource lbl_Brand}"
+                <TextBlock Text="{DynamicResource lbl_Equipment}"
                            VerticalAlignment="Center"
                            Margin="0,0,10,0"
                            FontWeight="SemiBold"/>
@@ -27,9 +27,7 @@
                           Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
                           SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}"
                           DisplayMemberPath="Text" 
-                          IsDropDownOpen="{Binding IsSearchDropDownOpen}"
-                          materialDesign:HintAssist.Hint="{DynamicResource ph_Vendor}" 
-                          />
+                          IsDropDownOpen="{Binding IsSearchDropDownOpen}"/>
 
                 <Button Content="{DynamicResource btn_Analyze}"
                         Width="120"
@@ -84,27 +82,89 @@
             <StackPanel Orientation="Horizontal" Margin="0,20,0,5">
                 <TextBlock FontWeight="Bold" FontSize="14" Text="{DynamicResource lbl_PurchasedPartsList}"/>
                 <TextBlock FontWeight="Bold" FontSize="14" Text=": "/>
-                <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Analysis.BrandName}" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Analysis.EquipmentName}" 
+                           Foreground="{DynamicResource PrimaryHueMidBrush}"/>
             </StackPanel>
 
             <DataGrid ItemsSource="{Binding Analysis.Items}"
                       AutoGenerateColumns="False" 
                       IsReadOnly="True"
                       ColumnHeaderHeight="40"
-                      MaxHeight="400">
+                      MaxHeight="450">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="{DynamicResource dg_Id}" Binding="{Binding Id}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Model}" Width="Auto" MinWidth="100" Binding="{Binding ModelName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Vendor}" Width="Auto" MinWidth="100" Binding="{Binding VendorName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Equipment}" Width="Auto" MinWidth="100" Binding="{Binding EquipmentName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Quantity}" Binding="{Binding Quantity}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_UnitPrice}" Binding="{Binding UnitPrice}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_TotalPrice}" Binding="{Binding TotalPrice}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Currency}" Binding="{Binding CurrencyCode}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}" Binding="{Binding PurchaseDate}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Created}" Binding="{Binding CreateAt}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_User}" Binding="{Binding UserId}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Note}" Width="*" Binding="{Binding Note}"/>
+
+                    <DataGridTextColumn Binding="{Binding Id}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Id}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="Auto" MinWidth="100" Binding="{Binding ModelName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Model}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="Auto" MinWidth="100" Binding="{Binding VendorName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Vendor}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="Auto" MinWidth="100" Binding="{Binding EquipmentName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Equipment}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding Quantity}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Quantity}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding UnitPrice}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_UnitPrice}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding TotalPrice}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_TotalPrice}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding CurrencyCode}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Currency}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding PurchaseDate}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_PurchaseDate}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding CreateAt}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_CreateAt}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding UserId}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_User}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="*" Binding="{Binding Note}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Note}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
                 </DataGrid.Columns>
             </DataGrid>
 

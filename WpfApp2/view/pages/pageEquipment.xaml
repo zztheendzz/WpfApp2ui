@@ -21,7 +21,6 @@
         </Grid.RowDefinitions>
 
         <WrapPanel Grid.Row="0" Margin="0,0,0,10" VerticalAlignment="Center">
-
             <Button Content="{DynamicResource btn_Add}"
                     MinWidth="100"
                     Padding="15,6"
@@ -48,7 +47,6 @@
                      ItemsSource="{Binding CategoryList}"
                      SelectionMode="Multiple"
                      ToolTip="{DynamicResource ph_Equipment}"/>
-
         </WrapPanel>
 
         <Grid Grid.Row="1">
@@ -65,16 +63,22 @@
                       ColumnHeaderHeight="40">
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="{DynamicResource dg_Id}"
-                                        Width="Auto"
-                                        MinWidth="60"
-                                        Binding="{Binding Id}"/>
+                    <DataGridTextColumn Width="Auto" MinWidth="60" Binding="{Binding Id}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Id}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="{DynamicResource dg_Equipment}"
-                                        Width="*"
-                                        Binding="{Binding EquipmentName}"/>
+                    <DataGridTextColumn Width="*" Binding="{Binding EquipmentName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Equipment}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
 
-                    <DataGridTemplateColumn Header="{DynamicResource dg_Edit}" Width="80">
+                    <DataGridTemplateColumn Width="80">
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Edit}"/>
+                        </DataGridTemplateColumn.Header>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Style="{StaticResource MaterialDesignIconButton}"
@@ -88,7 +92,10 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="{DynamicResource dg_Delete}" Width="80">
+                    <DataGridTemplateColumn Width="80">
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Delete}"/>
+                        </DataGridTemplateColumn.Header>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Style="{StaticResource MaterialDesignIconButton}"

@@ -30,8 +30,8 @@
                           SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}"
                           DisplayMemberPath="Text" 
                           IsDropDownOpen="{Binding IsSearchDropDownOpen}"
-                          materialDesign:HintAssist.Hint="{DynamicResource ph_Vendor}" 
-                          SelectionChanged="ComboBox_SelectionChanged"/>
+                          SelectionChanged="ComboBox_SelectionChanged">
+                </ComboBox>
 
                 <Button Content="{DynamicResource btn_Analyze}"
                         Width="100"
@@ -81,27 +81,86 @@
                 </Border>
             </Grid>
 
-            <TextBlock FontWeight="Bold" Margin="0,20,0,5">
-                <Run Text="{DynamicResource lbl_PurchasedPartsList}"/>
-                <Run Text=": "/>
-                <Run Text="{Binding Analysis.BrandName}"/>
-            </TextBlock>
+            <StackPanel Orientation="Horizontal" Margin="0,20,0,5">
+                <TextBlock FontWeight="Bold" Text="{DynamicResource lbl_PurchasedPartsList}"/>
+                <TextBlock FontWeight="Bold" Text=": "/>
+                <TextBlock FontWeight="Bold" Text="{Binding Analysis.BrandName}"/>
+            </StackPanel>
 
             <DataGrid ItemsSource="{Binding Analysis.Items}"
                       AutoGenerateColumns="False" IsReadOnly="True" >
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="{DynamicResource dg_Id}" Binding="{Binding Id}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Model}" Binding="{Binding ModelName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Vendor}" Binding="{Binding VendorName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Equipment}" Binding="{Binding EquipmentName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Quantity}" Binding="{Binding Quantity}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_UnitPrice}" Binding="{Binding UnitPrice}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_TotalPrice}" Binding="{Binding TotalPrice}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Currency}" Binding="{Binding CurrencyCode}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}" Binding="{Binding PurchaseDate}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_CreateAt}" Binding="{Binding CreateAt}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_User}" Binding="{Binding UserId}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Note}" Width="*" Binding="{Binding Note}"/>
+                    <DataGridTextColumn Binding="{Binding Id}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Id}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding ModelName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Model}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding VendorName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Vendor}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding EquipmentName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Equipment}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding Quantity}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Quantity}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding UnitPrice}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_UnitPrice}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding TotalPrice}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_TotalPrice}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding CurrencyCode}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Currency}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding PurchaseDate}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_PurchaseDate}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding CreateAt}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_CreateAt}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding UserId}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_User}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="*" Binding="{Binding Note}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Note}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
 

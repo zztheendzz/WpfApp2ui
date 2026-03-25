@@ -26,63 +26,59 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                <ComboBox Width="180" 
-                          ItemsSource="{Binding ModelCodeList}"
-                          SelectedItem="{Binding SelectedModel, Mode=TwoWay}"
-                          DisplayMemberPath="ModelCode"
-                          materialDesign:HintAssist.Hint="{DynamicResource ph_ModelCode}"
-                          Margin="0,0,15,0"/>
+                <Button Content="{DynamicResource btn_Add}"
+                        MinWidth="100" Padding="15,6"
+                        Command="{Binding AddCommand}"
+                        Margin="0,0,10,5"/>
 
-                <ComboBox Width="180" 
-                          ItemsSource="{Binding ModelNameList}"
-                          SelectedItem="{Binding SelectedModel, Mode=TwoWay}"
-                          DisplayMemberPath="ModelName"
-                          materialDesign:HintAssist.Hint="{DynamicResource ph_ModelName}"
-                          Margin="0,0,15,0"/>
+                <TextBox Width="200" Margin="10,0,10,5" VerticalContentAlignment="Center"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+                    <materialDesign:HintAssist.Hint>
+                        <TextBlock Text="{DynamicResource ph_SearchHint}"/>
+                    </materialDesign:HintAssist.Hint>
+                </TextBox>
 
-                <ComboBox Width="180" 
-                          ItemsSource="{Binding VendorList}"
-                          SelectedItem="{Binding SelectedVendor, Mode=TwoWay}"
-                          DisplayMemberPath="VendorName"
-                          materialDesign:HintAssist.Hint="{DynamicResource ph_Vendor}"
-                          Margin="0,0,15,0"/>
+                <ListBox Width="150" MaxHeight="100" Margin="10,0,10,5"
+                         ItemsSource="{Binding BrandList}" SelectionMode="Multiple">
+                    <ListBox.ToolTip>
+                        <TextBlock Text="{DynamicResource ph_Vendor}"/>
+                    </ListBox.ToolTip>
+                </ListBox>
 
-                <ComboBox Width="180" 
-                          ItemsSource="{Binding EquipmentList}"
-                          SelectedItem="{Binding SelectedEquipment, Mode=TwoWay}"
-                          DisplayMemberPath="EquipmentName"
-                          materialDesign:HintAssist.Hint="{DynamicResource ph_Equipment}"
-                          Margin="0,0,15,0"/>
-
-                <Button Content="{DynamicResource btn_Clear}"
-                        MinWidth="90"
-                        Padding="10,4"
-                        Command="{Binding ClearFilterCommand}"
-                        Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                <ListBox Width="150" MaxHeight="100" Margin="10,0,10,5"
+                         ItemsSource="{Binding CategoryList}" SelectionMode="Multiple">
+                    <ListBox.ToolTip>
+                        <TextBlock Text="{DynamicResource ph_Equipment}"/>
+                    </ListBox.ToolTip>
+                </ListBox>
             </StackPanel>
 
             <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <DatePicker Width="150" 
-                            SelectedDate="{Binding DateFrom}"
-                            materialDesign:HintAssist.Hint="{DynamicResource ph_DateFrom}"
-                            Margin="0,0,15,0"/>
+                <DatePicker Width="150" SelectedDate="{Binding DateFrom}" Margin="0,0,15,0">
+                    <materialDesign:HintAssist.Hint>
+                        <TextBlock Text="{DynamicResource ph_DateFrom}"/>
+                    </materialDesign:HintAssist.Hint>
+                </DatePicker>
 
-                <DatePicker Width="150" 
-                            SelectedDate="{Binding DateTo}"
-                            materialDesign:HintAssist.Hint="{DynamicResource ph_DateTo}"
-                            Margin="0,0,15,0"/>
+                <DatePicker Width="150" SelectedDate="{Binding DateTo}" Margin="0,0,15,0">
+                    <materialDesign:HintAssist.Hint>
+                        <TextBlock Text="{DynamicResource ph_DateTo}"/>
+                    </materialDesign:HintAssist.Hint>
+                </DatePicker>
 
-
-                <TextBox Width="100" 
-                         Text="{Binding PriceMin}"
-                         materialDesign:HintAssist.Hint="{DynamicResource ph_MinPrice}"
-                         Margin="0,0,10,0"/>
+                <TextBox Width="100" Text="{Binding PriceMin}" Margin="0,0,10,0">
+                    <materialDesign:HintAssist.Hint>
+                        <TextBlock Text="{DynamicResource ph_MinPrice}"/>
+                    </materialDesign:HintAssist.Hint>
+                </TextBox>
 
                 <TextBlock Text="~" VerticalAlignment="Center" Margin="0,0,10,0"/>
 
-                <TextBox Width="100" 
-                         Text="{Binding PriceMax}"
-                         materialDesign:HintAssist.Hint="{DynamicResource ph_MaxPrice}"/>
+                <TextBox Width="100" Text="{Binding PriceMax}">
+                    <materialDesign:HintAssist.Hint>
+                        <TextBlock Text="{DynamicResource ph_MaxPrice}"/>
+                    </materialDesign:HintAssist.Hint>
+                </TextBox>
             </StackPanel>
         </Grid>
 
@@ -99,19 +95,70 @@
                       IsReadOnly="True"
                       ColumnHeaderHeight="40">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="{DynamicResource dg_Id}" Width="Auto" Binding="{Binding Id}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Model}" Width="Auto" MinWidth="110" Binding="{Binding ModelName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Vendor}" Width="Auto" MinWidth="110" Binding="{Binding VendorName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Equipment}" Width="Auto" MinWidth="110" Binding="{Binding EquipmentName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Quantity}" Width="Auto" Binding="{Binding Quantity}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_UnitPrice}" Width="Auto" Binding="{Binding UnitPrice}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_TotalPrice}" Width="Auto" Binding="{Binding TotalPrice}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Currency}" Width="Auto" Binding="{Binding CurrencyCode}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}" Width="Auto" MinWidth="110" Binding="{Binding PurchaseDate}"/>
+                    <DataGridTextColumn Width="Auto" Binding="{Binding Id}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Id}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="{DynamicResource dg_Note}" Width="*" Binding="{Binding Note}"/>
+                    <DataGridTextColumn Width="Auto" MinWidth="110" Binding="{Binding ModelName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Model}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
 
-                    <DataGridTemplateColumn Header="{DynamicResource dg_Edit}" Width="80">
+                    <DataGridTextColumn Width="Auto" MinWidth="110" Binding="{Binding VendorName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Vendor}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="Auto" MinWidth="110" Binding="{Binding EquipmentName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Equipment}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="Auto" Binding="{Binding Quantity}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Quantity}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="Auto" Binding="{Binding UnitPrice}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_UnitPrice}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="Auto" Binding="{Binding TotalPrice}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_TotalPrice}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="Auto" Binding="{Binding CurrencyCode}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Currency}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="Auto" MinWidth="110" Binding="{Binding PurchaseDate}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_PurchaseDate}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="*" Binding="{Binding Note}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Note}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTemplateColumn Width="80">
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Edit}"/>
+                        </DataGridTemplateColumn.Header>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Style="{StaticResource MaterialDesignIconButton}"
@@ -124,7 +171,10 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="{DynamicResource dg_Delete}" Width="80">
+                    <DataGridTemplateColumn Width="80">
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Delete}"/>
+                        </DataGridTemplateColumn.Header>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Style="{StaticResource MaterialDesignIconButton}"

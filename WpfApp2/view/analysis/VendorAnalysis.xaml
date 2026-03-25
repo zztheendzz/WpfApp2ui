@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WpfApp2.view.analysis"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="1000"
       Title="VendorAnalysis">
@@ -11,12 +12,14 @@
     <Grid>
         <StackPanel Margin="20">
 
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
-                <TextBlock Text="{StaticResource lbl_Vendor}"
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBlock Text="{DynamicResource lbl_Vendor}"
                            VerticalAlignment="Center"
-                           Margin="0,0,10,0"/>
+                           Margin="0,0,10,0"
+                           FontWeight="SemiBold"/>
 
                 <ComboBox Width="300"
+                          Margin="10"
                           IsEditable="True"
                           IsTextSearchEnabled="False"
                           StaysOpenOnEdit="True"
@@ -27,7 +30,7 @@
                           DisplayMemberPath="Text"/>
 
                 <Button Content="{DynamicResource btn_Analyze}"
-                        Width="100"
+                        Width="120"
                         Margin="10,0,0,0"
                         Command="{Binding AnalyzeModelCommand}"/>
             </StackPanel>
@@ -41,7 +44,7 @@
 
                 <Border Background="#2C3E50" Margin="5" Padding="15" CornerRadius="5">
                     <StackPanel>
-                        <TextBlock Text="{StaticResource lbl_TotalPurchaseValue}" Foreground="#BDC3C7"/>
+                        <TextBlock Text="{DynamicResource lbl_TotalPurchaseValue}" Foreground="#BDC3C7" FontSize="12"/>
                         <TextBlock Text="{Binding Analysis.TotalPrice}"
                                    FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,5,0,0"/>
                     </StackPanel>
@@ -49,7 +52,7 @@
 
                 <Border Grid.Column="1" Background="#2C3E50" Margin="5" Padding="15" CornerRadius="5">
                     <StackPanel>
-                        <TextBlock Text="{StaticResource lbl_SupplyCount}" Foreground="#BDC3C7"/>
+                        <TextBlock Text="{DynamicResource lbl_SupplyCount}" Foreground="#BDC3C7" FontSize="12"/>
                         <TextBlock Text="{Binding Analysis.SupplyCount}"
                                    FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,5,0,0"/>
                     </StackPanel>
@@ -57,35 +60,96 @@
 
                 <Border Grid.Column="2" Background="#2C3E50" Margin="5" Padding="15" CornerRadius="5">
                     <StackPanel>
-                        <TextBlock Text="{StaticResource lbl_TotalParts}" Foreground="#BDC3C7"/>
+                        <TextBlock Text="{DynamicResource lbl_TotalParts}" Foreground="#BDC3C7" FontSize="12"/>
                         <TextBlock Text="{Binding Analysis.TotalQuantity}"
                                    FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,5,0,0"/>
                     </StackPanel>
                 </Border>
             </Grid>
 
-            <TextBlock Text="{StaticResource lbl_PurchasedPartsList}"
-                       FontSize="16" FontWeight="Bold"
-                       Margin="0,20,0,10"/>
+            <StackPanel Orientation="Horizontal" Margin="0,20,0,5">
+                <TextBlock FontWeight="Bold" FontSize="14" Text="{DynamicResource lbl_PurchasedPartsList}"/>
+                <TextBlock FontWeight="Bold" FontSize="14" Text=": "/>
+                <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Analysis.VendorName}" 
+                           Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+            </StackPanel>
 
             <DataGrid ItemsSource="{Binding Analysis.Items}"
                       AutoGenerateColumns="False" 
                       IsReadOnly="True" 
                       CanUserAddRows="False"
+                      ColumnHeaderHeight="40"
+                      MaxHeight="400"
                       Background="White"
                       AlternatingRowBackground="#F9F9F9">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="{StaticResource dg_Id}" Binding="{Binding Id}"/>
-                    <DataGridTextColumn Header="{StaticResource dg_Model}" Binding="{Binding ModelName}" Width="*"/>
-                    <DataGridTextColumn Header="{StaticResource dg_Equipment}" Binding="{Binding EquipmentName}" Width="*"/>
-                    <DataGridTextColumn Header="{StaticResource dg_Quantity}" Binding="{Binding Quantity}"/>
-                    <DataGridTextColumn Header="{StaticResource dg_UnitPrice}" Binding="{Binding UnitPrice}" Width="100"/>
-                    <DataGridTextColumn Header="{StaticResource dg_TotalPrice}" Binding="{Binding TotalPrice}" Width="120"/>
-                    <DataGridTextColumn Header="{StaticResource dg_Currency}" Binding="{Binding CurrencyCode}"/>
-                    <DataGridTextColumn Header="{StaticResource dg_PurchaseDate}" Binding="{Binding PurchaseDate, StringFormat=\{0:dd/MM/yyyy\}}"/>
-                    <DataGridTextColumn Header="{StaticResource dg_CreateAt}" Binding="{Binding CreateAt, StringFormat=\{0:dd/MM/yyyy\}}"/>
-                    <DataGridTextColumn Header="{StaticResource dg_User}" Binding="{Binding UserId}"/>
-                    <DataGridTextColumn Header="{StaticResource dg_Note}" Binding="{Binding Note}" Width="*"/>
+
+                    <DataGridTextColumn Binding="{Binding Id}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Id}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="*" Binding="{Binding ModelName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Model}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="*" Binding="{Binding EquipmentName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Equipment}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding Quantity}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Quantity}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="100" Binding="{Binding UnitPrice}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_UnitPrice}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="120" Binding="{Binding TotalPrice}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_TotalPrice}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding CurrencyCode}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Currency}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding PurchaseDate, StringFormat=\{0:dd/MM/yyyy\}}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_PurchaseDate}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding CreateAt, StringFormat=\{0:dd/MM/yyyy\}}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_CreateAt}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding UserId}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_User}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="*" Binding="{Binding Note}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Note}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
                 </DataGrid.Columns>
             </DataGrid>
 

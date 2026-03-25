@@ -34,6 +34,7 @@
     <sys:String x:Key="dg_User">담당자</sys:String>
     <sys:String x:Key="dg_ModelCode">모델 코드</sys:String>
 
+    <sys:String x:Key="lbl_Equipment">설비</sys:String>
     <sys:String x:Key="lbl_PurchaseHistory">구매 이력</sys:String>
     <sys:String x:Key="lbl_Vendor">공급사:</sys:String>
     <sys:String x:Key="lbl_Brand">브랜드:</sys:String>

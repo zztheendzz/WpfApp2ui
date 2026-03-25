@@ -9,7 +9,7 @@
       xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="600" d:DesignWidth="1100"
       Title="PurchaseAnalysis">
 
     <Page.DataContext>
@@ -19,21 +19,18 @@
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Margin="0,0,0,10">
+        <Grid Margin="0,0,0,15">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <StackPanel Orientation="Horizontal">
-                <ComboBox Width="300"
-                          Margin="10"
-                          IsEditable="True"
-                          IsTextSearchEnabled="False"
-                          StaysOpenOnEdit="True"
+                <ComboBox Width="250" Margin="0,10,10,10"
+                          IsEditable="True" IsTextSearchEnabled="False" StaysOpenOnEdit="True"
                           ItemsSource="{Binding ModelSuggestions}"
                           Text="{Binding SearchModelText, UpdateSourceTrigger=PropertyChanged}"
                           SelectedItem="{Binding SelectedModel, Mode=TwoWay}"
@@ -41,14 +38,10 @@
                           IsDropDownOpen="{Binding IsDropDownOpenM}"
                           PreviewMouseDown="ComboBox_PreviewMouseDown"
                           materialDesign:HintAssist.Hint="{DynamicResource ph_ModelName}" 
-                          SelectionChanged="ComboBox_SelectionChanged">
-                </ComboBox>
+                          SelectionChanged="ComboBox_SelectionChanged"/>
 
-                <ComboBox Width="300"
-                          Margin="10"
-                          IsEditable="True"
-                          IsTextSearchEnabled="False"
-                          StaysOpenOnEdit="True"
+                <ComboBox Width="250" Margin="10"
+                          IsEditable="True" IsTextSearchEnabled="False" StaysOpenOnEdit="True"
                           ItemsSource="{Binding VendorSuggestions}"
                           Text="{Binding SearchVendorText, UpdateSourceTrigger=PropertyChanged}"
                           SelectedItem="{Binding SelectedVendor, Mode=TwoWay}"
@@ -64,11 +57,8 @@
                     </i:Interaction.Triggers>
                 </ComboBox>
 
-                <ComboBox Width="300"
-                          Margin="10"
-                          IsEditable="True"
-                          IsTextSearchEnabled="False"
-                          StaysOpenOnEdit="True"
+                <ComboBox Width="250" Margin="10"
+                          IsEditable="True" IsTextSearchEnabled="False" StaysOpenOnEdit="True"
                           ItemsSource="{Binding EquipmentSuggestions}"
                           Text="{Binding SearchEquipmentText, UpdateSourceTrigger=PropertyChanged}"
                           SelectedItem="{Binding SelectedEquipment, Mode=TwoWay}"
@@ -77,77 +67,134 @@
                           PreviewMouseDown="ComboBox_PreviewMouseDown"
                           materialDesign:HintAssist.Hint="{DynamicResource ph_Equipment}"/>
 
-                <Button Content="{DynamicResource btn_Search}"
-                        Margin="10,0,0,0"
-                        Command="{Binding SearchCommand}"/>
+                <Button Content="{DynamicResource btn_Search}" Width="100"
+                        Margin="10,0,0,0" Command="{Binding SearchCommand}"
+                        Style="{StaticResource MaterialDesignRaisedButton}"/>
 
-                <Button Content="{DynamicResource btn_Clear}"
-                        Margin="10"
-                        Command="{Binding ClearCommand}"/>
+                <Button Content="{DynamicResource btn_Clear}" Width="100"
+                        Margin="10" Command="{Binding ClearCommand}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"/>
             </StackPanel>
 
-            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10,0,0,10" VerticalAlignment="Center">
-                <DatePicker Width="140"
-                            SelectedDate="{Binding SelectedDateFrom}"
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10" VerticalAlignment="Center">
+                <DatePicker Width="130" SelectedDate="{Binding SelectedDateFrom}"
                             materialDesign:HintAssist.Hint="{DynamicResource ph_DateFrom}"/>
 
-                <DatePicker Width="140"
-                            Margin="10,0,0,0"
-                            SelectedDate="{Binding SelectedDateTo}"
+                <DatePicker Width="130" Margin="10,0,0,0" SelectedDate="{Binding SelectedDateTo}"
                             materialDesign:HintAssist.Hint="{DynamicResource ph_DateTo}"/>
 
-                <TextBlock Text="{DynamicResource ph_MinPrice}" VerticalAlignment="Center" Margin="30,0,0,0"/>
-                <xctk:DoubleUpDown Value="{Binding PriceMin, Mode=TwoWay}" 
-                                   ClipValueToMinMax="True"
-                                   Minimum="0"
-                                   Width="100"
-                                   Margin="10,0,0,0"/>
+                <TextBlock Text="{DynamicResource ph_MinPrice}" VerticalAlignment="Center" Margin="25,0,0,0" Foreground="#666"/>
+                <xctk:DoubleUpDown Value="{Binding PriceMin, Mode=TwoWay}" ClipValueToMinMax="True"
+                                   Minimum="0" Width="100" Margin="10,0,0,0"/>
 
-                <TextBlock Text="{DynamicResource ph_MaxPrice}" VerticalAlignment="Center" Margin="30,0,0,0"/>
-                <xctk:DoubleUpDown Value="{Binding PriceMax, Mode=TwoWay}" 
-                                   ClipValueToMinMax="True"
-                                   Width="100"
-                                   Margin="10,0,0,0"
-                                   Minimum="0"/>
+                <TextBlock Text="{DynamicResource ph_MaxPrice}" VerticalAlignment="Center" Margin="25,0,0,0" Foreground="#666"/>
+                <xctk:DoubleUpDown Value="{Binding PriceMax, Mode=TwoWay}" ClipValueToMinMax="True"
+                                   Minimum="0" Width="100" Margin="10,0,0,0"/>
 
                 <StackPanel Orientation="Horizontal" Margin="30,0,0,0" VerticalAlignment="Center">
                     <TextBlock Text="{DynamicResource lbl_TotalRecords}" FontSize="14"/>
-                    <TextBlock Text="{Binding SelectedCount}" Margin="5,0,0,0" FontSize="14" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding SelectedCount}" Margin="5,0,0,0" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                 </StackPanel>
             </StackPanel>
         </Grid>
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
-                <RowDefinition/>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <DataGrid Grid.Row="0"
-                      ItemsSource="{Binding PurchaseDtos}"
+            <DataGrid ItemsSource="{Binding PurchaseDtos}"
                       SelectedItem="{Binding SelectedItem}"
                       AutoGenerateColumns="False"
-                      IsReadOnly="True">
+                      IsReadOnly="True"
+                      ColumnHeaderHeight="40">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="{DynamicResource dg_Id}" Binding="{Binding Id}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Model}" Binding="{Binding ModelName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Vendor}" Binding="{Binding VendorName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Equipment}" Binding="{Binding EquipmentName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Quantity}" Binding="{Binding Quantity}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_UnitPrice}" Binding="{Binding UnitPrice}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_TotalPrice}" Binding="{Binding TotalPrice}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Currency}" Binding="{Binding CurrencyCode}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}" Binding="{Binding PurchaseDate}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_CreateAt}" Binding="{Binding CreateAt}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_User}" Binding="{Binding UserId}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Note}" Width="*" Binding="{Binding Note}"/>
+                    <DataGridTextColumn Binding="{Binding Id}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Id}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding ModelName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Model}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding VendorName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Vendor}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding EquipmentName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Equipment}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding Quantity}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Quantity}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding UnitPrice}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_UnitPrice}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding TotalPrice}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_TotalPrice}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding CurrencyCode}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Currency}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding PurchaseDate}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_PurchaseDate}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding CreateAt}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_CreateAt}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding UserId}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_User}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="*" Binding="{Binding Note}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_Note}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
 
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                <Button Content="{DynamicResource btn_Prev}" Width="45" Height="25" Command="{Binding PrevCommand}"/>
-                <TextBlock Text="{Binding CurrentPage}" Margin="10,0" VerticalAlignment="Center" FontSize="14" FontWeight="Bold"/>
-                <Button Content="{DynamicResource btn_Next}" Width="45" Height="25" Command="{Binding NextCommand}"/>
+                <Button Content="{DynamicResource btn_Prev}" Width="60" Height="30" 
+                        Command="{Binding PrevCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
+
+                <Border Background="{DynamicResource PrimaryHueMidBrush}" CornerRadius="15" Width="30" Height="30" Margin="10,0">
+                    <TextBlock Text="{Binding CurrentPage}" Foreground="White" 
+                               HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                </Border>
+
+                <Button Content="{DynamicResource btn_Next}" Width="60" Height="30" 
+                        Command="{Binding NextCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
             </StackPanel>
         </Grid>
     </Grid>
