@@ -1,10 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 using Microsoft.Win32;
 using WpfApp2.command;
 using WpfApp2.Services.improtExcel;
+using WpfApp2.Services.sessionService;
 
 namespace WpfApp2.viewmodel.importExcel
 {
@@ -18,6 +20,7 @@ namespace WpfApp2.viewmodel.importExcel
         private string _filePath;
         public string FilePath
         {
+           
             get => _filePath;
             set
             {

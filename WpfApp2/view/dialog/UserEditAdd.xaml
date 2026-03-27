@@ -1,0 +1,68 @@
+﻿<Window x:Class="WpfApp2.view.dialog.UserEditAdd"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp2.view.dialog"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+
+        mc:Ignorable="d"
+        Title="UserEditAdd" Height="450" Width="800">
+
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="120"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="1" Grid.Column="0" Content="Tài khoản:" VerticalAlignment="Center" Margin="0,0,0,15"/>
+        <TextBox Grid.Row="1" Grid.Column="1" 
+             Text="{Binding CurrentUser.UserName, UpdateSourceTrigger=PropertyChanged}" 
+             materialDesign:HintAssist.Hint="Nhập tên đăng nhập"
+             Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,15"/>
+
+        <Label Grid.Row="2" Grid.Column="0" Content="Mật khẩu:" VerticalAlignment="Center" Margin="0,0,0,15"/>
+        <TextBox Grid.Row="2" Grid.Column="1" 
+             Text="{Binding CurrentUser.Password, UpdateSourceTrigger=PropertyChanged}" 
+             materialDesign:HintAssist.Hint="Nhập mật khẩu"
+             Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,15"/>
+
+        <Label Grid.Row="3" Grid.Column="0" Content="Quyền hạn:" VerticalAlignment="Center" Margin="0,0,0,20"/>
+        <ComboBox Grid.Row="3" Grid.Column="1" 
+              SelectedValue="{Binding CurrentUser.Role}" 
+              SelectedValuePath="Tag"
+              materialDesign:HintAssist.Hint="Chọn quyền"
+              Style="{StaticResource MaterialDesignOutlinedComboBox}" Margin="0,0,0,20">
+            <ComboBoxItem Content="Admin" Tag="1"/>
+            <ComboBoxItem Content="Staff" Tag="2"/>
+            <ComboBoxItem Content="Manager" Tag="3"/>
+        </ComboBox>
+
+        <Label Grid.Row="4" Grid.Column="0" Content="Trạng thái:" VerticalAlignment="Center" Margin="0,0,0,20"/>
+        <CheckBox Grid.Row="4" Grid.Column="1" 
+              IsChecked="{Binding CurrentUser.IsActive,  UpdateSourceTrigger=PropertyChanged }"
+              Content="Đang hoạt động"
+              Style="{StaticResource MaterialDesignCheckBox}"
+              Margin="0,0,0,20"/>
+
+        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="HỦY" IsCancel="True" 
+                Style="{StaticResource MaterialDesignFlatButton}" Margin="0,0,10,0"/>
+            <Button Content="LƯU" IsDefault="True"
+                Background="#455A64" BorderBrush="{x:Null}"
+                Command="{Binding SaveCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+        </StackPanel>
+    </Grid>
+</Window>

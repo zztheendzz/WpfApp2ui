@@ -40,6 +40,9 @@ namespace WpfApp2.view.dialog
                 // ❌ bỏ field không cần
                 if (prop.PropertyType == typeof(bool)) continue;
                 if (prop.Name == "Id") continue;
+                //if (prop.Name == "UserName") continue;
+                if (prop.Name == "CreateAt") continue;
+
 
                 // ❌ bỏ Name nếu có Id tương ứng
                 if (prop.Name.EndsWith("Id"))
@@ -133,6 +136,11 @@ namespace WpfApp2.view.dialog
         public static string SplitName(string name)
         {
             return Regex.Replace(name, "([a-z])([A-Z])", "$1 $2");
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }

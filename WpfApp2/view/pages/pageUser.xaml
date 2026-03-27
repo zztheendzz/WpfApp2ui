@@ -14,159 +14,72 @@
     </Page.DataContext>
 
     <Grid Margin="20">
-
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- TOOLBAR -->
-        <StackPanel Grid.Row="0"
-                    Orientation="Horizontal"
-                    Margin="0,0,0,10">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
+            <materialDesign:PackIcon Kind="AccountKey" Width="30" Height="30" VerticalAlignment="Center" Foreground="#2C3E50"/>
+            <TextBlock Text="DANH SÁCH TÀI KHOẢN" FontSize="20" FontWeight="Bold" Margin="10,0,30,0" VerticalAlignment="Center" Foreground="#2C3E50"/>
 
-            <Button Content="Add"
-                    Width="80"
-                    Command="{Binding AddCommand}"/>
-
-            <!-- Search -->
-            <TextBox Width="200"
-                     Margin="20,0,0,0"
-                     VerticalContentAlignment="Center"
+            <TextBox Width="250" materialDesign:HintAssist.Hint="Tìm tài khoản..." 
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
                      Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <!-- Brand Filter -->
-            <ListBox Width="150"
-                     Margin="20,0,0,0"
-                     ItemsSource="{Binding BrandList}"
-                     SelectionMode="Multiple"/>
-
-            <!-- Category Filter -->
-            <ListBox Width="150"
-                     Margin="10,0,0,0"
-                     ItemsSource="{Binding CategoryList}"
-                     SelectionMode="Multiple"/>
-
+            <Button Content="ADD USER" Margin="20,0,0,0" Background="#455A64" BorderBrush="{x:Null}"
+                    Command="{Binding AddCommand}"/>
         </StackPanel>
 
-
-        <!-- TABLE + PAGINATION -->
-        <Grid Grid.Row="1">
-
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-
-            <!-- DATA GRID -->
-            <DataGrid Grid.Row="0"
-                      ItemsSource="{Binding Items}"
-                      SelectedItem="{Binding SelectedItem}"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True">
-
-                <!-- Center Cell Style -->
-                <DataGrid.CellStyle>
-                    <Style TargetType="DataGridCell">
-                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                        <Setter Property="VerticalContentAlignment" Value="Center"/>
-                    </Style>
-                </DataGrid.CellStyle>
-                <DataGrid.RowStyle >
-                    <Style TargetType="DataGridRow" >
-                        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-                    </Style>
-                </DataGrid.RowStyle>
+        <materialDesign:Card Grid.Row="1" VerticalAlignment="Stretch">
+            <DataGrid ItemsSource="{Binding Users}" AutoGenerateColumns="False"
+                      CanUserAddRows="False" IsReadOnly="True"
+                      GridLinesVisibility="Vertical" VerticalGridLinesBrush="#DDDDDD">
                 <DataGrid.Columns>
+                    <DataGridTextColumn Header="Username" Binding="{Binding UserName}" Width="150"/>
 
-                    <DataGridTextColumn Header="ID"
-                                        Binding="{Binding Id}"/>
+                    <!--<DataGridTextColumn Header="Password" Binding="{Binding Password}" Width="150">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontStyle" Value="Italic"/>
+                                <Setter Property="Foreground" Value="Gray"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>-->
 
-                    <DataGridTextColumn Header="User Name"
-                                        Binding="{Binding UserName}"/>
-
-                    <DataGridTextColumn Header="Role"
-                                        Binding="{Binding Role}"/>
-
-                    <DataGridTextColumn Header="Creat At"
-                                        Binding="{Binding CreatAt}"/>
-
-                    <DataGridTextColumn Header="Active"
-                                        Binding="{Binding IsActive}"/>
-
-                    <!-- EDIT -->
-                    <DataGridTemplateColumn Header="Edit" Width="60">
-
+                    <DataGridTemplateColumn Header="Role" Width="120">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-
-                                <Button
-                                    Style="{StaticResource MaterialDesignIconButton}"
-                                    Command="{Binding DataContext.EditCommand,
-                                    RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                    CommandParameter="{Binding}">
-
-                                    <materialDesign:PackIcon Kind="Pencil" Width="16"/>
-
-                                </Button>
-
+                                <Border Background="{Binding RoleColor}" CornerRadius="4" Padding="5,2">
+                                    <TextBlock Text="{Binding RoleName}" Foreground="Black" HorizontalAlignment="Center"/>
+                                </Border>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
-
                     </DataGridTemplateColumn>
 
+                    <DataGridCheckBoxColumn Header="Active" Binding="{Binding IsActive}" Width="80"/>
 
-                    <!-- DELETE -->
-                    <DataGridTemplateColumn Header="Delete" Width="60">
-
+                    <DataGridTemplateColumn Header="Thao tác" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-
-                                <Button
-                                    Style="{StaticResource MaterialDesignIconButton}"
-                                    Command="{Binding DataContext.DeleteCommand,
-                                    RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                    CommandParameter="{Binding}">
-
-                                    <materialDesign:PackIcon Kind="Delete" Width="16"/>
-
-                                </Button>
-
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Style="{StaticResource MaterialDesignIconButton}"
+        Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+        CommandParameter="{Binding}">
+                                        <materialDesign:PackIcon Kind="Edit" Width="18" Height="18"/>
+                                    </Button>
+                                    <Button Style="{StaticResource MaterialDesignIconButton}" 
+        Foreground="Red" 
+        Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+        CommandParameter="{Binding}">
+                                        <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
+                                    </Button>
+                                </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
-
                     </DataGridTemplateColumn>
-
                 </DataGrid.Columns>
-
             </DataGrid>
-
-
-            <!-- PAGINATION -->
-            <StackPanel Grid.Row="1"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        Margin="0,10,0,0">
-
-                <Button Content="◀"
-                        Width="45"
-                        Height="25"
-                        Command="{Binding PrevCommand}"/>
-
-                <TextBlock Text="{Binding CurrentPage}"
-                           Margin="10,0"
-                           VerticalAlignment="Center"
-                           FontSize="14"/>
-
-                <Button Content="▶"
-                        Width="45"
-                        Height="25"
-                        Command="{Binding NextCommand}"/>
-
-            </StackPanel>
-
-        </Grid>
-
+        </materialDesign:Card>
     </Grid>
-
 </Page>

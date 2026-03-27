@@ -138,8 +138,8 @@
 
                 <Expander Header="{DynamicResource menu_Settings}" Foreground="Black" Background="#ECF0F1" Margin="5,2">
                     <StackPanel Background="White">
-                        <Button Content="{DynamicResource sub_Backup}" Style="{StaticResource SidebarButtonStyle}"/>
-                        <Button Content="{DynamicResource sub_User}" Style="{StaticResource SidebarButtonStyle}"/>
+                        <Button Content="{DynamicResource sub_Backup}" Style="{StaticResource SidebarButtonStyle}" Command="{Binding LogoutCommand}"/>
+                        <Button Content="{DynamicResource sub_User}" Style="{StaticResource SidebarButtonStyle}" Command="{Binding ShowUserPageCommand}" />
                         <Button Content="{DynamicResource sub_Language}" Style="{StaticResource SidebarButtonStyle}"/>
                     </StackPanel>
                 </Expander>

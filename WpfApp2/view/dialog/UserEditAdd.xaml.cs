@@ -9,28 +9,24 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using WpfApp2.viewmodel.login;
-
-namespace WpfApp2.view.login
+using WpfApp2.modelDTO;
+using WpfApp2.viewmodel.tableVm;
+namespace WpfApp2.view.dialog
 {
     /// <summary>
-    /// Interaction logic for Login.xaml
+    /// Interaction logic for UserEditAdd.xaml
     /// </summary>
-    public partial class Login : Window
+    public partial class UserEditAdd : Window
     {
-        public Login()
+        public UserEditAdd(UserViewModel vm)
         {
             InitializeComponent();
-
-            var vm = new LoginViewModel();
             DataContext = vm;
+        }
 
-            vm.LoginSuccessAction = () =>
-            {
-                var main = new MainWindow();
-                main.Show();
-                this.Close();
-            };
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

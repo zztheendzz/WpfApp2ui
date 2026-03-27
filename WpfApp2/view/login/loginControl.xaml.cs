@@ -8,20 +8,21 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApp2.viewmodel.login;
 
 namespace WpfApp2.view.login
 {
     /// <summary>
-    /// Interaction logic for Login.xaml
+    /// Interaction logic for loginControl.xaml
     /// </summary>
-    public partial class Login : Window
+    public partial class loginControl : UserControl
     {
-        public Login()
+        public loginControl()
         {
             InitializeComponent();
-
+            DataContext = new LoginViewModel();
             var vm = new LoginViewModel();
             DataContext = vm;
 
@@ -29,7 +30,15 @@ namespace WpfApp2.view.login
             {
                 var main = new MainWindow();
                 main.Show();
-                this.Close();
+
+                Window.GetWindow(this)?.Close();
+            };
+            vm.LogoutAction = () =>
+            {
+                var login = new loginControl(); // hoặc LoginControl host
+                //login.Show();
+
+                //this.Close();
             };
         }
     }

@@ -14,7 +14,9 @@ using WpfApp2.Services;
 using WpfApp2.view.analysis;
 using WpfApp2.view.pages;
 using WpfApp2.viewmodel;
+using WpfApp2.viewmodel.login;
 using WpfApp2.viewmodel.tableVm;
+using WpfApp2.view.login;
 namespace WpfApp2
 {
     /// <summary>
@@ -26,7 +28,16 @@ namespace WpfApp2
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
+
+            var vm = new MainViewModel();
+            DataContext = vm;
+
+            vm.LogoutAction = () =>
+            {
+                var login = new Login();
+                login.Show();
+                this.Close();
+            };
         }
     }
 }

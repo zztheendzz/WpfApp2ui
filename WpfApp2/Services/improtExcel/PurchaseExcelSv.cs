@@ -5,6 +5,7 @@ using System.Data;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using WpfApp2.model.modelImportExcel;
+using WpfApp2.Services.sessionService;
 
 
 namespace WpfApp2.Services.improtExcel
@@ -12,6 +13,7 @@ namespace WpfApp2.Services.improtExcel
     public class PurchaseExcelSv : INotifyPropertyChanged
     {
         private DatabaseService _db = new DatabaseService();
+        int UserId = SessionService.CurrentUser.Id;
 
         // ===== NORMALIZE =====
         private string Normalize(string s)
@@ -79,9 +81,9 @@ namespace WpfApp2.Services.improtExcel
 
                     conn.Execute(@"
 INSERT INTO PurchaseHistory
-(ModelId, VendorId, Quantity, UnitPrice, TotalPrice, PurchaseDate,CreateAt)
+(ModelId, VendorId, Quantity, UnitPrice, TotalPrice, PurchaseDate,CreateAt,UserId)
 VALUES
-(@ModelId, @VendorId, @Quantity, @UnitPrice, @TotalPrice, @PurchaseDate,@CreateAt)",
+(@ModelId, @VendorId, @Quantity, @UnitPrice, @TotalPrice, @PurchaseDate,@CreateAt,@UserId)",
                     new
                     {
                         ModelId = modelId,
@@ -90,7 +92,8 @@ VALUES
                         UnitPrice = row.UnitPrice,
                         TotalPrice = row.Quantity * row.UnitPrice,
                         PurchaseDate = GetCurrentDate(),
-                        CreateAt= createAt
+                        CreateAt= createAt,
+                        UserId = UserId
                     });
 
                     success++;

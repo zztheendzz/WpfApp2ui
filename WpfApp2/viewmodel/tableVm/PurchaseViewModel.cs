@@ -12,6 +12,7 @@ using WpfApp2.model;
 using WpfApp2.modelDto;
 using WpfApp2.modelDTO;
 using WpfApp2.Services;
+using WpfApp2.Services.sessionService;
 using WpfApp2.view.dialog;
 
 namespace WpfApp2.viewmodel.tableVm
@@ -23,6 +24,7 @@ namespace WpfApp2.viewmodel.tableVm
         public ICommand DeleteCommand { get; set; }
         public ICommand AddCommand { get; set; }
         public ObservableCollection<PurchaseDto> purchases { get; set; }
+        int UserId = SessionService.CurrentUser.Id;
 
         public ICollectionView PurchasesView { get; set; }
         public PurchaseViewModel()
@@ -239,7 +241,8 @@ namespace WpfApp2.viewmodel.tableVm
         public void Add()
         {
             var purchase = new PurchaseDto();   // object mới
-
+            purchase.UserName = SessionService.CurrentUser.UserName;
+            purchase.UserId = SessionService.CurrentUser.Id;
             var dialog = new edit(purchase);
 
             if (dialog.ShowDialog() == true)

@@ -9,6 +9,7 @@ using System.Windows.Input;
 using WpfApp2.command;
 using WpfApp2.model;
 using WpfApp2.Services;
+using WpfApp2.Services.sessionService;
 using WpfApp2.view.analysis;
 using WpfApp2.view.pages;
 
@@ -31,6 +32,9 @@ namespace WpfApp2.viewmodel.tableVm
         public ICommand ShowImportExcelCommand { get; set; }
         public ICommand ShowPurchaseAnalysisPageCommand { get; set; }
         public ICommand ChangeLangCommand { get; set; }
+        public ICommand LogoutCommand { get; set; }
+
+        public Action LogoutAction { get; set; }
 
         private object _currentPage;
         public object CurrentPage
@@ -59,11 +63,23 @@ namespace WpfApp2.viewmodel.tableVm
             ShowImportExcelCommand = new RelayCommand(OpenPageImportExcel);
             ShowPurchaseAnalysisPageCommand = new RelayCommand(OpenPagePurchaseAnalysis);
             ChangeLangCommand= new RelayCommand(p => ExecuteChangeLang(p));
+            LogoutCommand= new RelayCommand(p => Logout());
+
             //CurrentPage = new newModel(); // page mặc định
+        }
+
+        private void Logout()
+        {
+            // clear session
+            SessionService.Logout();
+            SessionService.CurrentUser= null;
+            // trigger UI chuyển màn
+            LogoutAction?.Invoke();
         }
 
         private void ExecuteChangeLang(object param)
         {
+
             // Ép kiểu từ object sang string
             string langCode = param as string;
 
@@ -141,7 +157,7 @@ namespace WpfApp2.viewmodel.tableVm
 
         void OpenUserPage(object obj)
         {
-           // CurrentPage = new pageUser();
+           CurrentPage = new pageUser();
         }
         void OpenEquipmentPage(object obj)
         {

@@ -11,11 +11,8 @@ namespace WpfApp2.model
     {
         [Key]
         public int Id { get; set; }
-
-        [Column("LoginId")]
-        public string LoginId { get; set; }
         [Column("PasswordHash")]
-        public string PasswordHash { get; set; }
+        public string Password { get; set; }
         [Column("UserName")]
         public string UserName { get; set; }
         [Column("Role")]
