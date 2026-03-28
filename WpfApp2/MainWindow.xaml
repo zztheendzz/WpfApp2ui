@@ -140,7 +140,7 @@
                     <StackPanel Background="White">
                         <Button Content="{DynamicResource btn_Logout}" Style="{StaticResource SidebarButtonStyle}" Command="{Binding LogoutCommand}"/>
                         <Button Content="{DynamicResource sub_User}" Style="{StaticResource SidebarButtonStyle}" Command="{Binding ShowUserPageCommand}" Visibility="{Binding IsAdminVisible}" />
-                        <Button Content="{DynamicResource sub_Language}" Style="{StaticResource SidebarButtonStyle}"/>
+                        <!--<Button Content="{DynamicResource sub_Language}" Style="{StaticResource SidebarButtonStyle}"/>-->
                     </StackPanel>
                 </Expander>
 
