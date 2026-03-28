@@ -17,25 +17,33 @@ namespace WpfApp2.Services
         {
             using var conn = _db.GetConnection();
 
+            // 1. Lấy user theo UserName và phải còn Active
+            // Thêm cột IsActive vào SELECT để kiểm tra phía dưới
             string sql = @"
-        SELECT Id, UserName, Password, Role
+        SELECT Id, UserName, Password, Role, IsActive
         FROM [User]
-        WHERE UserName = @UserName
-          AND IsActive = 1
-    ";
+        WHERE UserName = @UserName AND IsActive = 1";
 
             var user = conn.QueryFirstOrDefault<User>(sql, new { UserName = username });
 
+            // 2. Nếu không tìm thấy UserName hoặc User bị khóa (IsActive = 0)
             if (user == null)
-                return null;
-
-            if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
-                return null;
-            if (user.IsActive == 0)
             {
+                // Bạn không nên nói rõ là "Tài khoản không tồn tại" để tránh bị dò quét user
                 return null;
             }
 
+            // 3. Kiểm tra mật khẩu bằng BCrypt (Chỉ gọi 1 lần duy nhất)
+            bool isPasswordMatch = BCrypt.Net.BCrypt.Verify(password, user.Password);
+
+            if (!isPasswordMatch)
+            {
+                // MessageBox này chỉ nên dùng để debug, khi chạy thật nên bỏ đi
+                // MessageBox.Show("Mật khẩu không chính xác!"); 
+                return null;
+            }
+
+            // 4. Đăng nhập thành công
             return user;
         }
         public IEnumerable<UserDto> GetUserDTO()
@@ -67,8 +75,6 @@ namespace WpfApp2.Services
                 ";
             return conn.Query<UserDto>(sql);
         }
-
-
         public void Delete(int id)
         {
             using var conn = _db.GetConnection();
@@ -81,15 +87,33 @@ namespace WpfApp2.Services
         {
             using var conn = _db.GetConnection();
 
-            string sql = @"
-        UPDATE User
-        SET 
-            UserName = @UserName,
-            Password = @Password,
-            Role = @Role
-        WHERE Id = @Id
-        ";
+            // 1. Kiểm tra xem ViewModel có gửi mật khẩu mới (đã hash) xuống không
+            bool hasNewPassword = !string.IsNullOrWhiteSpace(user.Password);
 
+            string sql;
+            if (hasNewPassword)
+            {
+                // Trường hợp 1: Có mật khẩu mới -> Cập nhật tất cả các cột
+                sql = @"
+            UPDATE [User]
+            SET UserName = @UserName,
+                Password = @Password,
+                Role = @Role,
+                IsActive = @IsActive
+            WHERE Id = @Id";
+            }
+            else
+            {
+                // Trường hợp 2: Password rỗng -> Chỉ cập nhật các thông tin khác, GIỮ NGUYÊN Password cũ trong DB
+                sql = @"
+            UPDATE [User]
+            SET UserName = @UserName,
+                Role = @Role,
+                IsActive = @IsActive
+            WHERE Id = @Id";
+            }
+
+            // 2. Thực thi với Dapper
             conn.Execute(sql, user);
         }
 

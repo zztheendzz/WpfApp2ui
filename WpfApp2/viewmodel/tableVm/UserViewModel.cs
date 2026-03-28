@@ -1,126 +1,157 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using WpfApp2.command;
-using WpfApp2.model;
 using WpfApp2.modelDto;
 using WpfApp2.modelDTO;
 using WpfApp2.Services;
 using WpfApp2.view.dialog;
 
-
 namespace WpfApp2.viewmodel.tableVm
 {
     public class UserViewModel : INotifyPropertyChanged
     {
+        private readonly UserService _userService;
+        private UserDto _currentUser;
+
         public ICommand EditCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
         public ICommand AddCommand { get; set; }
         public ICommand SaveCommand { get; set; }
-        public bool isEditCommand{get; set;}
+
+        public bool IsEditMode { get; set; }
         public ObservableCollection<UserDto> Users { get; set; }
 
-        public UserDto userAdd = new UserDto();
-        public UserViewModel()
-        {
-            UserService userService = new UserService();
-
-            Users = new ObservableCollection<UserDto>(
-                        userService.GetUserDTO());
-            EditCommand = new RelayCommand(x => OpenEdit((UserDto)x));
-            DeleteCommand = new RelayCommand(x => Delete((UserDto)x));
-            AddCommand = new RelayCommand(x => OpenAdd());
-            SaveCommand = new RelayCommand(x => Save(x));
-        }
-        // UserDto user userDto
-
-        private UserDto _currentUser;
         public UserDto CurrentUser
         {
             get => _currentUser;
             set { _currentUser = value; OnPropertyChanged(); }
         }
-        public void Delete(UserDto user)
+
+        public UserViewModel()
         {
-            UserService userService = new UserService();
-            userService.Delete(user.Id);
-            Users.Remove(user);
-        }
-        public void Save(object parameter)
-        {
-            if (isEditCommand)
-            {
-                Edit();
-            }
-            else
-            {
-                Add();
-            }
-            if (parameter is Window window)
-            {
-                // Gán DialogResult = true để các hàm OpenAdd/OpenEdit biết là đã lưu thành công
-                // window.DialogResult = true; 
-                window.Close();
-            }
-        }
+            _userService = new UserService();
 
-        public void Add()
-        {
-            UserService userService = new UserService();
+            // Load danh sách ban đầu từ DB
+            Users = new ObservableCollection<UserDto>(_userService.GetUserDTO());
 
-            // Mã hóa mật khẩu trước khi ném xuống Service
-            if (!string.IsNullOrEmpty(CurrentUser.Password))
-            {
-                CurrentUser.Password = BCrypt.Net.BCrypt.HashPassword(CurrentUser.Password);
-            }
-
-            int newId = userService.Add(CurrentUser);
-
-            CurrentUser.Id = newId;
-            Users.Add(CurrentUser); // Đưa vào Grid hiển thị
-        }
-
-        public void Edit()
-        {
-            MessageBox.Show("edit");
-            UserService userService = new UserService();
-
-            // Nếu mật khẩu bị sửa, cần mã hóa lại (Bạn cần xử lý logic check xem pass có đổi hay không)
-            // userService.Edit của bạn nhận (UserDto user)
-            userService.Edit(CurrentUser);
-
-            // Cập nhật UI nhanh chóng bằng IndexOf
-            int index = Users.IndexOf(CurrentUser);
-            if (index != -1)
-            {
-                Users[index] = CurrentUser;
-            }
-        }
-
-        public void OpenEdit(UserDto user)
-        {
-            isEditCommand = true;
-            // Tạo bản sao để tránh việc sửa trực tiếp trên list khi chưa nhấn Save (tùy chọn)
-            CurrentUser = user;
-
-            var dialog = new UserEditAdd(this);
-            dialog.ShowDialog();
-
+            // Init Commands
+            EditCommand = new RelayCommand(x => OpenEdit((UserDto)x));
+            DeleteCommand = new RelayCommand(x => Delete((UserDto)x));
+            AddCommand = new RelayCommand(x => OpenAdd());
+            SaveCommand = new RelayCommand(x => Save(x));
         }
 
         public void OpenAdd()
         {
-            isEditCommand = false;
-            CurrentUser = new UserDto { IsActive = true };
+            IsEditMode = false;
+            // Khởi tạo user mới khớp với DB (mặc định Role = 0, Active = 1)
+            CurrentUser = new UserDto
+            {
+                IsActive = true,
+                Role = 0,
+            };
 
             var dialog = new UserEditAdd(this);
             dialog.ShowDialog();
+        }
+
+        public void OpenEdit(UserDto user)
+        {
+            if (user == null) return;
+            IsEditMode = true;
+
+            // Clone dữ liệu để tránh sửa trực tiếp vào Grid
+            // Giữ lại Password cũ (không hiển thị) để xử lý logic update
+            CurrentUser = new UserDto
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Role = user.Role,
+                IsActive = user.IsActive,
+                Password = "" // Để trống để kiểm tra xem có nhập pass mới không
+            };
+
+            var dialog = new UserEditAdd(this);
+            dialog.ShowDialog();
+        }
+
+        public void Save(object parameter)
+        {
+            try
+            {
+                if (IsEditMode)
+                {
+                    ExecuteEdit();
+                }
+                else
+                {
+                    ExecuteAdd();
+                }
+
+                if (parameter is Window window)
+                {
+                    window.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi: {ex.Message}");
+            }
+        }
+
+        private void ExecuteAdd()
+        {
+            if (string.IsNullOrWhiteSpace(CurrentUser.Password))
+            {
+                MessageBox.Show("Vui lòng nhập mật khẩu cho người dùng mới!");
+                return;
+            }
+
+            // Hash mật khẩu
+            CurrentUser.Password = BCrypt.Net.BCrypt.HashPassword(CurrentUser.Password);
+
+            int newId = _userService.Add(CurrentUser);
+            CurrentUser.Id = newId;
+
+            Users.Add(CurrentUser);
+        }
+
+        private void ExecuteEdit()
+        {
+            // Logic: Nếu Password để trống -> Không đổi pass. Nếu có chữ -> Hash pass mới.
+            if (!string.IsNullOrWhiteSpace(CurrentUser.Password))
+            {
+                CurrentUser.Password = BCrypt.Net.BCrypt.HashPassword(CurrentUser.Password);
+                MessageBox.Show(CurrentUser.Password);
+            }
+
+            _userService.Edit(CurrentUser);
+
+            // Cập nhật lại UI Table
+            var userInList = Users.FirstOrDefault(u => u.Id == CurrentUser.Id);
+            if (userInList != null)
+            {
+                userInList.UserName = CurrentUser.UserName;
+                userInList.Role = CurrentUser.Role;
+                userInList.IsActive = CurrentUser.IsActive;
+                // Không gán ngược Password đã hash vào UI List để đảm bảo an toàn
+            }
+        }
+
+        public void Delete(UserDto user)
+        {
+            if (user == null) return;
+            var result = MessageBox.Show($"Xóa user {user.UserName}?", "Xác nhận", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                _userService.Delete(user.Id);
+                Users.Remove(user);
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
