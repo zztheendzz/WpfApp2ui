@@ -11,11 +11,10 @@
     <sys:String x:Key="ph_MinPrice">Min Price</sys:String>
     <sys:String x:Key="ph_MaxPrice">Max Price</sys:String>
 
-
+    <sys:String x:Key="btn_Logout">Logout</sys:String>
     <sys:String x:Key="btn_SelectFile">Select File</sys:String>
     <sys:String x:Key="btn_Import">Import Data</sys:String>
     <sys:String x:Key="btn_Clear">Clear Filters</sys:String>
-    <sys:String x:Key="btn_Search">Search</sys:String>
     <sys:String x:Key="btn_Add">Add New</sys:String>
     <sys:String x:Key="btn_Analyze">Analyze</sys:String>
     <sys:String x:Key="btn_Prev">◀</sys:String>
@@ -82,5 +81,21 @@
     <sys:String x:Key="sub_Backup">Database Backup</sys:String>
     <sys:String x:Key="sub_User">User</sys:String>
     <sys:String x:Key="sub_Language">Language</sys:String>
+
+
+    <sys:String x:Key="title_UserEditAdd">Add/Edit User</sys:String>
+    <sys:String x:Key="lbl_Account">Account:</sys:String>
+    <sys:String x:Key="lbl_Password">Password:</sys:String>
+    <sys:String x:Key="lbl_Role">Role:</sys:String>
+    <sys:String x:Key="lbl_Status">Status:</sys:String>
+    <sys:String x:Key="lbl_ActiveStatus">Active</sys:String>
+    <sys:String x:Key="ph_EnterUsername">Enter username</sys:String>
+    <sys:String x:Key="ph_EnterPassword">Enter password</sys:String>
+    <sys:String x:Key="ph_SelectRole">Select role</sys:String>
+
+    <sys:String x:Key="btn_Save">SAVE</sys:String>
+    <sys:String x:Key="btn_Cancel">CANCEL</sys:String>
+    <sys:String x:Key="btn_Search">Search</sys:String>
+
 
 </ResourceDictionary>

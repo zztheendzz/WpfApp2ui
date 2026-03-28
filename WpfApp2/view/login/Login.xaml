@@ -61,7 +61,7 @@
                         </CheckBox.Style>
                     </CheckBox>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <materialDesign:PackIcon Kind="Translate" VerticalAlignment="Center" Margin="0,0,5,0" Foreground="Gray"/>
                         <ComboBox Width="80" FontSize="12" BorderThickness="0" IsEnabled="True">
                             <ComboBoxItem Content="VN" IsSelected="True"/>
@@ -77,7 +77,7 @@
                                 </Style>
                             </ComboBox.Style>
                         </ComboBox>
-                    </StackPanel>
+                    </StackPanel>-->
                 </Grid>
 
                 <Grid Height="50">

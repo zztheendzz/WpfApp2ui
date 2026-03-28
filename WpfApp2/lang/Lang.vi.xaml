@@ -81,4 +81,19 @@
     <sys:String x:Key="sub_User">Người dùng</sys:String>
     <sys:String x:Key="sub_Language">Ngôn ngữ</sys:String>
 
+    <sys:String x:Key="lbl_Account">Tài khoản:</sys:String>
+    <sys:String x:Key="lbl_Password">Mật khẩu:</sys:String>
+    <sys:String x:Key="lbl_Role">Quyền hạn:</sys:String>
+    <sys:String x:Key="lbl_Status">Trạng thái:</sys:String>
+    <sys:String x:Key="lbl_ActiveStatus">Đang hoạt động</sys:String>
+
+    <sys:String x:Key="ph_EnterUsername">Nhập tên đăng nhập</sys:String>
+    <sys:String x:Key="ph_EnterPassword">Nhập mật khẩu</sys:String>
+    <sys:String x:Key="ph_SelectRole">Chọn quyền</sys:String>
+
+    <sys:String x:Key="btn_Logout">Đăng xuất</sys:String>
+    <sys:String x:Key="btn_Save">LƯU</sys:String>
+    <sys:String x:Key="btn_Cancel">HỦY</sys:String>
+    <sys:String x:Key="title_UserEditAdd">Chỉnh sửa / Thêm người dùng</sys:String>
+
 </ResourceDictionary>

@@ -82,4 +82,20 @@
     <sys:String x:Key="sub_Backup">데이터베이스 백업</sys:String>
     <sys:String x:Key="sub_User">사용자 관리</sys:String>
     <sys:String x:Key="sub_Language">언어 설정</sys:String>
+
+    <sys:String x:Key="title_UserEditAdd">사용자 추가/수정</sys:String>
+    <sys:String x:Key="lbl_Account">계정:</sys:String>
+    <sys:String x:Key="lbl_Password">비밀번호:</sys:String>
+    <sys:String x:Key="lbl_Role">권한:</sys:String>
+    <sys:String x:Key="lbl_Status">상태:</sys:String>
+    <sys:String x:Key="lbl_ActiveStatus">활성 상태</sys:String>
+    <sys:String x:Key="ph_EnterUsername">사용자 이름을 입력하세요</sys:String>
+    <sys:String x:Key="ph_EnterPassword">비밀번호를 입력하세요</sys:String>
+    <sys:String x:Key="ph_SelectRole">권한 선택</sys:String>
+
+    <sys:String x:Key="btn_Logout">로그아웃</sys:String>
+    <sys:String x:Key="btn_Save">저장</sys:String>
+    <sys:String x:Key="btn_Cancel">취소</sys:String>
+
+
 </ResourceDictionary>

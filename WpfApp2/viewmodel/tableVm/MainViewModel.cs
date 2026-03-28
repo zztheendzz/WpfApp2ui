@@ -33,7 +33,8 @@ namespace WpfApp2.viewmodel.tableVm
         public ICommand ShowPurchaseAnalysisPageCommand { get; set; }
         public ICommand ChangeLangCommand { get; set; }
         public ICommand LogoutCommand { get; set; }
-
+        public Visibility IsAdminVisible =>
+            (SessionService.CurrentUser?.Role == 1) ? Visibility.Visible : Visibility.Collapsed;
         public Action LogoutAction { get; set; }
 
         private object _currentPage;
@@ -52,7 +53,7 @@ namespace WpfApp2.viewmodel.tableVm
         {
             ShowModelPageCommand = new RelayCommand(OpenModelPage);
             ShowBrandlPageCommand = new RelayCommand(OpenBrandPage);
-            ShowUserPageCommand = new RelayCommand(OpenUserPage);
+            ShowUserPageCommand = new RelayCommand(OpenUserPage );
             ShowEquipmentPageCommand = new RelayCommand(OpenEquipmentPage);
             ShowPurchaseHistoryPageCommand = new RelayCommand(OpenVendorPage);
             ShowVendorPageCommand = new RelayCommand(OpenCurrencyPage);

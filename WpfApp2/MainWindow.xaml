@@ -122,13 +122,13 @@
                     </StackPanel>
                 </Expander>
 
-                <Expander Header="{DynamicResource menu_PriceManagement}" Foreground="Black" Background="#ECF0F1" Margin="5,2">
+                <!--<Expander Header="{DynamicResource menu_PriceManagement}" Foreground="Black" Background="#ECF0F1" Margin="5,2">
                     <StackPanel Background="White">
                         <Button Content="{DynamicResource sub_RegisterPrice}" Style="{StaticResource SidebarButtonStyle}"/>
                         <Button Content="{DynamicResource sub_EditPrice}" Style="{StaticResource SidebarButtonStyle}"/>
                         <Button Content="{DynamicResource sub_DeletePrice}" Style="{StaticResource SidebarButtonStyle}"/>
                     </StackPanel>
-                </Expander>
+                </Expander>-->
 
                 <Expander Header="{DynamicResource menu_Excel}" Foreground="Black" Background="#ECF0F1" Margin="5,2">
                     <StackPanel Background="White">
@@ -138,8 +138,8 @@
 
                 <Expander Header="{DynamicResource menu_Settings}" Foreground="Black" Background="#ECF0F1" Margin="5,2">
                     <StackPanel Background="White">
-                        <Button Content="{DynamicResource sub_Backup}" Style="{StaticResource SidebarButtonStyle}" Command="{Binding LogoutCommand}"/>
-                        <Button Content="{DynamicResource sub_User}" Style="{StaticResource SidebarButtonStyle}" Command="{Binding ShowUserPageCommand}" />
+                        <Button Content="{DynamicResource btn_Logout}" Style="{StaticResource SidebarButtonStyle}" Command="{Binding LogoutCommand}"/>
+                        <Button Content="{DynamicResource sub_User}" Style="{StaticResource SidebarButtonStyle}" Command="{Binding ShowUserPageCommand}" Visibility="{Binding IsAdminVisible}" />
                         <Button Content="{DynamicResource sub_Language}" Style="{StaticResource SidebarButtonStyle}"/>
                     </StackPanel>
                 </Expander>

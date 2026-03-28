@@ -80,7 +80,6 @@ namespace WpfApp2.viewmodel.login
                 else
                 {
                     MessageBox.Show("Sai tài khoản hoặc mật khẩu");
-                    LoginSuccessAction?.Invoke();
                 }
             }
             catch (Exception ex)

@@ -10,59 +10,58 @@
 
         mc:Ignorable="d"
         Title="UserEditAdd" Height="450" Width="800">
-
-    <Grid Margin="30">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="120"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="120"/>
+        <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="1" Grid.Column="0" Content="Tài khoản:" VerticalAlignment="Center" Margin="0,0,0,15"/>
-        <TextBox Grid.Row="1" Grid.Column="1" 
-             Text="{Binding CurrentUser.UserName, UpdateSourceTrigger=PropertyChanged}" 
-             materialDesign:HintAssist.Hint="Nhập tên đăng nhập"
-             Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,15"/>
+    <Label Grid.Row="1" Grid.Column="0" Content="{DynamicResource lbl_Account}" VerticalAlignment="Center" Margin="0,0,0,15"/>
+    <TextBox Grid.Row="1" Grid.Column="1" 
+                 Text="{Binding CurrentUser.UserName, UpdateSourceTrigger=PropertyChanged}" 
+                 materialDesign:HintAssist.Hint="{DynamicResource ph_EnterUsername}"
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,15"/>
 
-        <Label Grid.Row="2" Grid.Column="0" Content="Mật khẩu:" VerticalAlignment="Center" Margin="0,0,0,15"/>
-        <TextBox Grid.Row="2" Grid.Column="1" 
-             Text="{Binding CurrentUser.Password, UpdateSourceTrigger=PropertyChanged}" 
-             materialDesign:HintAssist.Hint="Nhập mật khẩu"
-             Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,15"/>
+    <Label Grid.Row="2" Grid.Column="0" Content="{DynamicResource lbl_Password}" VerticalAlignment="Center" Margin="0,0,0,15"/>
+    <TextBox Grid.Row="2" Grid.Column="1" 
+                 Text="{Binding CurrentUser.Password, UpdateSourceTrigger=PropertyChanged}" 
+                 materialDesign:HintAssist.Hint="{DynamicResource ph_EnterPassword}"
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,15"/>
 
-        <Label Grid.Row="3" Grid.Column="0" Content="Quyền hạn:" VerticalAlignment="Center" Margin="0,0,0,20"/>
-        <ComboBox Grid.Row="3" Grid.Column="1" 
-              SelectedValue="{Binding CurrentUser.Role}" 
-              SelectedValuePath="Tag"
-              materialDesign:HintAssist.Hint="Chọn quyền"
-              Style="{StaticResource MaterialDesignOutlinedComboBox}" Margin="0,0,0,20">
-            <ComboBoxItem Content="Admin" Tag="1"/>
-            <ComboBoxItem Content="Staff" Tag="2"/>
-            <ComboBoxItem Content="Manager" Tag="3"/>
-        </ComboBox>
+    <Label Grid.Row="3" Grid.Column="0" Content="{DynamicResource lbl_Role}" VerticalAlignment="Center" Margin="0,0,0,20"/>
+    <ComboBox Grid.Row="3" Grid.Column="1" 
+                  SelectedValue="{Binding CurrentUser.Role}" 
+                  SelectedValuePath="Tag"
+                  materialDesign:HintAssist.Hint="{DynamicResource ph_SelectRole}"
+                  Style="{StaticResource MaterialDesignOutlinedComboBox}" Margin="0,0,0,20">
+        <ComboBoxItem Content="Admin" Tag="1"/>
+        <ComboBoxItem Content="Staff" Tag="2"/>
+        <ComboBoxItem Content="Manager" Tag="3"/>
+    </ComboBox>
 
-        <Label Grid.Row="4" Grid.Column="0" Content="Trạng thái:" VerticalAlignment="Center" Margin="0,0,0,20"/>
-        <CheckBox Grid.Row="4" Grid.Column="1" 
-              IsChecked="{Binding CurrentUser.IsActive,  UpdateSourceTrigger=PropertyChanged }"
-              Content="Đang hoạt động"
-              Style="{StaticResource MaterialDesignCheckBox}"
-              Margin="0,0,0,20"/>
+    <Label Grid.Row="4" Grid.Column="0" Content="{DynamicResource lbl_Status}" VerticalAlignment="Center" Margin="0,0,0,20"/>
+    <CheckBox Grid.Row="4" Grid.Column="1" 
+                  IsChecked="{Binding CurrentUser.IsActive, UpdateSourceTrigger=PropertyChanged}"
+                  Content="{DynamicResource lbl_ActiveStatus}"
+                  Style="{StaticResource MaterialDesignCheckBox}"
+                  Margin="0,0,0,20"/>
 
-        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="HỦY" IsCancel="True" 
-                Style="{StaticResource MaterialDesignFlatButton}" Margin="0,0,10,0"/>
-            <Button Content="LƯU" IsDefault="True"
-                Background="#455A64" BorderBrush="{x:Null}"
-                Command="{Binding SaveCommand}"
-                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
-        </StackPanel>
+    <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+        <Button Content="{DynamicResource btn_Cancel}" IsCancel="True" 
+                    Style="{StaticResource MaterialDesignFlatButton}" Margin="0,0,10,0"/>
+        <Button Content="{DynamicResource btn_Save}" IsDefault="True"
+                    Background="#455A64" BorderBrush="{x:Null}"
+                    Command="{Binding SaveCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+    </StackPanel>
     </Grid>
 </Window>

@@ -16,7 +16,7 @@ namespace WpfApp2.model
         [Column("UserName")]
         public string UserName { get; set; }
         [Column("Role")]
-        public string Role { get; set; }
+        public int Role { get; set; }
         [Column("IsActive")]
         public int IsActive { get; set; }
         [Column("CreatedAt")]
