@@ -86,6 +86,8 @@ namespace WpfApp2.viewmodel.analysis
         }
 
         private int _selectedBrandId;
+
+
         public int SelectedBrandId
         {
             get => _selectedBrandId;

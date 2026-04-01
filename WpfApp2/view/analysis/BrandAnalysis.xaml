@@ -49,9 +49,9 @@
 
                 <Border Background="#2C3E50" Margin="5" Padding="15" CornerRadius="5">
                     <StackPanel>
-                        <TextBlock Text="{DynamicResource lbl_TotalPurchaseValue}"
+                        <TextBlock Text="{DynamicResource lbl_TotalPurchaseValue }"
                                    Foreground="White"/>
-                        <TextBlock Text="{Binding Analysis.TotalPrice}"
+                        <TextBlock Text="{Binding Analysis.TotalPrice , StringFormat={}{0:N0}}"
                                    FontSize="16"
                                    FontWeight="Bold"
                                    Foreground="White"/>
@@ -62,7 +62,7 @@
                     <StackPanel >
                         <TextBlock Text="{DynamicResource lbl_TotalParts}"
                                    Foreground="White" />
-                        <TextBlock Text="{Binding Analysis.TotalQuantity}"
+                        <TextBlock Text="{Binding Analysis.TotalQuantity , StringFormat={}{0:N0}}"
                                    FontSize="16"
                                    FontWeight="Bold"
                                    Foreground="White"/>
@@ -114,19 +114,19 @@
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Binding="{Binding Quantity}">
+                    <DataGridTextColumn Binding="{Binding Quantity , StringFormat={}{0:N0}}">
                         <DataGridTextColumn.Header>
-                            <TextBlock Text="{DynamicResource dg_Quantity}"/>
+                            <TextBlock Text="{DynamicResource dg_Quantity }"/>
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Binding="{Binding UnitPrice}">
+                    <DataGridTextColumn Binding="{Binding UnitPrice , StringFormat={}{0:N0}}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource dg_UnitPrice}"/>
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Binding="{Binding TotalPrice}">
+                    <DataGridTextColumn Binding="{Binding TotalPrice , StringFormat={}{0:N0}}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource dg_TotalPrice}"/>
                         </DataGridTextColumn.Header>

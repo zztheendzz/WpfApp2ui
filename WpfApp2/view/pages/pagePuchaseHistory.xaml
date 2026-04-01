@@ -53,33 +53,7 @@
                 </ListBox>
             </StackPanel>
 
-            <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <DatePicker Width="150" SelectedDate="{Binding DateFrom}" Margin="0,0,15,0">
-                    <materialDesign:HintAssist.Hint>
-                        <TextBlock Text="{DynamicResource ph_DateFrom}"/>
-                    </materialDesign:HintAssist.Hint>
-                </DatePicker>
 
-                <DatePicker Width="150" SelectedDate="{Binding DateTo}" Margin="0,0,15,0">
-                    <materialDesign:HintAssist.Hint>
-                        <TextBlock Text="{DynamicResource ph_DateTo}"/>
-                    </materialDesign:HintAssist.Hint>
-                </DatePicker>
-
-                <TextBox Width="100" Text="{Binding PriceMin}" Margin="0,0,10,0">
-                    <materialDesign:HintAssist.Hint>
-                        <TextBlock Text="{DynamicResource ph_MinPrice}"/>
-                    </materialDesign:HintAssist.Hint>
-                </TextBox>
-
-                <TextBlock Text="~" VerticalAlignment="Center" Margin="0,0,10,0"/>
-
-                <TextBox Width="100" Text="{Binding PriceMax}">
-                    <materialDesign:HintAssist.Hint>
-                        <TextBlock Text="{DynamicResource ph_MaxPrice}"/>
-                    </materialDesign:HintAssist.Hint>
-                </TextBox>
-            </StackPanel>
         </Grid>
 
         <Grid Grid.Row="1">
@@ -119,19 +93,19 @@
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Width="Auto" Binding="{Binding Quantity}">
+                    <DataGridTextColumn Width="Auto" Binding="{Binding Quantity, StringFormat={}{0:N0}}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource dg_Quantity}"/>
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Width="Auto" Binding="{Binding UnitPrice}">
+                    <DataGridTextColumn Width="Auto" Binding="{Binding UnitPrice, StringFormat={}{0:N0}}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource dg_UnitPrice}"/>
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Width="Auto" Binding="{Binding TotalPrice}">
+                    <DataGridTextColumn Width="Auto" Binding="{Binding TotalPrice, StringFormat={}{0:N0}}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource dg_TotalPrice}"/>
                         </DataGridTextColumn.Header>

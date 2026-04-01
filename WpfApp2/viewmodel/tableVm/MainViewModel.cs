@@ -12,6 +12,7 @@ using WpfApp2.Services;
 using WpfApp2.Services.sessionService;
 using WpfApp2.view.analysis;
 using WpfApp2.view.pages;
+using WpfApp2.modelDTO;
 
 namespace WpfApp2.viewmodel.tableVm
 {
@@ -33,6 +34,11 @@ namespace WpfApp2.viewmodel.tableVm
         public ICommand ShowPurchaseAnalysisPageCommand { get; set; }
         public ICommand ChangeLangCommand { get; set; }
         public ICommand LogoutCommand { get; set; }
+
+        public ICommand resetCurrencyCommand { get; set; }
+
+        public CurrencyService CurrencyService;
+        
         public Visibility IsAdminVisible =>
             (SessionService.CurrentUser?.Role == 1) ? Visibility.Visible : Visibility.Collapsed;
         public Action LogoutAction { get; set; }
@@ -48,6 +54,17 @@ namespace WpfApp2.viewmodel.tableVm
                     new PropertyChangedEventArgs(nameof(CurrentPage)));
             }
         }
+        private CurrencyDto _currentcyDto;
+        public CurrencyDto CurrentcyDto
+        {
+            get => _currentcyDto;
+            set
+            {
+                _currentcyDto = value;
+                OnPropertyChanged(); // auto lấy tên property
+            }
+        }
+
 
         public MainViewModel()
         {
@@ -65,10 +82,17 @@ namespace WpfApp2.viewmodel.tableVm
             ShowPurchaseAnalysisPageCommand = new RelayCommand(OpenPagePurchaseAnalysis);
             ChangeLangCommand= new RelayCommand(p => ExecuteChangeLang(p));
             LogoutCommand= new RelayCommand(p => Logout());
-
+            resetCurrencyCommand = new RelayCommand(async p => await currencyRate());
+            currencyRate();
             //CurrentPage = new newModel(); // page mặc định
         }
 
+
+        private async Task currencyRate()
+        {
+            CurrencyService = new CurrencyService();
+            CurrentcyDto = await CurrencyService.GetRates();
+        }
         private void Logout()
         {
             // clear session

@@ -47,24 +47,30 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="350"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition Width="150"/>
                 </Grid.ColumnDefinitions>
 
+                <!-- Logo -->
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <StackPanel Margin="0,0,10,0" VerticalAlignment="Center">
-                        <Image Source="/Images/logo.jpg" Width="35" Height="25" HorizontalAlignment="Center"/>
-                        <TextBlock Text="Automation" FontSize="10" Foreground="White" HorizontalAlignment="Center"/>
+                    <StackPanel Margin="0,0,10,0">
+                        <Image Source="/Images/logo.jpg" Width="35" Height="25"/>
+                        <TextBlock Text="Automation" FontSize="10" Foreground="White"/>
                     </StackPanel>
-                    <TextBlock Text="Price Management System" Foreground="White" FontSize="18" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="Price Management System" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
                 </StackPanel>
 
+                <!-- Search -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <ComboBox Width="300" IsEditable="True" IsTextSearchEnabled="False" StaysOpenOnEdit="True"
-                              materialDesign:HintAssist.Hint="Global Search..."
-                              IsDropDownOpen="{Binding IsSearchDropDownOpen}"
-                              ItemsSource="{Binding SearchSuggestions}"
-                              Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
-                              SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}">
+                    <ComboBox Width="150"
+                      IsEditable="True"
+                      IsTextSearchEnabled="False"
+                      StaysOpenOnEdit="True"
+                      materialDesign:HintAssist.Hint="Global Search..."
+                      IsDropDownOpen="{Binding IsSearchDropDownOpen}"
+                      ItemsSource="{Binding SearchSuggestions}"
+                      Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding SelectedSearchResult}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -74,14 +80,52 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    <Button Width="50" Height="30" Margin="5,0,0,0" Command="{Binding GlobalSearchCommand}" Style="{StaticResource MaterialDesignRaisedButton}">
+
+                    <Button Width="50" Height="30" Margin="5,0,0,0"
+                    Command="{Binding GlobalSearchCommand}"
+                    Style="{StaticResource MaterialDesignRaisedButton}">
                         <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20"/>
                     </Button>
                 </StackPanel>
 
-                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                    
-                    <materialDesign:PopupBox PlacementMode="BottomAndAlignRightEdges" StaysOpen="False" Margin="0,0,15,0" ToolTip="Change Language">
+                <!-- ✅ TỶ GIÁ (ở giữa search và user) -->
+                <StackPanel Grid.Column="2"
+            Orientation="Horizontal"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center">
+
+                    <!-- Text tỷ giá -->
+                    <TextBlock Foreground="White" 
+               FontSize="12"
+               FontWeight="SemiBold"
+               VerticalAlignment="Center"
+               Margin="0,0,5,0">
+        <Run Text="1 USD = "/>
+        <Run Text="{Binding CurrentcyDto.VND, StringFormat={}{0:N0}}" FontWeight="Bold"/>
+        <Run Text=" VND = "/>
+        <Run Text="{Binding CurrentcyDto.KRW, StringFormat={}{0:N0}}" FontWeight="Bold"/>
+        <Run Text=" KRW"/>
+                    </TextBlock>
+
+                    <!-- Nút refresh -->
+                    <Button Width="30"
+            Height="30"
+            Command="{Binding resetCurrencyCommand}"
+            ToolTip="Refresh exchange rate"
+            Style="{StaticResource MaterialDesignIconButton}">
+
+                        <materialDesign:PackIcon Kind="Refresh"
+                                 Width="18"
+                                 Height="18"
+                                 Foreground="White"/>
+                    </Button>
+
+                </StackPanel>
+
+                <!-- User + Language -->
+                <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+
+                    <materialDesign:PopupBox PlacementMode="BottomAndAlignRightEdges" StaysOpen="False" Margin="0,0,15,0">
                         <materialDesign:PopupBox.ToggleContent>
                             <materialDesign:PackIcon Kind="Translate" Width="24" Height="24" Foreground="White"/>
                         </materialDesign:PopupBox.ToggleContent>
@@ -92,9 +136,10 @@
                         </StackPanel>
                     </materialDesign:PopupBox>
 
-                    <materialDesign:PackIcon Kind="AccountCircle" Width="24" Height="24" Margin="0,0,5,0" Foreground="White"/>
-                    <TextBlock Text="Admin" Foreground="White" VerticalAlignment="Center" FontWeight="Bold"/>
+                    <!--<materialDesign:PackIcon Kind="AccountCircle" Width="24" Height="24" Margin="0,0,5,0" Foreground="White"/>
+                    <TextBlock Text="Admin" Foreground="White" VerticalAlignment="Center" FontWeight="Bold"/>-->
                 </StackPanel>
+
             </Grid>
         </Border>
 

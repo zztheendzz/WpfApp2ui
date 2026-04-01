@@ -5,12 +5,9 @@ using System.Text;
 
 namespace WpfApp2.modelDTO
 {
-    internal class CurrencyDto
+    public class CurrencyDto
     {
-        public string Code { get; set; }
-
-        public string Name { get; set; }
-
-        public string Symbol { get; set; }
+        public decimal VND { get; set; }
+        public decimal KRW { get; set; }
     }
 }
