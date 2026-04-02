@@ -9,6 +9,7 @@ namespace WpfApp2.modelDTO.analysysDto
     {
         public int ModelId { get; set; }
         public string ModelName { get; set; }
+        public string Currency ="VND" ;
 
         // Giá
         public double LatestPrice { get; set; }

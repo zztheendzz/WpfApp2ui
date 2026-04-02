@@ -66,8 +66,13 @@
                 <Border Background="#2C3E50" Margin="5" Padding="15" CornerRadius="5">
                     <StackPanel>
                         <TextBlock Text="{DynamicResource lbl_LatestPrice}" Foreground="#BDC3C7" FontSize="12"/>
-                        <TextBlock Text="{Binding Analysis.LatestPrice , StringFormat={}{0:N0}}"
-                                   FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,5,0,0"/>
+                        <TextBlock FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,5,0,0">
+                    <TextBlock FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,5,0,0">
+                        <Run Text="{Binding Analysis.LatestPrice, StringFormat={}{0:N0}}" />
+                        <Run Text=" " />
+                        <Run Text="{Binding Analysis.Currency}" FontSize="14" Foreground="Gray" />
+                    </TextBlock>
+                        </TextBlock>
                     </StackPanel>
                 </Border>
 

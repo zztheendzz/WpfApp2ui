@@ -129,9 +129,9 @@ namespace WpfApp2.Services.improtExcel
                         // 4. Insert vào PurchaseHistory (Thêm cột EquipmentId)
                         conn.Execute(@"
                     INSERT INTO PurchaseHistory 
-                    (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, TotalPrice, PurchaseDate, CreateAt, UserId)
+                    (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, TotalPrice, PurchaseDate, CreateAt, UserId,CurrencyCode)
                     VALUES 
-                    (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @TotalPrice, @PurchaseDate, @CreateAt, @UserId)",
+                    (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @TotalPrice, @PurchaseDate, @CreateAt, @UserId,@CurrencyCode)",
                         new
                         {
                             ModelId = modelId,
@@ -142,7 +142,9 @@ namespace WpfApp2.Services.improtExcel
                             TotalPrice = row.Quantity * row.UnitPrice,
                             PurchaseDate = DateTime.Now.ToString("yyyy-MM-dd"),
                             CreateAt = DateTime.Now.ToString("HH:mm dd-MM-yyyy"),
-                            UserId = UserId
+                            UserId = UserId,
+                            CurrencyCode="VND"
+
                         }, transaction);
 
                         success++;

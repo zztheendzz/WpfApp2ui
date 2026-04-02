@@ -75,6 +75,7 @@ namespace WpfApp2.viewmodel.analysis
         }
 
         private ModelAnalysisDto _analysis;
+        
         public ModelAnalysisDto Analysis
         {
             get => _analysis;
@@ -158,6 +159,7 @@ namespace WpfApp2.viewmodel.analysis
         {
             if (SelectedModelId == 0) return;
             Analysis = _service.GetModelAnalysis(SelectedModelId);
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
