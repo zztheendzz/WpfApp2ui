@@ -20,12 +20,15 @@
 
                 <ComboBox Width="300"
                           Margin="10"
+                          VirtualizingStackPanel.IsVirtualizing="True"
+                            VirtualizingStackPanel.VirtualizationMode="Recycling"
+                            ScrollViewer.CanContentScroll="True"
                           IsEditable="True"
                           IsTextSearchEnabled="False"
                           StaysOpenOnEdit="True"
                           IsDropDownOpen="{Binding IsSearchDropDownOpen}"
                           ItemsSource="{Binding SearchSuggestions}"
-                          Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
+                          Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged, Delay= 500}"
                           SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}"
                           DisplayMemberPath="Text"/>
 

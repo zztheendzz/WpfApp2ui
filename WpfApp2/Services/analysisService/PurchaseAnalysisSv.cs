@@ -117,11 +117,13 @@ namespace WpfApp2.Services.analysisService
                     m.ModelName,
                     v.VendorName,
                     e.EquipmentName,
-                COUNT(*) OVER() AS TotalCount
+                u.FullName,
+                (SELECT COUNT(*) FROM PurchaseHistory) AS TotalCount
                 FROM PurchaseHistory p
                 LEFT JOIN Model m ON p.ModelId = m.Id
                 LEFT JOIN Vendor v ON p.VendorId = v.Id
                 LEFT JOIN Equipment e ON p.EquipmentId = e.Id
+                LEFT JOIN User u ON p.UserId = u.Id
                 WHERE 1=1
                     AND (@ModelId IS NULL OR p.ModelId = @ModelId)
                     AND (@VendorId IS NULL OR p.VendorId = @VendorId)

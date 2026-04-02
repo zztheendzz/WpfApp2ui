@@ -5,63 +5,97 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp2.view.dialog"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-
         mc:Ignorable="d"
-        Title="UserEditAdd" Height="450" Width="800">
-    <Grid>
-        <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-    </Grid.RowDefinitions>
+        Title="User Management" Height="550" Width="600"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}">
 
-    <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="120"/>
-        <ColumnDefinition Width="*"/>
-    </Grid.ColumnDefinitions>
+    <materialDesign:TransitioningContent>
+        <materialDesign:TransitioningContent.OpeningEffects>
+            <materialDesign:TransitionEffect Kind="SlideInFromBottom" Duration="0:0:0.4" />
+        </materialDesign:TransitioningContent.OpeningEffects>
 
-    <Label Grid.Row="1" Grid.Column="0" Content="{DynamicResource lbl_Account}" VerticalAlignment="Center" Margin="0,0,0,15"/>
-    <TextBox Grid.Row="1" Grid.Column="1" 
-                 Text="{Binding CurrentUser.UserName, UpdateSourceTrigger=PropertyChanged}" 
-                 materialDesign:HintAssist.Hint="{DynamicResource ph_EnterUsername}"
-                 Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,15"/>
+        <Grid Margin="30">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-    <Label Grid.Row="2" Grid.Column="0" Content="{DynamicResource lbl_Password}" VerticalAlignment="Center" Margin="0,0,0,15"/>
-    <TextBox Grid.Row="2" Grid.Column="1" 
-                 Text="{Binding CurrentUser.Password, UpdateSourceTrigger=PropertyChanged}" 
-                 materialDesign:HintAssist.Hint="{DynamicResource ph_EnterPassword}"
-                 Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,15"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-    <Label Grid.Row="3" Grid.Column="0" Content="{DynamicResource lbl_Role}" VerticalAlignment="Center" Margin="0,0,0,20"/>
-    <ComboBox Grid.Row="3" Grid.Column="1" 
-                  SelectedValue="{Binding CurrentUser.Role}" 
-                  SelectedValuePath="Tag"
-                  materialDesign:HintAssist.Hint="{DynamicResource ph_SelectRole}"
-                  Style="{StaticResource MaterialDesignOutlinedComboBox}" Margin="0,0,0,20">
-        <ComboBoxItem Content="Admin" Tag="1"/>
-        <ComboBoxItem Content="Staff" Tag="2"/>
-        <ComboBoxItem Content="Manager" Tag="3"/>
-    </ComboBox>
+            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
+                       Text="THIẾT LẬP TÀI KHOẢN" 
+                       Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                       Margin="0,0,0,30" FontWeight="Bold" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 
-    <Label Grid.Row="4" Grid.Column="0" Content="{DynamicResource lbl_Status}" VerticalAlignment="Center" Margin="0,0,0,20"/>
-    <CheckBox Grid.Row="4" Grid.Column="1" 
-                  IsChecked="{Binding CurrentUser.IsActive, UpdateSourceTrigger=PropertyChanged}"
-                  Content="{DynamicResource lbl_ActiveStatus}"
-                  Style="{StaticResource MaterialDesignCheckBox}"
-                  Margin="0,0,0,20"/>
+            <!--<Label Grid.Row="1" Grid.Column="0" Content="{DynamicResource lbl_FullName}"-->
+            <Label Grid.Row="1" Grid.Column="0" Content="Full Name" 
+                   VerticalAlignment="Center" Margin="0,0,0,20" FontWeight="SemiBold"/>
+            <TextBox Grid.Row="1" Grid.Column="1" 
+                     Text="{Binding CurrentUser.FullName, UpdateSourceTrigger=PropertyChanged}" 
+                     materialDesign:HintAssist.Hint="Enter FullName"
+                     materialDesign:TextFieldAssist.HasClearButton="True"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,20"/>
 
-    <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-        <Button Content="{DynamicResource btn_Cancel}" IsCancel="True" 
-                    Style="{StaticResource MaterialDesignFlatButton}" Margin="0,0,10,0"/>
-        <Button Content="{DynamicResource btn_Save}" IsDefault="True"
-                    Background="#455A64" BorderBrush="{x:Null}"
-                    Command="{Binding SaveCommand}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
-    </StackPanel>
-    </Grid>
+            <Label Grid.Row="2" Grid.Column="0" Content="{DynamicResource lbl_Account}" 
+                   VerticalAlignment="Center" Margin="0,0,0,20" FontWeight="SemiBold"/>
+            <TextBox Grid.Row="2" Grid.Column="1" 
+                     Text="{Binding CurrentUser.UserName, UpdateSourceTrigger=PropertyChanged}" 
+                     materialDesign:HintAssist.Hint="{DynamicResource ph_EnterUsername}"
+                     materialDesign:TextFieldAssist.HasClearButton="True"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,20"/>
+
+            <Label Grid.Row="3" Grid.Column="0" Content="{DynamicResource lbl_Password}" 
+                   VerticalAlignment="Center" Margin="0,0,0,20" FontWeight="SemiBold"/>
+            <TextBox Grid.Row="3" Grid.Column="1" 
+                     Text="{Binding CurrentUser.Password, UpdateSourceTrigger=PropertyChanged}" 
+                     materialDesign:HintAssist.Hint="{DynamicResource ph_EnterPassword}"
+                     materialDesign:TextFieldAssist.HasClearButton="True"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,20"/>
+
+            <Label Grid.Row="4" Grid.Column="0" Content="{DynamicResource lbl_Role}" 
+                   VerticalAlignment="Center" Margin="0,0,0,25" FontWeight="SemiBold"/>
+            <ComboBox Grid.Row="4" Grid.Column="1" 
+                      SelectedValue="{Binding CurrentUser.Role}" 
+                      SelectedValuePath="Tag"
+                      materialDesign:HintAssist.Hint="{DynamicResource ph_SelectRole}"
+                      Style="{StaticResource MaterialDesignOutlinedComboBox}" Margin="0,0,0,25">
+                <ComboBoxItem Content="Admin" Tag="1"/>
+                <ComboBoxItem Content="Staff" Tag="2"/>
+                <ComboBoxItem Content="Manager" Tag="3"/>
+            </ComboBox>
+
+            <Label Grid.Row="5" Grid.Column="0" Content="{DynamicResource lbl_Status}" 
+                   VerticalAlignment="Center" Margin="0,0,0,20" FontWeight="SemiBold"/>
+            <CheckBox Grid.Row="5" Grid.Column="1" 
+                      IsChecked="{Binding CurrentUser.IsActive, UpdateSourceTrigger=PropertyChanged}"
+                      Content="{DynamicResource lbl_ActiveStatus}"
+                      Style="{StaticResource MaterialDesignActionLightCheckBox}"
+                      Margin="0,0,0,20"/>
+
+            <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" 
+                        HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,20,0,0">
+                <Button Content="{DynamicResource btn_Cancel}" IsCancel="True" 
+                        Style="{StaticResource MaterialDesignFlatButton}" 
+                        Margin="0,0,15,0" Width="100" Height="40"/>
+                <Button Content="{DynamicResource btn_Save}" IsDefault="True"
+                        Background="#455A64" BorderBrush="{x:Null}"
+                        materialDesign:ButtonAssist.CornerRadius="6"
+                        Command="{Binding SaveCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                        Width="120" Height="40"
+                        Style="{StaticResource MaterialDesignRaisedDarkButton}"/>
+            </StackPanel>
+        </Grid>
+    </materialDesign:TransitioningContent>
 </Window>

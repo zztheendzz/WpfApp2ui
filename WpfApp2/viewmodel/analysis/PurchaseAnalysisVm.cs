@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Input;
 using WpfApp2.command;
 using WpfApp2.modelDTO;
@@ -15,49 +14,48 @@ namespace WpfApp2.viewmodel.analysis
     public class PurchaseAnalysisVm : INotifyPropertyChanged
     {
         private readonly SearchService _searchService = new SearchService();
+        private readonly PurchaseAnalysisSv _purchaseService = new PurchaseAnalysisSv();
 
-        // Các cờ chặn vòng lặp phản hồi cho từng trường
-        private bool _isSelectingM;
-        private bool _isSelectingE;
-        private bool _isSelectingV;
+        // Cờ chặn vòng lặp phản hồi cho từng trường
+        private bool _isInternalChange;
 
-        private bool _isDropDownOpenV;
-        public bool IsDropDownOpenV
-        {
-            get => _isDropDownOpenV;
-            set { _isDropDownOpenV = value; OnPropertyChanged(); }
-        }
+        #region ===================== Dropdown States =====================
 
         private bool _isDropDownOpenM;
+        public bool IsDropDownOpenM { get => _isDropDownOpenM; set { _isDropDownOpenM = value; OnPropertyChanged(); } }
 
-        public bool IsDropDownOpenM
-        {
-            get => _isDropDownOpenM;
-            set { _isDropDownOpenM = value; OnPropertyChanged(); }
-        }
+        private bool _isDropDownOpenV;
+        public bool IsDropDownOpenV { get => _isDropDownOpenV; set { _isDropDownOpenV = value; OnPropertyChanged(); } }
+
         private bool _isDropDownOpenE;
-
-        public bool IsDropDownOpenE
-        {
-            get => _isDropDownOpenE;
-            set { _isDropDownOpenE = value; OnPropertyChanged(); }
-        }
-
-        public ICommand SearchCommand { get; set; }
-        public ICommand ClearCommand { get; set; }
-        public ICommand VendorFocusCommand { get; set; }
-
-        public ObservableCollection<PurchaseDto> PurchaseDtos { get; set; } = new ObservableCollection<PurchaseDto>();
-
-        #region ===================== Suggestions =====================
-
-        public ObservableCollection<SearchResultDto> ModelSuggestions { get; set; } = new ObservableCollection<SearchResultDto>();
-        public ObservableCollection<SearchResultDto> VendorSuggestions { get; set; } = new ObservableCollection<SearchResultDto>();
-        public ObservableCollection<SearchResultDto> EquipmentSuggestions { get; set; } = new ObservableCollection<SearchResultDto>();
+        public bool IsDropDownOpenE { get => _isDropDownOpenE; set { _isDropDownOpenE = value; OnPropertyChanged(); } }
 
         #endregion
 
-        #region ===================== Search Text =====================
+        public ICommand SearchCommand { get; set; }
+        public ICommand ClearCommand { get; set; }
+
+        public ObservableCollection<PurchaseDto> PurchaseDtos { get; } = new ObservableCollection<PurchaseDto>();
+
+        #region ===================== Suggestions & Selected Items =====================
+
+        public ObservableCollection<SearchResultDto> ModelSuggestions { get; } = new ObservableCollection<SearchResultDto>();
+        public ObservableCollection<SearchResultDto> VendorSuggestions { get; } = new ObservableCollection<SearchResultDto>();
+        public ObservableCollection<SearchResultDto> EquipmentSuggestions { get; } = new ObservableCollection<SearchResultDto>();
+
+        // Selected Objects (Dùng để Binding với ListBox SelectedItem)
+        private SearchResultDto _selectedModel;
+        public SearchResultDto SelectedModel { get => _selectedModel; set { _selectedModel = value; OnPropertyChanged(); } }
+
+        private SearchResultDto _selectedVendor;
+        public SearchResultDto SelectedVendor { get => _selectedVendor; set { _selectedVendor = value; OnPropertyChanged(); } }
+
+        private SearchResultDto _selectedEquipment;
+        public SearchResultDto SelectedEquipment { get => _selectedEquipment; set { _selectedEquipment = value; OnPropertyChanged(); } }
+
+        #endregion
+
+        #region ===================== Search Text Properties =====================
 
         private string _searchModelText;
         public string SearchModelText
@@ -68,7 +66,11 @@ namespace WpfApp2.viewmodel.analysis
                 if (_searchModelText == value) return;
                 _searchModelText = value;
                 OnPropertyChanged();
-                if (!_isSelectingM) UpdateModelSuggestions(value);
+                if (!_isInternalChange)
+                {
+                    if (string.IsNullOrWhiteSpace(value)) SelectedModelId = 0;
+                    UpdateSuggestions("M", value);
+                }
             }
         }
 
@@ -81,7 +83,11 @@ namespace WpfApp2.viewmodel.analysis
                 if (_searchVendorText == value) return;
                 _searchVendorText = value;
                 OnPropertyChanged();
-                if (!_isSelectingV) UpdateVendorSuggestions(value);
+                if (!_isInternalChange)
+                {
+                    if (string.IsNullOrWhiteSpace(value)) SelectedVendorId = 0;
+                    UpdateSuggestions("V", value);
+                }
             }
         }
 
@@ -94,89 +100,21 @@ namespace WpfApp2.viewmodel.analysis
                 if (_searchEquipmentText == value) return;
                 _searchEquipmentText = value;
                 OnPropertyChanged();
-                if (!_isSelectingE) UpdateEquipmentSuggestions(value);
+                if (!_isInternalChange)
+                {
+                    if (string.IsNullOrWhiteSpace(value)) SelectedEquipmentId = 0;
+                    UpdateSuggestions("E", value);
+                }
             }
         }
 
         #endregion
 
-        #region ===================== Selected Item =====================
+        #region ===================== Filter Data (IDs, Dates, Prices) =====================
 
-        private SearchResultDto _selectedModel;
-        public SearchResultDto SelectedModel
-        {
-            get => _selectedModel;
-            set
-            {
-                if (_selectedModel == value) return;
-                _isSelectingM = true;
-                _selectedModel = value;
-                OnPropertyChanged();
-                if (value != null)
-                {
-                    _selectedModelId = value.Id;
-                    OnPropertyChanged(nameof(SelectedModelId));
-                    _searchModelText = value.Text;
-                    OnPropertyChanged(nameof(SearchModelText));
-                }
-                _isSelectingM = false;
-            }
-        }
-
-        private SearchResultDto _selectedVendor;
-        public SearchResultDto SelectedVendor
-        {
-            get => _selectedVendor;
-            set
-            {
-                if (_selectedVendor == value) return;
-                _isSelectingV = true;
-                _selectedVendor = value;
-                OnPropertyChanged();
-                if (value != null)
-                {
-                    _selectedVendorId = value.Id;
-                    OnPropertyChanged(nameof(SelectedVendorId));
-                    _searchVendorText = value.Text;
-                    OnPropertyChanged(nameof(SearchVendorText));
-                }
-                _isSelectingV = false;
-            }
-        }
-
-        private SearchResultDto _selectedEquipment;
-        public SearchResultDto SelectedEquipment
-        {
-            get => _selectedEquipment;
-            set
-            {
-                if (_selectedEquipment == value) return;
-                _isSelectingE = true;
-                _selectedEquipment = value;
-                OnPropertyChanged();
-                if (value != null)
-                {
-                    _selectedEquipmentId = value.Id;
-                    OnPropertyChanged(nameof(SelectedEquipmentId));
-                    _searchEquipmentText = value.Text;
-                    OnPropertyChanged(nameof(SearchEquipmentText));
-                }
-                _isSelectingE = false;
-            }
-        }
-
-        #endregion
-
-        #region ===================== Filter Properties =====================
-
-        private int _selectedModelId;
-        public int SelectedModelId { get => _selectedModelId; set { _selectedModelId = value; OnPropertyChanged(); } }
-
-        private int _selectedVendorId;
-        public int SelectedVendorId { get => _selectedVendorId; set { _selectedVendorId = value; OnPropertyChanged(); } }
-
-        private int _selectedEquipmentId;
-        public int SelectedEquipmentId { get => _selectedEquipmentId; set { _selectedEquipmentId = value; OnPropertyChanged(); LoadData(); } }
+        public int SelectedModelId { get; set; }
+        public int SelectedVendorId { get; set; }
+        public int SelectedEquipmentId { get; set; }
 
         private DateTime? _dateFrom;
         public DateTime? SelectedDateFrom { get => _dateFrom; set { _dateFrom = value; OnPropertyChanged(); ValidateDate(); } }
@@ -200,69 +138,78 @@ namespace WpfApp2.viewmodel.analysis
 
         public PurchaseAnalysisVm()
         {
-            SearchCommand = new RelayCommand(Search);
-            ClearCommand = new RelayCommand(Clear);
+            SearchCommand = new RelayCommand(_ => LoadData());
+            ClearCommand = new RelayCommand(_ => ClearAll());
         }
 
         #region ===================== Logic Methods =====================
 
-        public void Clear(object obj)
+        private void UpdateSuggestions(string type, string query)
         {
-            // Bật tất cả cờ chặn để tránh gọi API search khi đang xóa
-            _isSelectingM = _isSelectingV = _isSelectingE = true;
+            if (string.IsNullOrWhiteSpace(query) || query.Length < 2)
+            {
+                if (type == "M") { ModelSuggestions.Clear(); IsDropDownOpenM = false; }
+                if (type == "V") { VendorSuggestions.Clear(); IsDropDownOpenV = false; }
+                if (type == "E") { EquipmentSuggestions.Clear(); IsDropDownOpenE = false; }
+                return;
+            }
 
+            switch (type)
+            {
+                case "M":
+                    var resM = _searchService.SearchModel(query);
+                    ModelSuggestions.Clear(); foreach (var i in resM) ModelSuggestions.Add(i);
+                    IsDropDownOpenM = ModelSuggestions.Any();
+                    SelectedModel = ModelSuggestions.FirstOrDefault();
+                    break;
+                case "V":
+                    var resV = _searchService.SearchVendor(query);
+                    VendorSuggestions.Clear(); foreach (var i in resV) VendorSuggestions.Add(i);
+                    IsDropDownOpenV = VendorSuggestions.Any();
+                    SelectedVendor = VendorSuggestions.FirstOrDefault();
+                    break;
+                case "E":
+                    var resE = _searchService.SearchEquipment(query);
+                    EquipmentSuggestions.Clear(); foreach (var i in resE) EquipmentSuggestions.Add(i);
+                    IsDropDownOpenE = EquipmentSuggestions.Any();
+                    SelectedEquipment = EquipmentSuggestions.FirstOrDefault();
+                    break;
+            }
+        }
+
+        // Hàm này gọi khi người dùng nhấn Enter hoặc Click chọn item từ Popup
+        public void ConfirmSelection(string type)
+        {
+            _isInternalChange = true;
             try
             {
-                // 1. Clear Suggestions lists
-                ModelSuggestions.Clear();
-                VendorSuggestions.Clear();
-                EquipmentSuggestions.Clear();
-
-                // 2. Clear Selected Objects
-                _selectedModel = null;
-                _selectedVendor = null;
-                _selectedEquipment = null;
-                OnPropertyChanged(nameof(SelectedModel));
-                OnPropertyChanged(nameof(SelectedVendor));
-                OnPropertyChanged(nameof(SelectedEquipment));
-
-                // 3. Clear Search Texts (Ép UI về rỗng)
-                _searchModelText = string.Empty;
-                _searchVendorText = string.Empty;
-                _searchEquipmentText = string.Empty;
-                OnPropertyChanged(nameof(SearchModelText));
-                OnPropertyChanged(nameof(SearchVendorText));
-                OnPropertyChanged(nameof(SearchEquipmentText));
-
-                // 4. Reset IDs và các Filter khác
-                _selectedModelId = _selectedVendorId = _selectedEquipmentId = 0;
-                OnPropertyChanged(nameof(SelectedModelId));
-                OnPropertyChanged(nameof(SelectedVendorId));
-                OnPropertyChanged(nameof(SelectedEquipmentId));
-
-                _priceMin = _priceMax = null;
-                _dateFrom = _dateTo = null;
-                _error = null;
-                OnPropertyChanged(nameof(PriceMin));
-                OnPropertyChanged(nameof(PriceMax));
-                OnPropertyChanged(nameof(SelectedDateFrom));
-                OnPropertyChanged(nameof(SelectedDateTo));
-                OnPropertyChanged(nameof(Error));
-
-                // 5. Load lại dữ liệu mặc định
-                PurchaseDtos.Clear();
+                if (type == "M" && SelectedModel != null)
+                {
+                    SearchModelText = SelectedModel.Text;
+                    SelectedModelId = SelectedModel.Id;
+                    IsDropDownOpenM = false;
+                }
+                else if (type == "V" && SelectedVendor != null)
+                {
+                    SearchVendorText = SelectedVendor.Text;
+                    SelectedVendorId = SelectedVendor.Id;
+                    IsDropDownOpenV = false;
+                }
+                else if (type == "E" && SelectedEquipment != null)
+                {
+                    SearchEquipmentText = SelectedEquipment.Text;
+                    SelectedEquipmentId = SelectedEquipment.Id;
+                    IsDropDownOpenE = false;
+                    LoadData(); // Tự động load nếu là thiết bị
+                }
             }
-            finally
-            {
-                _isSelectingM = _isSelectingV = _isSelectingE = false;
-            }
+            finally { _isInternalChange = false; }
         }
 
         private void LoadData()
         {
             PurchaseDtos.Clear();
-            PurchaseAnalysisSv purchaseService = new PurchaseAnalysisSv();
-            var list = purchaseService.Search3(
+            var list = _purchaseService.Search3(
                 SelectedEquipmentId == 0 ? null : (int?)SelectedEquipmentId,
                 SelectedModelId == 0 ? null : (int?)SelectedModelId,
                 SelectedVendorId == 0 ? null : (int?)SelectedVendorId,
@@ -273,28 +220,28 @@ namespace WpfApp2.viewmodel.analysis
             SelectedCount = list.Count;
         }
 
-        public void Search(object obj) => LoadData();
-
-        private void UpdateModelSuggestions(string t) 
-        { 
-            if (_isSelectingM || string.IsNullOrWhiteSpace(t) || t.Length < 2) { ModelSuggestions.Clear(); return; }
-
-            var res = _searchService.SearchModel(t); ModelSuggestions.Clear(); foreach (var i in res) ModelSuggestions.Add(i);
+        private void ClearAll()
+        {
+            _isInternalChange = true;
+            try
+            {
+                ModelSuggestions.Clear(); VendorSuggestions.Clear(); EquipmentSuggestions.Clear();
+                SearchModelText = SearchVendorText = SearchEquipmentText = string.Empty;
+                SelectedModelId = SelectedVendorId = SelectedEquipmentId = 0;
+                SelectedModel = null; SelectedVendor = null; SelectedEquipment = null;
+                PriceMin = PriceMax = null; SelectedDateFrom = SelectedDateTo = null;
+                Error = null; PurchaseDtos.Clear(); SelectedCount = 0;
+                IsDropDownOpenM = IsDropDownOpenV = IsDropDownOpenE = false;
+            }
+            finally { _isInternalChange = false; }
         }
-        private void UpdateVendorSuggestions(string t) { 
-            if (_isSelectingV || string.IsNullOrWhiteSpace(t) || t.Length < 2) { VendorSuggestions.Clear(); return; }
 
-            var res = _searchService.SearchVendor(t); VendorSuggestions.Clear(); foreach (var i in res) VendorSuggestions.Add(i); }
-        private void UpdateEquipmentSuggestions(string t) { 
-            if (_isSelectingE || string.IsNullOrWhiteSpace(t) || t.Length < 2) { EquipmentSuggestions.Clear(); return; }
-
-            var res = _searchService.SearchEquipment(t); EquipmentSuggestions.Clear(); foreach (var i in res) EquipmentSuggestions.Add(i); }
-
-        private void ValidateDate() { if (SelectedDateFrom > SelectedDateTo) Error = "From phải ≤ To"; else Error = null; }
-        private void ValidateRange() { if (PriceMin > PriceMax) Error = "Min phải ≤ Max"; else Error = null; }
+        private void ValidateDate() { Error = (SelectedDateFrom > SelectedDateTo) ? "Từ ngày ≤ Đến ngày" : null; }
+        private void ValidateRange() { Error = (PriceMin > PriceMax) ? "Min ≤ Max" : null; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
         #endregion
     }
 }

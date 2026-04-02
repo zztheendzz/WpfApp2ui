@@ -18,6 +18,7 @@ namespace WpfApp2.modelDTO
         public int Role { get; set; }
         public bool IsActive { get; set; }
         public string CreatedAt { get; set; }
+        public string FullName { get; set; }
         public string RoleName
         {
             get => ((UserRole)Role).ToString();

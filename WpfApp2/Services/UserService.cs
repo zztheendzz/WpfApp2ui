@@ -55,7 +55,8 @@ namespace WpfApp2.Services
                     m.UserName,
                     m.Password,       
                     m.Role,
-                    m.IsActive       
+                    m.IsActive,
+                    m.FullName
                 FROM User m
                 ";
             return conn.Query<UserDto>(sql);

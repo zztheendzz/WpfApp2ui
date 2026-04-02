@@ -21,5 +21,8 @@ namespace WpfApp2.model
         public int IsActive { get; set; }
         [Column("CreatedAt")]
         public string CreatedAt { get; set; }
+
+        [Column("FullName")]
+        public string FullName { get; set; }
     }
 }

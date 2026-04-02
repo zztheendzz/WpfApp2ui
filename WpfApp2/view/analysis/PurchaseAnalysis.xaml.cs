@@ -24,7 +24,49 @@ namespace WpfApp2.view.analysis
             InitializeComponent();
             DataContext = new PurchaseAnalysisVm();
         }
+        private void SearchBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            var type = textBox.Tag.ToString();
+            var vm = (PurchaseAnalysisVm)this.DataContext;
 
+            // Xác định ListBox nào cần điều khiển
+            ListBox activeList = type == "M" ? lstModel : (type == "V" ? lstVendor : lstEquip);
+
+            if (e.Key == Key.Down)
+            {
+                if (activeList.SelectedIndex < activeList.Items.Count - 1) activeList.SelectedIndex++;
+                activeList.ScrollIntoView(activeList.SelectedItem);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Up)
+            {
+                if (activeList.SelectedIndex > 0) activeList.SelectedIndex--;
+                activeList.ScrollIntoView(activeList.SelectedItem);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Enter)
+            {
+                vm.ConfirmSelection(type);
+                textBox.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                e.Handled = true;
+            }
+        }
+
+        private void OnListBoxItemClick(object sender, MouseButtonEventArgs e)
+        {
+            // Lấy ListBox cha của item bị click
+            var item = sender as ListBoxItem;
+            if (item != null)
+            {
+                var listBox = ItemsControl.ItemsControlFromItemContainer(item) as ListBox;
+                var type = (listBox.Name == "lstModel") ? "M" : (listBox.Name == "lstVendor" ? "V" : "E");
+                var vm = (PurchaseAnalysisVm)this.DataContext;
+
+                // Dùng Dispatcher để đảm bảo SelectedItem đã cập nhật trước khi Confirm
+                Dispatcher.BeginInvoke(new Action(() => vm.ConfirmSelection(type)));
+            }
+        }
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var cb = sender as ComboBox;

@@ -36,18 +36,14 @@
                       CanUserAddRows="False" IsReadOnly="True"
                       GridLinesVisibility="Vertical" VerticalGridLinesBrush="#DDDDDD">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Username" Binding="{Binding UserName}" Width="150"/>
-
-                    <!--<DataGridTextColumn Header="Password" Binding="{Binding Password}" Width="150">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="FontStyle" Value="Italic"/>
-                                <Setter Property="Foreground" Value="Gray"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>-->
+                    <DataGridTextColumn Header="Name" Binding="{Binding FullName}" Width="150"/>
+                    <DataGridTextColumn Header="Account" Binding="{Binding UserName}" Width="150"/>
 
                     <DataGridTemplateColumn Header="Role" Width="120">
+                        
+
+
+                        
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Border Background="{Binding RoleColor}" CornerRadius="4" Padding="5,2">

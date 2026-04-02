@@ -82,8 +82,8 @@ namespace WpfApp2.viewmodel.tableVm
             ShowPurchaseAnalysisPageCommand = new RelayCommand(OpenPagePurchaseAnalysis);
             ChangeLangCommand= new RelayCommand(p => ExecuteChangeLang(p));
             LogoutCommand= new RelayCommand(p => Logout());
-            resetCurrencyCommand = new RelayCommand(async p => await currencyRate());
-            currencyRate();
+          //  resetCurrencyCommand = new RelayCommand(async p => await currencyRate());
+           // currencyRate();
             //CurrentPage = new newModel(); // page mặc định
         }
 
