@@ -37,7 +37,7 @@ SELECT
     p.CurrencyCode,
     p.PurchaseDate,
     p.CreateAt,
-    u.UserName,
+    u.FullName,
     p.Note
 FROM PurchaseHistory p
 LEFT JOIN Model m ON p.ModelId = m.Id

@@ -150,7 +150,7 @@
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Binding="{Binding UserId}">
+                    <DataGridTextColumn Binding="{Binding FullName}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource dg_User}"/>
                         </DataGridTextColumn.Header>

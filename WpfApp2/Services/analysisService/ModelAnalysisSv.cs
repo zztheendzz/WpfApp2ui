@@ -83,7 +83,7 @@ SELECT
     p.CurrencyCode,
     p.PurchaseDate,
     p.CreateAt,
-    u.UserName,
+    u.FullName,
     p.Note
 
 FROM PurchaseHistory p

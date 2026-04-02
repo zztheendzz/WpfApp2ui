@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Windows.Input;
 using WpfApp2.command;
 using WpfApp2.model;
@@ -17,13 +16,11 @@ namespace WpfApp2.viewmodel.analysis
 {
     public class EquipmentAnalysisVm : INotifyPropertyChanged
     {
+        private readonly SearchService _searchService = new SearchService();
+        private readonly EquipmentAnalysisSv _service = new EquipmentAnalysisSv();
+        private bool _isInternalChange;
 
-        private SearchService _searchService = new SearchService();
-
-
-        public ObservableCollection<SearchResultDto> SearchSuggestions { get; set; }
-            = new ObservableCollection<SearchResultDto>();
-
+        #region ===================== Properties =====================
 
         private string _globalSearchText;
         public string GlobalSearchText
@@ -31,148 +28,154 @@ namespace WpfApp2.viewmodel.analysis
             get => _globalSearchText;
             set
             {
+                if (_globalSearchText == value) return;
                 _globalSearchText = value;
                 OnPropertyChanged();
 
-                UpdateSuggestions();
+                if (!_isInternalChange)
+                {
+                    // Nếu xóa sạch text thì reset ID
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        SelectedEquipmentId = 0;
+                        SearchSuggestions.Clear();
+                        IsSearchDropDownOpen = false;
+                    }
+                    else
+                    {
+                        UpdateSuggestions();
+                    }
+                }
             }
         }
 
-        // Hàm cập nhật gợi ý tìm kiếm dựa trên GlobalSearchText
-        private void UpdateSuggestions()
-        {
-            SearchSuggestions.Clear(); // xóa các gợi ý cũ
-
-            if (string.IsNullOrWhiteSpace(GlobalSearchText) || GlobalSearchText.Length < 2)
-            {
-
-                IsSearchDropDownOpen = false;
-                return;
-            }
-
-            // Lấy danh sách Brand phù hợp với từ khóa
-            var results = _searchService.SearchEquipment(GlobalSearchText);
-
-            // Thêm từng item vào ObservableCollection để UI tự động cập nhật
-            foreach (var item in results)
-                SearchSuggestions.Add(item);
-
-
-            IsSearchDropDownOpen = SearchSuggestions.Count > 0;
-        }
-
-        // Selected item khi người dùng chọn từ gợi ý
         private SearchResultDto _selectedSearchResult;
         public SearchResultDto SelectedSearchResult
         {
             get => _selectedSearchResult;
             set
             {
-                if (_selectedSearchResult != value)
-                {
-                    _selectedSearchResult = value;
-                    OnPropertyChanged(); // thông báo UI
-                    if (value != null)
-                    {
-
-                        // Nếu Data là BrandDto, lấy Id và tên hiển thị
-                        if (value.Data is Equipment equipment)
-                        {
-                            SelectedEquipmentId = equipment.Id;
-                            GlobalSearchText = equipment.EquipmentName;
-
-                        }
-                        else if (value.Data is EquipmentDto equipmentDto)
-                        {
-                            SelectedEquipmentId = equipmentDto.Id;
-                            GlobalSearchText = equipmentDto.EquipmentName;
-
-                        }
-
-                        // Đóng dropdown khi chọn xong
-                        IsSearchDropDownOpen = false;
-
-                        // Load dữ liệu phân tích cho brand đã chọn
-                        LoadData();
-                        OnPropertyChanged();
-                    }
-                }
+                if (_selectedSearchResult == value) return;
+                _selectedSearchResult = value;
+                OnPropertyChanged();
             }
         }
 
-        // Dropdown có đang mở hay không
         private bool _isSearchDropDownOpen;
         public bool IsSearchDropDownOpen
         {
             get => _isSearchDropDownOpen;
             set
             {
+                if (_isSearchDropDownOpen == value) return;
                 _isSearchDropDownOpen = value;
-                OnPropertyChanged(); // thông báo UI
+                OnPropertyChanged();
             }
         }
-        // Equipment equipment
-        // Service dùng để phân tích dữ liệu theo Brand
-        private readonly EquipmentAnalysisSv _service;
 
-        // Command cho nút phân tích
-        public ICommand AnalyzeCommand { get; set; }
-
-        // Id brand được chọn
         private int _selectedEquipmentId;
         public int SelectedEquipmentId
         {
             get => _selectedEquipmentId;
-            set
-            {
-                _selectedEquipmentId = value;
-                OnPropertyChanged(); // thông báo UI
-            }
+            set { _selectedEquipmentId = value; OnPropertyChanged(); }
         }
 
-        // List  dùng cho ComboBox hoặc UI khác
-        public ObservableCollection<EquipmentDto> Equipments { get; set; }
-        public ObservableCollection<EquipmentDto> EquipmentsSearch { get; set; }
-
-        // Constructor
-        public EquipmentAnalysisVm()
-        {
-            _service = new EquipmentAnalysisSv(); // init service phân tích
-
-            var equipmentService = new EquipmentService(); // init service Brand
-            var list = equipmentService.GetEquipmentDto(); // lấy danh sách brand từ service
-
-            Equipments = new ObservableCollection<EquipmentDto>(list); // danh sách hiển thị
-            EquipmentsSearch = new ObservableCollection<EquipmentDto>(list); // danh sách dùng search
-            AnalyzeCommand = new RelayCommand(_ => LoadData()); // gán command nút phân tích
-        }
-
-        // Property chứa dữ liệu phân tích 
         private EquipmentAnalysisDto _analysis;
         public EquipmentAnalysisDto Analysis
         {
             get => _analysis;
-            set
+            set { _analysis = value; OnPropertyChanged(); }
+        }
+
+        public ICommand AnalyzeCommand { get; set; }
+        public ObservableCollection<SearchResultDto> SearchSuggestions { get; } = new ObservableCollection<SearchResultDto>();
+
+        #endregion
+
+        public EquipmentAnalysisVm()
+        {
+            AnalyzeCommand = new RelayCommand(_ => LoadData());
+        }
+
+        #region ===================== Methods =====================
+
+        private void UpdateSuggestions()
+        {
+            // Tăng trải nghiệm bằng cách chỉ search khi đủ 2 ký tự
+            if (string.IsNullOrWhiteSpace(GlobalSearchText) || GlobalSearchText.Length < 2)
             {
-                _analysis = value;
-                OnPropertyChanged(); // thông báo UI khi dữ liệu phân tích thay đổi
+                SearchSuggestions.Clear();
+                IsSearchDropDownOpen = false;
+                return;
+            }
+
+            var results = _searchService.SearchEquipment(GlobalSearchText);
+
+            SearchSuggestions.Clear();
+            if (results != null)
+            {
+                foreach (var item in results)
+                {
+                    SearchSuggestions.Add(item);
+                }
+            }
+
+            IsSearchDropDownOpen = SearchSuggestions.Any();
+
+            // Tự động focus vào dòng đầu tiên để nhấn Enter là lấy luôn
+            SelectedSearchResult = SearchSuggestions.FirstOrDefault();
+        }
+
+        public void ConfirmSelection()
+        {
+            if (SelectedSearchResult == null) return;
+
+            _isInternalChange = true;
+            try
+            {
+                // Lấy ID thông minh dựa trên kiểu Object chứa trong Data
+                SelectedEquipmentId = SelectedSearchResult.Data switch
+                {
+                    Equipment e => e.Id,
+                    EquipmentDto d => d.Id,
+                    _ => SelectedSearchResult.Id
+                };
+
+                GlobalSearchText = SelectedSearchResult.Text;
+                IsSearchDropDownOpen = false;
+
+                // Load dữ liệu phân tích ngay lập tức
+                LoadData();
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi nếu cần (ví dụ: Log lỗi)
+                System.Diagnostics.Debug.WriteLine($"Error selecting equipment: {ex.Message}");
+            }
+            finally
+            {
+                _isInternalChange = false;
             }
         }
 
-        // Load dữ liệu phân tích dựa trên SelectedBrandId
         private void LoadData()
         {
-            if (SelectedEquipmentId == 0) return; // nếu chưa chọn brand => thoát
+            if (SelectedEquipmentId <= 0) return;
 
-
-            Analysis = _service.GetEquipmentAnalysis(SelectedEquipmentId); // gọi service lấy dữ liệu
+            // Thực hiện gọi service lấy dữ liệu phân tích
+            var result = _service.GetEquipmentAnalysis(SelectedEquipmentId);
+            if (result != null)
+            {
+                Analysis = result;
+            }
         }
 
-        // INotifyPropertyChanged implementation
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+        #endregion
     }
 }
