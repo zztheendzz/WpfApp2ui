@@ -16,27 +16,45 @@
 
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
 
-                <TextBlock Text="{DynamicResource lbl_Brand}"
-                           VerticalAlignment="Center"
-                           Margin="0,0,10,0"/>
 
-                <ComboBox Width="300"
-                          Margin="10"
-                          IsEditable="True"
-                          IsTextSearchEnabled="False"
-                          StaysOpenOnEdit="True"
-                          ItemsSource="{Binding SearchSuggestions}"
-                          Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
-                          SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}"
-                          DisplayMemberPath="Text" 
-                          IsDropDownOpen="{Binding IsSearchDropDownOpen}"
-                          SelectionChanged="ComboBox_SelectionChanged">
-                </ComboBox>
 
-                <Button Content="{DynamicResource btn_Analyze}"
-                        Width="100"
-                        Margin="10,0,0,0"
-                        Command="{Binding AnalyzeCommand}"/>
+                <StackPanel Orientation="Horizontal" Margin="10">
+                    <StackPanel Width="300">
+                        <TextBlock Text="{DynamicResource lbl_Brand}" Margin="0,0,0,5" Foreground="Black"   FontWeight="SemiBold"/>
+                        <Grid>
+                            <TextBox x:Name="txtSearchBrand" 
+                     materialDesign:HintAssist.Hint="{DynamicResource ph_Brand}"
+                     Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
+                     PreviewKeyDown="SearchBox_PreviewKeyDown"/>
+
+                            <Popup IsOpen="{Binding IsSearchDropDownOpen}" 
+                   PlacementTarget="{Binding ElementName=txtSearchBrand}"
+                   StaysOpen="False" AllowsTransparency="True" PopupAnimation="Slide">
+                                <Border Background="White" BorderBrush="#DDD" BorderThickness="1" CornerRadius="2"
+                        Width="{Binding ElementName=txtSearchBrand, Path=ActualWidth}" MaxHeight="250">
+                                    <ListBox x:Name="lstBrand" 
+                             DisplayMemberPath="Text" 
+                             BorderThickness="0"
+                             ItemsSource="{Binding SearchSuggestions}" 
+                             SelectedItem="{Binding SelectedSearchResult}">
+                                        <ListBox.ItemContainerStyle>
+                                            <Style TargetType="ListBoxItem">
+                                                <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/>
+                                            </Style>
+                                        </ListBox.ItemContainerStyle>
+                                    </ListBox>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </StackPanel>
+
+                    <Button Content="{DynamicResource btn_Analyze}"
+            Width="120"
+            Height="35"
+            VerticalAlignment="Bottom"
+            Margin="10,0,0,0"
+            Command="{Binding AnalyzeCommand}"/>
+                </StackPanel>
 
             </StackPanel>
 

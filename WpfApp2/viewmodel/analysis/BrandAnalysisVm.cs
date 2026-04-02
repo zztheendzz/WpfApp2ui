@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using WpfApp2.command;
@@ -16,17 +17,10 @@ namespace WpfApp2.viewmodel.analysis
     public class BrandAnalysisVm : INotifyPropertyChanged
     {
         private readonly SearchService _searchService = new SearchService();
-        private readonly BrandAnalysisSv _service;
+        private readonly BrandAnalysisSv _service = new BrandAnalysisSv();
 
-        // Cờ chặn vòng lặp khi gán text từ kết quả chọn
-        private bool _isSelecting;
-
-        public ICommand AnalyzeCommand { get; set; }
-
-        public ObservableCollection<SearchResultDto> SearchSuggestions { get; set; }
-            = new ObservableCollection<SearchResultDto>();
-
-        public ObservableCollection<BrandDto> Brands { get; set; }
+        // Cờ chặn vòng lặp phản hồi khi gán text từ kết quả chọn
+        private bool _isInternalChange;
 
         #region ===================== Properties =====================
 
@@ -40,9 +34,10 @@ namespace WpfApp2.viewmodel.analysis
                 _globalSearchText = value;
                 OnPropertyChanged();
 
-                // Chỉ cập nhật gợi ý nếu KHÔNG phải đang trong quá trình chọn item
-                if (!_isSelecting)
+                // Chỉ cập nhật gợi ý nếu KHÔNG phải thay đổi nội bộ do chọn item
+                if (!_isInternalChange)
                 {
+                    if (string.IsNullOrWhiteSpace(value)) SelectedBrandId = 0;
                     UpdateSuggestions();
                 }
             }
@@ -55,21 +50,8 @@ namespace WpfApp2.viewmodel.analysis
             set
             {
                 if (_selectedSearchResult == value) return;
-
-                _isSelecting = true; // Bắt đầu chặn
                 _selectedSearchResult = value;
                 OnPropertyChanged();
-
-                if (value != null)
-                {
-                    SelectedBrandId = value.Id;
-                    _globalSearchText = value.Text; // Cập nhật text hiển thị
-                    OnPropertyChanged(nameof(GlobalSearchText));
-
-                    IsSearchDropDownOpen = false;
-                    LoadData();
-                }
-                _isSelecting = false; // Mở chặn
             }
         }
 
@@ -86,39 +68,26 @@ namespace WpfApp2.viewmodel.analysis
         }
 
         private int _selectedBrandId;
-
-
         public int SelectedBrandId
         {
             get => _selectedBrandId;
-            set
-            {
-                _selectedBrandId = value;
-                OnPropertyChanged();
-            }
+            set { _selectedBrandId = value; OnPropertyChanged(); }
         }
 
         private BrandAnalysisDto _analysis;
         public BrandAnalysisDto Analysis
         {
             get => _analysis;
-            set
-            {
-                _analysis = value;
-                OnPropertyChanged();
-            }
+            set { _analysis = value; OnPropertyChanged(); }
         }
+
+        public ICommand AnalyzeCommand { get; set; }
+        public ObservableCollection<SearchResultDto> SearchSuggestions { get; } = new ObservableCollection<SearchResultDto>();
 
         #endregion
 
         public BrandAnalysisVm()
         {
-            _service = new BrandAnalysisSv();
-            var brandService = new BrandService();
-
-            var list = brandService.GetBrandDTO();
-            Brands = new ObservableCollection<BrandDto>(list);
-
             AnalyzeCommand = new RelayCommand(_ => LoadData());
         }
 
@@ -126,6 +95,7 @@ namespace WpfApp2.viewmodel.analysis
 
         private void UpdateSuggestions()
         {
+            // Kiểm tra độ dài keyword tương tự Purchase/Vendor
             if (string.IsNullOrWhiteSpace(GlobalSearchText) || GlobalSearchText.Length < 2)
             {
                 SearchSuggestions.Clear();
@@ -141,7 +111,32 @@ namespace WpfApp2.viewmodel.analysis
                 SearchSuggestions.Add(item);
             }
 
-            IsSearchDropDownOpen = SearchSuggestions.Count > 0;
+            IsSearchDropDownOpen = SearchSuggestions.Any();
+
+            // Mặc định chọn item đầu tiên để người dùng nhấn Enter là lấy luôn
+            SelectedSearchResult = SearchSuggestions.FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Hàm này được gọi từ Code-behind khi nhấn Enter hoặc Click vào ListBoxItem
+        /// </summary>
+        public void ConfirmSelection()
+        {
+            if (SelectedSearchResult == null) return;
+
+            _isInternalChange = true;
+            try
+            {
+                SelectedBrandId = SelectedSearchResult.Id;
+                GlobalSearchText = SelectedSearchResult.Text;
+
+                IsSearchDropDownOpen = false;
+                LoadData(); // Tự động load dữ liệu ngay khi chọn xong
+            }
+            finally
+            {
+                _isInternalChange = false;
+            }
         }
 
         private void LoadData()
