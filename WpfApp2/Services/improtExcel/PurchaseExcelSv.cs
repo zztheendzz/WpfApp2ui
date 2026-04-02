@@ -1,14 +1,14 @@
 ﻿using ClosedXML.Excel;
 using Dapper;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using WpfApp2.model.modelImportExcel;
 using WpfApp2.Services.sessionService;
-using System.Collections.Generic;
-using System.Linq;
-using System;
 
 namespace WpfApp2.Services.improtExcel
 {
@@ -17,31 +17,92 @@ namespace WpfApp2.Services.improtExcel
         private DatabaseService _db = new DatabaseService();
         int UserId = SessionService.CurrentUser.Id;
 
-        // ===== 1. MỚI: LẤY DANH SÁCH SHEET =====
+        // Lấy danh sách Sheet để hiển thị lên ComboBox
         public List<string> GetSheetNames(string filePath)
         {
-            using var workbook = new XLWorkbook(filePath);
-            return workbook.Worksheets.Select(x => x.Name).ToList();
+            try
+            {
+                using var workbook = new XLWorkbook(filePath);
+                return workbook.Worksheets.Select(x => x.Name).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Không thể đọc file Excel: " + ex.Message);
+            }
         }
 
-        // ===== NORMALIZE =====
+        // Chuẩn hóa chuỗi để so sánh tiêu đề (Viết hoa, bỏ dấu cách)
         private string Normalize(string s)
         {
             if (string.IsNullOrWhiteSpace(s)) return "";
             return new string(s.Trim().ToUpper().Where(c => !char.IsWhiteSpace(c)).ToArray());
         }
 
-        // ===== MAIN INSERT (Cập nhật tham số) =====
+        // Hàm kiểm tra ô có phải tiêu đề "Tên hàng" hay không (Hỗ trợ Việt - Hàn - Anh)
+        private bool IsModelNameHeader(string text)
+        {
+            string n = Normalize(text);
+            return n.Contains("TENHANG") || n.Contains("제품명") || n.Contains("MODELNAME");
+        }
+
+        public string GetProjectName(string filePath, string sheetName)
+        {
+            using var workbook = new XLWorkbook(filePath);
+            var ws = workbook.Worksheet(sheetName);
+
+            // Quét vài dòng đầu để tìm ô có chứa "Project name:"
+            for (int i = 1; i <= 5; i++)
+            {
+                var cellValue = ws.Cell(i, 1).GetValue<string>();
+                if (cellValue.Contains("Project name:"))
+                {
+                    // Lấy phần tên sau dấu ":"
+                    return cellValue.Replace("Project name:", "").Trim();
+                }
+            }
+            return "Unknown Project";
+        }
+        private int GetOrCreateEquipment(IDbConnection conn, string projectName)
+        {
+            if (string.IsNullOrWhiteSpace(projectName) || projectName == "Unknown Project")
+                return 0;
+
+            // Chuẩn hóa tên để tìm kiếm
+            string normalizedName = projectName.Trim();
+
+            // Kiểm tra xem đã có Equipment này chưa
+            int? existingId = conn.QueryFirstOrDefault<int?>(
+                "SELECT Id FROM Equipment WHERE EquipmentName = @Name",
+                new { Name = normalizedName });
+
+            if (existingId.HasValue) return existingId.Value;
+
+            // Nếu chưa có, tiến hành tạo mới
+            return conn.ExecuteScalar<int>(@"
+        INSERT INTO Equipment (EquipmentName, IsActive) 
+        VALUES (@Name, 1); 
+        SELECT last_insert_rowid();",
+                new
+                {
+                    Name = normalizedName,
+                    CreateAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                });
+        }
+
+        // Thực hiện Insert dữ liệu vào Database
         public void inSertData(string filePath, string sheetName)
         {
             try
             {
-                // Truyền sheetName vào đây
+                // 1. Lấy Project Name từ Excel trước
+                string projectName = GetProjectName(filePath, sheetName);
+
+                // 2. Đọc dữ liệu hàng hóa
                 var importPurchases = ReadExcel(filePath, sheetName);
 
                 if (importPurchases.Count == 0)
                 {
-                    MessageBox.Show("Không có dữ liệu trong sheet đã chọn!");
+                    MessageBox.Show("Không tìm thấy dữ liệu hợp lệ!");
                     return;
                 }
 
@@ -50,123 +111,146 @@ namespace WpfApp2.Services.improtExcel
                 var modelDict = GetDictionary("SELECT Id, ModelCode AS Name FROM Model");
 
                 using var conn = _db.GetConnection();
-                int success = 0;
-                string lastVendor = null;
+                if (conn.State == ConnectionState.Closed) conn.Open();
+                using var transaction = conn.BeginTransaction();
 
-                foreach (var row in importPurchases)
+                try
                 {
-                    string createAt = GetCurrentDateTime();
-                    var modelName = Normalize(row.ModelName);
-                    var vendorName = Normalize(row.Vendor);
+                    // 3. Lấy hoặc Tạo mới EquipmentId từ Project Name
+                    int equipmentId = GetOrCreateEquipment(conn, projectName);
 
-                    if (string.IsNullOrEmpty(vendorName))
-                        vendorName = lastVendor;
-                    else
-                        lastVendor = vendorName;
-
-                    if (string.IsNullOrEmpty(modelName)) continue;
-
-                    int vendorId = GetOrCreateVendor(conn, vendorDict, row.Vendor);
-                    int brandId = GetOrCreateBrand(conn, brandDict, row.Brand);
-                    int modelId = GetOrCreateModel(conn, modelDict, row.ModelName, row.ModelCode, brandId);
-
-                    conn.Execute(@"
-                        INSERT INTO PurchaseHistory 
-                        (ModelId, VendorId, Quantity, UnitPrice, TotalPrice, PurchaseDate, CreateAt, UserId)
-                        VALUES 
-                        (@ModelId, @VendorId, @Quantity, @UnitPrice, @TotalPrice, @PurchaseDate, @CreateAt, @UserId)",
-                    new
+                    int success = 0;
+                    foreach (var row in importPurchases)
                     {
-                        ModelId = modelId,
-                        VendorId = vendorId,
-                        Quantity = row.Quantity,
-                        UnitPrice = row.UnitPrice,
-                        TotalPrice = row.Quantity * row.UnitPrice,
-                        PurchaseDate = GetCurrentDate(),
-                        CreateAt = createAt,
-                        UserId = UserId
-                    });
+                        int vendorId = GetOrCreateVendor(conn, vendorDict, row.Vendor);
+                        int brandId = GetOrCreateBrand(conn, brandDict, row.Brand);
+                        int modelId = GetOrCreateModel(conn, modelDict, row.ModelName, row.ModelCode, brandId);
 
-                    success++;
+                        // 4. Insert vào PurchaseHistory (Thêm cột EquipmentId)
+                        conn.Execute(@"
+                    INSERT INTO PurchaseHistory 
+                    (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, TotalPrice, PurchaseDate, CreateAt, UserId)
+                    VALUES 
+                    (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @TotalPrice, @PurchaseDate, @CreateAt, @UserId)",
+                        new
+                        {
+                            ModelId = modelId,
+                            VendorId = vendorId,
+                            EquipmentId = equipmentId, // Gắn ID thiết bị/dự án vào đây
+                            Quantity = row.Quantity,
+                            UnitPrice = row.UnitPrice,
+                            TotalPrice = row.Quantity * row.UnitPrice,
+                            PurchaseDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                            CreateAt = DateTime.Now.ToString("HH:mm dd-MM-yyyy"),
+                            UserId = UserId
+                        }, transaction);
+
+                        success++;
+                    }
+
+                    transaction.Commit();
+                    MessageBox.Show($"Dự án: {projectName}\nĐã import thành công {success} dòng.");
                 }
-
-                MessageBox.Show($"Đã import thành công {success} dòng từ sheet '{sheetName}'");
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Lỗi Database: " + ex.Message);
+                }
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message); // Ném lỗi để ViewModel bắt và hiển thị vào Message
+                MessageBox.Show(ex.Message);
             }
         }
 
-        // ===== READ EXCEL (Cập nhật tham số sheetName) =====
+        // Đọc dữ liệu từ Excel với cơ chế quét cột động
         public List<ImportPurchase> ReadExcel(string filePath, string sheetName)
         {
             var result = new List<ImportPurchase>();
-
             using var workbook = new XLWorkbook(filePath);
 
-            // Lấy sheet được chọn thay vì mặc định sheet 1
             if (!workbook.Worksheets.Contains(sheetName))
-                throw new Exception($"Không tìm thấy sheet có tên '{sheetName}'");
+                throw new Exception($"Không tìm thấy sheet '{sheetName}'");
 
             var ws = workbook.Worksheet(sheetName);
+            IXLRow headerRow = null;
+            var headerMap = new Dictionary<string, int>();
 
-            int headerRow = 0;
-            foreach (var row in ws.RowsUsed())
+            // Bước 1: Tìm hàng tiêu đề (Quét 20 hàng đầu tiên)
+            foreach (var row in ws.RowsUsed().Take(20))
             {
-                if (row.Cells().Any(c => Normalize(c.GetValue<string>()) == "NO"))
+                if (row.CellsUsed().Any(c => IsModelNameHeader(c.GetValue<string>())))
                 {
-                    headerRow = row.RowNumber();
+                    headerRow = row;
+                    foreach (var cell in row.CellsUsed())
+                    {
+                        string txt = Normalize(cell.GetValue<string>());
+                        int col = cell.Address.ColumnNumber;
+
+                        if (txt.Contains("STT") || txt.Contains("NO")) headerMap["NO"] = col;
+                        else if (txt.Contains("TENHANG") || txt.Contains("제품명") || txt.Contains("MODELNAME")) headerMap["MODELNAME"] = col;
+                        else if (txt.Contains("NHANHIEU") || txt.Contains("브랜드") || txt.Contains("BRAND")) headerMap["BRAND"] = col;
+                        else if (txt.Contains("MAHANG") || txt.Contains("CODE")) headerMap["MODELCODE"] = col;
+                        else if (txt.Contains("DONGIA") || txt.Contains("단가") || txt.Contains("UNITPRICE")) headerMap["UNITPRICE"] = col;
+                        else if (txt.Contains("SOLUONG") || txt.Contains("수량") || txt.Contains("QUANTITY")) headerMap["QUANTITY"] = col;
+                        else if (txt.Contains("NHACUNG") || txt.Contains("공급업체") || txt.Contains("VENDOR")) headerMap["VENDOR"] = col;
+                        else if (txt.Contains("GHICHU") || txt.Contains("비고") || txt.Contains("NOTE")) headerMap["NOTE"] = col;
+                    }
                     break;
                 }
             }
 
-            if (headerRow == 0)
-                throw new Exception("Không tìm thấy tiêu đề (cột 'NO') trong sheet này.");
+            if (headerRow == null)
+                throw new Exception("Không tìm thấy hàng tiêu đề có chứa 'Tên hàng' hoặc '제품명'.");
 
-            var headerMap = new Dictionary<string, int>();
-            var header = ws.Row(headerRow);
-
-            foreach (var cell in header.Cells())
-            {
-                var key = Normalize(cell.GetValue<string>());
-                if (!string.IsNullOrEmpty(key))
-                    headerMap[key] = cell.Address.ColumnNumber;
-            }
-
-            int currentRow = headerRow + 1;
+            // Bước 2: Đọc dữ liệu từ hàng kế tiếp
+            int startRow = headerRow.RowNumber() + 1;
             int lastRow = ws.LastRowUsed().RowNumber();
 
-            while (currentRow <= lastRow)
+            for (int r = startRow; r <= lastRow; r++)
             {
-                var row = ws.Row(currentRow);
-                var modelName = GetString(row, headerMap, "MODELNAME");
+                var row = ws.Row(r);
+                string modelName = GetCellValue(row, headerMap, "MODELNAME");
 
-                if (string.IsNullOrWhiteSpace(modelName))
-                {
-                    currentRow++;
-                    continue;
-                }
+                // Bỏ qua nếu hàng trống hoặc lỡ đọc phải hàng tiêu đề phụ (nếu có)
+                if (string.IsNullOrWhiteSpace(modelName) || IsModelNameHeader(modelName)) continue;
 
                 result.Add(new ImportPurchase
                 {
-                    No = GetInt(row, headerMap, "NO"),
-                    ModelName = modelName,
-                    Brand = GetString(row, headerMap, "BRAND"),
-                    ModelCode = GetString(row, headerMap, "MODELCODE"),
-                    Quantity = GetInt(row, headerMap, "QUANTITY"),
-                    UnitPrice = GetDecimal(row, headerMap, "UNITPRICE"),
-                    Vendor = GetString(row, headerMap, "VENDOR"),
-                    Note = GetString(row, headerMap, "NOTE")
+                    No = ParseInt(GetCellValue(row, headerMap, "NO")),
+                    ModelName = modelName.Trim(),
+                    Brand = GetCellValue(row, headerMap, "BRAND").Trim(),
+                    ModelCode = GetCellValue(row, headerMap, "MODELCODE").Trim(),
+                    Quantity = ParseInt(GetCellValue(row, headerMap, "QUANTITY")),
+                    UnitPrice = ParseDecimal(GetCellValue(row, headerMap, "UNITPRICE")),
+                    Vendor = GetCellValue(row, headerMap, "VENDOR").Trim(),
+                    Note = GetCellValue(row, headerMap, "NOTE").Trim()
                 });
-
-                currentRow++;
             }
 
             return result;
         }
 
-        // --- Các hàm GetOrCreate và Helper giữ nguyên như cũ ---
+        #region Helpers
+        private string GetCellValue(IXLRow row, Dictionary<string, int> map, string key)
+        {
+            return map.ContainsKey(key) ? row.Cell(map[key]).GetValue<string>() : "";
+        }
+
+        private int ParseInt(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return 0;
+            // Xử lý trường hợp số có dấu phẩy hoặc chấm thập phân
+            string clean = s.Replace(",", "").Split('.')[0];
+            return int.TryParse(clean, out int val) ? val : 0;
+        }
+
+        private decimal ParseDecimal(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return 0;
+            return decimal.TryParse(s.Replace(",", ""), out decimal val) ? val : 0;
+        }
+
         private int GetOrCreateVendor(IDbConnection conn, Dictionary<string, int> dict, string name)
         {
             var key = Normalize(name);
@@ -205,24 +289,7 @@ namespace WpfApp2.Services.improtExcel
                 .Where(x => !string.IsNullOrWhiteSpace(x.Name))
                 .ToDictionary(x => Normalize(x.Name), x => x.Id);
         }
-
-        private string GetString(IXLRow row, Dictionary<string, int> map, string colName)
-        {
-            var key = Normalize(colName);
-            return map.ContainsKey(key) ? row.Cell(map[key]).GetString() : "";
-        }
-
-        private int GetInt(IXLRow row, Dictionary<string, int> map, string colName)
-        {
-            var key = Normalize(colName);
-            return map.ContainsKey(key) ? (row.Cell(map[key]).TryGetValue<int>(out int val) ? val : 0) : 0;
-        }
-
-        private decimal GetDecimal(IXLRow row, Dictionary<string, int> map, string colName)
-        {
-            var key = Normalize(colName);
-            return map.ContainsKey(key) ? (row.Cell(map[key]).TryGetValue<decimal>(out decimal val) ? val : 0) : 0;
-        }
+        #endregion
 
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -231,8 +298,5 @@ namespace WpfApp2.Services.improtExcel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
         #endregion
-
-        public string GetCurrentDateTime() => DateTime.Now.ToString("HH:mm dd-MM-yyyy");
-        public string GetCurrentDate() => DateTime.Now.ToString("yyyy-MM-dd");
     }
 }
