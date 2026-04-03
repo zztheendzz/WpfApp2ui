@@ -1,28 +1,49 @@
 ﻿using Dapper;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using WpfApp2.modelDto;
+using WpfApp2.Services.exception;
 namespace WpfApp2.Services
 {
     internal class BrandService
     {
 
         public DatabaseService _db = new DatabaseService();
+
         public IEnumerable<BrandDto> GetBrandDTO()
         {
-            using var conn = _db.GetConnection();
+            const string sql = @"
+            SELECT 
+                Id,
+                BrandName,
+                IsActive
+            FROM Brand
+            WHERE IsActive = 1
+        ";
 
-            string sql = @"
-                SELECT 
-                    m.Id,
-                    m.BrandName,
-                    m.IsActive
-                    FROM Brand m
-                WHERE IsActive = 1
-                    ";
-            return conn.Query<BrandDto>(sql);
+            int retry = 3;
+
+            while (retry > 0)
+            {
+                try
+                {
+                    using var conn = _db.GetConnection();
+
+                    return conn.Query<BrandDto>(sql).ToList(); ;
+                }
+                catch (SqliteException ex) when (ex.Message.Contains("locked"))
+                {
+                    retry--;
+                    Thread.Sleep(300);
+                }
+            }
+
+            // ❗ nếu bị lock nhiều lần
+            throw new DatabaseLockedException();
         }
+
 
 
         public void Delete(int id)
@@ -47,6 +68,7 @@ namespace WpfApp2.Services
 
             conn.Execute(sql, brand);
         }
+
 
         public int Add(BrandDto brand)
         {

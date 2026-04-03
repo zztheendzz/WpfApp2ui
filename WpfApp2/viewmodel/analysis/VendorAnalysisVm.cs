@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows; // Thêm để dùng MessageBox
 using System.Windows.Input;
 using WpfApp2.command;
 using WpfApp2.model;
@@ -10,15 +11,16 @@ using WpfApp2.modelDTO;
 using WpfApp2.modelDTO.analysysDto;
 using WpfApp2.Services;
 using WpfApp2.Services.analysisService;
+using WpfApp2.Services.exception;
 
 namespace WpfApp2.viewmodel.analysis
 {
-    class VendorAnalysisVm : INotifyPropertyChanged
+    public class VendorAnalysisVm : INotifyPropertyChanged
     {
         private readonly SearchService _searchService = new SearchService();
         private readonly VendorAnalysisSv _service = new VendorAnalysisSv();
 
-        // 1. Cờ chặn vòng lặp phản hồi
+        // Cờ chặn vòng lặp phản hồi
         private bool _isInternalChange;
 
         #region ===================== Search Properties =====================
@@ -33,7 +35,7 @@ namespace WpfApp2.viewmodel.analysis
                 _globalSearchText = value;
                 OnPropertyChanged();
 
-                // 2. Chỉ update suggestion nếu không phải thay đổi nội bộ (do chọn item)
+                // Chỉ update suggestion nếu không phải thay đổi nội bộ (do chọn item)
                 if (!_isInternalChange)
                 {
                     if (string.IsNullOrWhiteSpace(value)) SelectedVendorId = 0;
@@ -84,7 +86,6 @@ namespace WpfApp2.viewmodel.analysis
 
         private void UpdateSuggestions()
         {
-            // Kiểm tra điều kiện như bên Purchase (độ dài >= 2)
             if (string.IsNullOrWhiteSpace(GlobalSearchText) || GlobalSearchText.Length < 2)
             {
                 SearchSuggestions.Clear();
@@ -92,18 +93,25 @@ namespace WpfApp2.viewmodel.analysis
                 return;
             }
 
-            var results = _searchService.SearchVendor(GlobalSearchText);
+            try
+            {
+                var results = _searchService.SearchVendor(GlobalSearchText);
 
-            SearchSuggestions.Clear();
-            foreach (var item in results) SearchSuggestions.Add(item);
+                SearchSuggestions.Clear();
+                foreach (var item in results) SearchSuggestions.Add(item);
 
-            IsSearchDropDownOpen = SearchSuggestions.Any();
+                IsSearchDropDownOpen = SearchSuggestions.Any();
 
-            // Tự động focus vào dòng đầu tiên để tiện nhấn Enter
-            SelectedSearchResult = SearchSuggestions.FirstOrDefault();
+                // Tự động focus vào dòng đầu tiên để tiện nhấn Enter
+                SelectedSearchResult = SearchSuggestions.FirstOrDefault();
+            }
+            catch (DatabaseLockedException)
+            {
+                // Silent fail cho phần gợi ý khi đang gõ
+                IsSearchDropDownOpen = false;
+            }
         }
 
-        // 3. Hàm xác nhận lựa chọn tương tự Purchase
         public void ConfirmSelection()
         {
             if (SelectedSearchResult == null) return;
@@ -121,6 +129,12 @@ namespace WpfApp2.viewmodel.analysis
                     SelectedVendorId = vendorDto.Id;
                     GlobalSearchText = vendorDto.VendorName;
                 }
+                else
+                {
+                    // Fallback
+                    SelectedVendorId = SelectedSearchResult.Id;
+                    GlobalSearchText = SelectedSearchResult.Text;
+                }
 
                 IsSearchDropDownOpen = false;
                 LoadData(); // Tự động chạy phân tích sau khi chọn
@@ -134,7 +148,19 @@ namespace WpfApp2.viewmodel.analysis
         private void LoadData()
         {
             if (SelectedVendorId == 0) return;
-            Analysis = _service.GetVendorAnalysis(SelectedVendorId);
+
+            try
+            {
+                Analysis = _service.GetVendorAnalysis(SelectedVendorId);
+            }
+            catch (DatabaseLockedException)
+            {
+                MessageBox.Show("Cơ sở dữ liệu đang bận tính toán dữ liệu Nhà cung cấp. Vui lòng thử lại sau.", "SQLite Locked");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi tải dữ liệu: {ex.Message}");
+            }
         }
 
         #endregion

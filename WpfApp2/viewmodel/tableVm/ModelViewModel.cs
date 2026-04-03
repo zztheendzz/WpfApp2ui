@@ -2,80 +2,121 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq; // Cần thiết để dùng FirstOrDefault
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
+using System.Windows; // Để dùng MessageBox
 using System.Windows.Input;
 using WpfApp2.command;
-using WpfApp2.model;
 using WpfApp2.modelDTO;
 using WpfApp2.Services;
+using WpfApp2.Services.exception;
 using WpfApp2.view.dialog;
-using WpfApp2.view.pages;
-using static MaterialDesignThemes.Wpf.Theme.ToolBar;
 
 namespace WpfApp2.viewmodel.tableVm
 {
     public class ModelViewModel : INotifyPropertyChanged
     {
+        // Khai báo Service dùng chung để tránh khởi tạo nhiều lần
+        private readonly ModelService _modelService = new ModelService();
+
         public ICommand EditCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
         public ICommand AddCommand { get; set; }
-        public ObservableCollection<ModelDto> Models { get; set; }
 
+        private ObservableCollection<ModelDto> _models;
+        public ObservableCollection<ModelDto> Models
+        {
+            get => _models;
+            set { _models = value; OnPropertyChanged(); }
+        }
 
-        public ModelViewModel() {
-            ModelService modelService = new ModelService();
+        public ModelViewModel()
+        {
+            LoadData();
 
-            Models = new ObservableCollection<ModelDto>(
-                        modelService.GetModelDTO());
             EditCommand = new RelayCommand(x => Edit((ModelDto)x));
             DeleteCommand = new RelayCommand(x => Delete((ModelDto)x));
             AddCommand = new RelayCommand(x => Add());
         }
+
+        private void LoadData()
+        {
+            try
+            {
+                var data = _modelService.GetModelDTO();
+                Models = new ObservableCollection<ModelDto>(data);
+            }
+            catch (DatabaseLockedException)
+            {
+                MessageBox.Show("Dữ liệu Models hiện đang bị khóa bởi tiến trình khác. Vui lòng thử lại sau.", "Thông báo");
+                Models = new ObservableCollection<ModelDto>(); // Tránh lỗi null cho UI
+            }
+        }
+
         public void Delete(ModelDto model)
         {
-            ModelService service = new ModelService();
+            if (model == null) return;
 
-            service.Delete(model.Id);
-
-            Models.Remove(model);
+            var confirm = MessageBox.Show($"Bạn có chắc chắn muốn xóa Model này?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (confirm == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    _modelService.Delete(model.Id);
+                    Models.Remove(model);
+                }
+                catch (DatabaseLockedException)
+                {
+                    MessageBox.Show("Database đang bận, không thể thực hiện thao tác xóa.", "Lỗi hệ thống");
+                }
+            }
         }
 
         public void Edit(ModelDto model)
         {
-            var dialog = new edit(model);
+            if (model == null) return;
 
+            var dialog = new edit(model);
             if (dialog.ShowDialog() == true)
             {
-                ModelService service = new ModelService();
-                service.Edit(model);
-
-                OnPropertyChanged(nameof(Models));
+                try
+                {
+                    _modelService.Edit(model);
+                    // Thông thường không cần OnPropertyChanged(nameof(Models)) ở đây 
+                    // vì object model trong danh sách đã được cập nhật tham chiếu
+                }
+                catch (DatabaseLockedException)
+                {
+                    MessageBox.Show("Không thể lưu thay đổi cho Model vì Database bị khóa.", "Lỗi");
+                    LoadData(); // Reload để đồng bộ lại dữ liệu gốc từ DB
+                }
             }
-
         }
+
         public void Add()
         {
-            var model = new ModelDto();
-            model.IsActive=true;
+            var model = new ModelDto { IsActive = true };
             var dialog = new edit(model);
 
             if (dialog.ShowDialog() == true)
             {
+                try
+                {
+                    int newId = _modelService.Add(model);
 
-                ModelService service = new ModelService();
+                    // Lấy lại data đã JOIN hoàn chỉnh (quan trọng đối với Model thường có BrandName, v.v.)
+                    var newItem = _modelService.GetModelDTO()
+                                             .FirstOrDefault(x => x.Id == newId);
 
-                int newId = service.Add(model);
-
-                // 🔥 LẤY LẠI DATA ĐÃ JOIN
-                var newItem = service.GetModelDTO()
-                                     .FirstOrDefault(x => x.Id == newId);
-
-                Models.Add(newItem); // ✅ FIX Ở ĐÂY
+                    if (newItem != null)
+                    {
+                        Models.Add(newItem);
+                    }
+                }
+                catch (DatabaseLockedException)
+                {
+                    MessageBox.Show("Thêm mới thất bại. Hệ thống đang bận ghi dữ liệu khác.", "Thông báo");
+                }
             }
         }
 

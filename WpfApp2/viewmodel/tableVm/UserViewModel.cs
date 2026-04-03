@@ -6,16 +6,16 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using WpfApp2.command;
-using WpfApp2.modelDto;
-using WpfApp2.modelDTO;
+using WpfApp2.modelDTO; // Đảm bảo đúng namespace
 using WpfApp2.Services;
+using WpfApp2.Services.exception;
 using WpfApp2.view.dialog;
 
 namespace WpfApp2.viewmodel.tableVm
 {
     public class UserViewModel : INotifyPropertyChanged
     {
-        private readonly UserService _userService;
+        private readonly UserService _userService = new UserService();
         private UserDto _currentUser;
 
         public ICommand EditCommand { get; set; }
@@ -34,20 +34,29 @@ namespace WpfApp2.viewmodel.tableVm
 
         public UserViewModel()
         {
-            _userService = new UserService();
-            // Load danh sách ban đầu từ DB
-            Users = new ObservableCollection<UserDto>(_userService.GetUserDTO());
+            LoadData();
 
-            // Khởi tạo Commands
             EditCommand = new RelayCommand(x => OpenEdit((UserDto)x));
             DeleteCommand = new RelayCommand(x => Delete((UserDto)x));
             AddCommand = new RelayCommand(x => OpenAdd());
             SaveCommand = new RelayCommand(x => Save(x));
         }
 
+        private void LoadData()
+        {
+            try
+            {
+                Users = new ObservableCollection<UserDto>(_userService.GetUserDTO());
+            }
+            catch (DatabaseLockedException)
+            {
+                MessageBox.Show("Hệ thống bận, không thể tải danh sách người dùng.", "Thông báo");
+                Users = new ObservableCollection<UserDto>();
+            }
+        }
+
         private bool IsDuplicateUserName(string userName, int currentUserId)
         {
-            // Kiểm tra trùng tên, loại trừ ID của người đang được sửa
             return Users.Any(u =>
                 u.UserName.Equals(userName, StringComparison.OrdinalIgnoreCase)
                 && u.Id != currentUserId);
@@ -56,13 +65,7 @@ namespace WpfApp2.viewmodel.tableVm
         public void OpenAdd()
         {
             IsEditMode = false;
-            CurrentUser = new UserDto
-            {
-                IsActive = true,
-                Role = 0,
-                UserName = ""
-            };
-
+            CurrentUser = new UserDto { IsActive = true, Role = 0, UserName = "" };
             var dialog = new UserEditAdd(this);
             dialog.ShowDialog();
         }
@@ -71,17 +74,14 @@ namespace WpfApp2.viewmodel.tableVm
         {
             if (user == null) return;
             IsEditMode = true;
-
-            // Clone dữ liệu để tránh sửa trực tiếp vào dòng đang hiển thị trên Grid khi chưa nhấn Save
             CurrentUser = new UserDto
             {
                 Id = user.Id,
                 UserName = user.UserName,
                 Role = user.Role,
                 IsActive = user.IsActive,
-                Password = "" // Để trống để kiểm tra xem có nhập pass mới không
+                Password = ""
             };
-
             var dialog = new UserEditAdd(this);
             dialog.ShowDialog();
         }
@@ -90,32 +90,25 @@ namespace WpfApp2.viewmodel.tableVm
         {
             try
             {
-                bool success = false;
+                bool success = IsEditMode ? ExecuteEdit() : ExecuteAdd();
 
-                if (IsEditMode)
-                {
-                    success = ExecuteEdit();
-                }
-                else
-                {
-                    success = ExecuteAdd();
-                }
-
-                // Nếu thực hiện thành công (không trùng tên, đủ pass) thì mới đóng cửa sổ
                 if (success && parameter is Window window)
                 {
                     window.Close();
                 }
             }
+            catch (DatabaseLockedException)
+            {
+                MessageBox.Show("Cơ sở dữ liệu đang bị khóa bởi một tác vụ khác. Vui lòng thử lại sau giây lát.", "Lỗi SQLite");
+            }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi hệ thống: {ex.Message}");
+                MessageBox.Show($"Lỗi không xác định: {ex.Message}");
             }
         }
 
         private bool ExecuteAdd()
         {
-            // 1. Kiểm tra đầu vào
             if (string.IsNullOrWhiteSpace(CurrentUser.UserName))
             {
                 MessageBox.Show("Vui lòng nhập tên đăng nhập!");
@@ -134,35 +127,35 @@ namespace WpfApp2.viewmodel.tableVm
                 return false;
             }
 
-            // 2. Hash mật khẩu và lưu DB
-            CurrentUser.Password = BCrypt.Net.BCrypt.HashPassword(CurrentUser.Password);
+            // Thực hiện Hash và Lưu (Phần này có thể bị ném DatabaseLockedException)
+            string rawPassword = CurrentUser.Password;
+            CurrentUser.Password = BCrypt.Net.BCrypt.HashPassword(rawPassword);
+
             int newId = _userService.Add(CurrentUser);
             CurrentUser.Id = newId;
 
-            // 3. Cập nhật UI: Thêm vào danh sách đang hiển thị
             Users.Add(CurrentUser);
             return true;
         }
 
         private bool ExecuteEdit()
         {
-            // 1. Kiểm tra trùng (Loại trừ chính mình qua ID)
             if (IsDuplicateUserName(CurrentUser.UserName, CurrentUser.Id))
             {
                 MessageBox.Show("Tên đăng nhập đã bị người khác sử dụng!");
                 return false;
             }
 
-            // 2. Xử lý Password (chỉ hash nếu người dùng có gõ mật khẩu mới)
+            // Chỉ hash nếu có nhập pass mới
             if (!string.IsNullOrWhiteSpace(CurrentUser.Password))
             {
                 CurrentUser.Password = BCrypt.Net.BCrypt.HashPassword(CurrentUser.Password);
             }
 
-            // 3. Gọi Service cập nhật DB
+            // Gọi service (Có thể bị ném DatabaseLockedException)
             _userService.Edit(CurrentUser);
 
-            // 4. Cập nhật UI: Tìm vị trí cũ và thay thế bằng Object mới để Grid refresh ngay lập tức
+            // Cập nhật UI
             var userInList = Users.FirstOrDefault(u => u.Id == CurrentUser.Id);
             if (userInList != null)
             {
@@ -179,15 +172,20 @@ namespace WpfApp2.viewmodel.tableVm
             var result = MessageBox.Show($"Xóa user {user.UserName}?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (result == MessageBoxResult.Yes)
             {
-                _userService.Delete(user.Id);
-                Users.Remove(user);
+                try
+                {
+                    _userService.Delete(user.Id);
+                    Users.Remove(user);
+                }
+                catch (DatabaseLockedException)
+                {
+                    MessageBox.Show("Hệ thống đang bận xử lý dữ liệu, chưa thể xóa user này.", "Thông báo");
+                }
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
-        {
+        protected void OnPropertyChanged([CallerMemberName] string name = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
     }
 }

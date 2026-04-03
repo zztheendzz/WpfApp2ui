@@ -1,75 +1,114 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
+using System.Windows;
 using System.Windows.Input;
 using WpfApp2.command;
-using WpfApp2.model;
 using WpfApp2.modelDTO;
 using WpfApp2.Services;
+using WpfApp2.Services.exception;
 using WpfApp2.view.dialog;
-
-using WpfApp2.view.pages;
 
 namespace WpfApp2.viewmodel.tableVm
 {
-    public class VendorViewModel:INotifyPropertyChanged
+    public class VendorViewModel : INotifyPropertyChanged
     {
+        // Sử dụng một instance service duy nhất
+        private readonly VendorService _vendorService = new VendorService();
+
         public ICommand EditCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
         public ICommand AddCommand { get; set; }
-        public ObservableCollection<VendorDto> Vendors { get; set; }
 
+        private ObservableCollection<VendorDto> _vendors;
+        public ObservableCollection<VendorDto> Vendors
+        {
+            get => _vendors;
+            set { _vendors = value; OnPropertyChanged(); }
+        }
 
         public VendorViewModel()
         {
-            VendorService vendorService = new VendorService();
+            LoadData();
 
-            Vendors = new ObservableCollection<VendorDto>(
-                        vendorService.GetVendorDTO());
             EditCommand = new RelayCommand(x => Edit((VendorDto)x));
             DeleteCommand = new RelayCommand(x => Delete((VendorDto)x));
             AddCommand = new RelayCommand(x => Add());
         }
+
+        private void LoadData()
+        {
+            try
+            {
+                var data = _vendorService.GetVendorDTO();
+                Vendors = new ObservableCollection<VendorDto>(data);
+            }
+            catch (DatabaseLockedException)
+            {
+                MessageBox.Show("Cơ sở dữ liệu đang bận, không thể tải danh sách nhà cung cấp.", "Thông báo");
+                Vendors = new ObservableCollection<VendorDto>();
+            }
+        }
+
         public void Delete(VendorDto vendor)
         {
-            VendorService vendorService = new VendorService();
+            if (vendor == null) return;
 
-            vendorService.Delete(vendor.Id);
+            var confirm = MessageBox.Show($"Bạn có chắc muốn xóa nhà cung cấp: {vendor.VendorName}?",
+                                         "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-            Vendors.Remove(vendor);
+            if (confirm == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    _vendorService.Delete(vendor.Id);
+                    Vendors.Remove(vendor);
+                }
+                catch (DatabaseLockedException)
+                {
+                    MessageBox.Show("Hệ thống đang bận ghi dữ liệu khác, vui lòng thử lại sau.", "Lỗi");
+                }
+            }
         }
 
         public void Edit(VendorDto vendor)
         {
-            var dialog = new edit(vendor);
+            if (vendor == null) return;
 
+            var dialog = new edit(vendor);
             if (dialog.ShowDialog() == true)
             {
-                VendorService vendorService = new VendorService();
-                vendorService.Edit(vendor);
-
-                OnPropertyChanged(nameof(vendor));
+                try
+                {
+                    _vendorService.Edit(vendor);
+                    // Dữ liệu tự cập nhật trên UI thông qua Binding vì cùng tham chiếu object
+                }
+                catch (DatabaseLockedException)
+                {
+                    MessageBox.Show("Lỗi: Cơ sở dữ liệu bị khóa, không thể lưu thay đổi.", "Thông báo");
+                    LoadData(); // Tải lại để đảm bảo dữ liệu trên UI khớp với DB
+                }
             }
-
         }
+
         public void Add()
         {
-            var vendor = new VendorDto();   // object mới
-           vendor.IsActive = true;
+            var vendor = new VendorDto { IsActive = true };
             var dialog = new edit(vendor);
 
             if (dialog.ShowDialog() == true)
             {
-                VendorService vendorService = new VendorService();
-
-                int newId = vendorService.Add(vendor);
-
-                vendor.Id = newId;
-
-                Vendors.Add(vendor);
+                try
+                {
+                    int newId = _vendorService.Add(vendor);
+                    vendor.Id = newId;
+                    Vendors.Add(vendor);
+                }
+                catch (DatabaseLockedException)
+                {
+                    MessageBox.Show("Không thể thêm nhà cung cấp mới lúc này do DB đang bận.", "Lỗi");
+                }
             }
         }
 

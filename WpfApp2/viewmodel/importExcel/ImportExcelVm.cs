@@ -1,13 +1,15 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using Microsoft.Win32;
 using WpfApp2.command;
+using WpfApp2.Services; // Giả định DatabaseLockedException nằm ở đây
 using WpfApp2.Services.improtExcel;
+using WpfApp2.Services.exception;
 
 namespace WpfApp2.viewmodel.importExcel
 {
@@ -22,46 +24,28 @@ namespace WpfApp2.viewmodel.importExcel
         public string FilePath
         {
             get => _filePath;
-            set
-            {
-                _filePath = value;
-                OnPropertyChanged();
-            }
+            set { _filePath = value; OnPropertyChanged(); }
         }
 
         private string _message;
         public string Message
         {
             get => _message;
-            set
-            {
-                _message = value;
-                OnPropertyChanged();
-            }
+            set { _message = value; OnPropertyChanged(); }
         }
 
-        // --- MỚI: Danh sách các Sheet ---
         private List<string> _sheetList;
         public List<string> SheetList
         {
             get => _sheetList;
-            set
-            {
-                _sheetList = value;
-                OnPropertyChanged();
-            }
+            set { _sheetList = value; OnPropertyChanged(); }
         }
 
-        // --- MỚI: Sheet được chọn ---
         private string _selectedSheet;
         public string SelectedSheet
         {
             get => _selectedSheet;
-            set
-            {
-                _selectedSheet = value;
-                OnPropertyChanged();
-            }
+            set { _selectedSheet = value; OnPropertyChanged(); }
         }
 
         // ====== COMMAND ======
@@ -87,15 +71,13 @@ namespace WpfApp2.viewmodel.importExcel
             if (dialog.ShowDialog() == true)
             {
                 FilePath = dialog.FileName;
-                Message = ""; // Xóa thông báo cũ
+                Message = "";
 
                 try
                 {
-                    // Tự động load danh sách Sheet khi chọn file xong
                     var sheets = _purchaseExcelSv.GetSheetNames(FilePath);
                     SheetList = sheets;
 
-                    // Mặc định chọn sheet đầu tiên
                     if (SheetList != null && SheetList.Count > 0)
                     {
                         SelectedSheet = SheetList.FirstOrDefault();
@@ -124,13 +106,23 @@ namespace WpfApp2.viewmodel.importExcel
 
             try
             {
-                // Truyền cả FilePath và SelectedSheet vào Service
+                Message = "Đang xử lý dữ liệu..."; // Thông báo trạng thái chờ
+
+                // Thực hiện gọi Service để Insert
                 _purchaseExcelSv.inSertData(FilePath, SelectedSheet);
+
                 Message = "Import thành công!";
+                MessageBox.Show("Dữ liệu đã được nhập thành công vào hệ thống.", "Hoàn tất");
+            }
+            catch (DatabaseLockedException)
+            {
+                Message = "Lỗi: Cơ sở dữ liệu đang bị khóa.";
+                MessageBox.Show("Cơ sở dữ liệu đang bận xử lý một tác vụ khác (có thể là Backup hoặc một lượt Import khác). Vui lòng đợi vài giây rồi thử lại.", "Hệ thống bận");
             }
             catch (Exception ex)
             {
                 Message = "Lỗi: " + ex.Message;
+                MessageBox.Show("Có lỗi xảy ra trong quá trình Import: " + ex.Message, "Lỗi");
             }
         }
 

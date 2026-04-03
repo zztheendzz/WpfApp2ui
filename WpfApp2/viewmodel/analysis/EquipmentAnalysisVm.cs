@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows; // Thêm để dùng MessageBox
 using System.Windows.Input;
 using WpfApp2.command;
 using WpfApp2.model;
@@ -11,6 +12,7 @@ using WpfApp2.modelDTO;
 using WpfApp2.modelDTO.analysysDto;
 using WpfApp2.Services;
 using WpfApp2.Services.analysisService;
+using WpfApp2.Services.exception;
 
 namespace WpfApp2.viewmodel.analysis
 {
@@ -34,7 +36,6 @@ namespace WpfApp2.viewmodel.analysis
 
                 if (!_isInternalChange)
                 {
-                    // Nếu xóa sạch text thì reset ID
                     if (string.IsNullOrWhiteSpace(value))
                     {
                         SelectedEquipmentId = 0;
@@ -101,7 +102,6 @@ namespace WpfApp2.viewmodel.analysis
 
         private void UpdateSuggestions()
         {
-            // Tăng trải nghiệm bằng cách chỉ search khi đủ 2 ký tự
             if (string.IsNullOrWhiteSpace(GlobalSearchText) || GlobalSearchText.Length < 2)
             {
                 SearchSuggestions.Clear();
@@ -109,21 +109,27 @@ namespace WpfApp2.viewmodel.analysis
                 return;
             }
 
-            var results = _searchService.SearchEquipment(GlobalSearchText);
-
-            SearchSuggestions.Clear();
-            if (results != null)
+            try
             {
-                foreach (var item in results)
+                var results = _searchService.SearchEquipment(GlobalSearchText);
+
+                SearchSuggestions.Clear();
+                if (results != null)
                 {
-                    SearchSuggestions.Add(item);
+                    foreach (var item in results)
+                    {
+                        SearchSuggestions.Add(item);
+                    }
                 }
+
+                IsSearchDropDownOpen = SearchSuggestions.Any();
+                SelectedSearchResult = SearchSuggestions.FirstOrDefault();
             }
-
-            IsSearchDropDownOpen = SearchSuggestions.Any();
-
-            // Tự động focus vào dòng đầu tiên để nhấn Enter là lấy luôn
-            SelectedSearchResult = SearchSuggestions.FirstOrDefault();
+            catch (DatabaseLockedException)
+            {
+                // Khi đang gõ mà bị lock thì ẩn gợi ý đi để không gây crash hoặc giật lag
+                IsSearchDropDownOpen = false;
+            }
         }
 
         public void ConfirmSelection()
@@ -133,7 +139,6 @@ namespace WpfApp2.viewmodel.analysis
             _isInternalChange = true;
             try
             {
-                // Lấy ID thông minh dựa trên kiểu Object chứa trong Data
                 SelectedEquipmentId = SelectedSearchResult.Data switch
                 {
                     Equipment e => e.Id,
@@ -144,12 +149,10 @@ namespace WpfApp2.viewmodel.analysis
                 GlobalSearchText = SelectedSearchResult.Text;
                 IsSearchDropDownOpen = false;
 
-                // Load dữ liệu phân tích ngay lập tức
                 LoadData();
             }
             catch (Exception ex)
             {
-                // Xử lý lỗi nếu cần (ví dụ: Log lỗi)
                 System.Diagnostics.Debug.WriteLine($"Error selecting equipment: {ex.Message}");
             }
             finally
@@ -162,11 +165,21 @@ namespace WpfApp2.viewmodel.analysis
         {
             if (SelectedEquipmentId <= 0) return;
 
-            // Thực hiện gọi service lấy dữ liệu phân tích
-            var result = _service.GetEquipmentAnalysis(SelectedEquipmentId);
-            if (result != null)
+            try
             {
-                Analysis = result;
+                var result = _service.GetEquipmentAnalysis(SelectedEquipmentId);
+                if (result != null)
+                {
+                    Analysis = result;
+                }
+            }
+            catch (DatabaseLockedException)
+            {
+                MessageBox.Show("Cơ sở dữ liệu đang bận tính toán thông số thiết bị. Vui lòng nhấn nút Thống kê lại sau giây lát.", "Thông báo");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi phân tích: {ex.Message}");
             }
         }
 

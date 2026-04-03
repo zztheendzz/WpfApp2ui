@@ -7,6 +7,7 @@ using System.Windows.Input;
 using WpfApp2.command;
 using WpfApp2.model;
 using WpfApp2.Services;
+using WpfApp2.Services.exception;
 using WpfApp2.Services.sessionService;
 
 namespace WpfApp2.viewmodel.login
@@ -16,6 +17,7 @@ namespace WpfApp2.viewmodel.login
         private readonly UserService _userService = new UserService();
         public Action LoginSuccessAction { get; set; }
         public Action LogoutAction { get; set; }
+
         private string _username;
         public string Username
         {
@@ -39,6 +41,7 @@ namespace WpfApp2.viewmodel.login
 
         public ICommand LoginCommand { get; set; }
         public ICommand LogoutCommand { get; set; }
+
         public LoginViewModel()
         {
             LoginCommand = new RelayCommand(async p => await LoginAsync());
@@ -47,10 +50,10 @@ namespace WpfApp2.viewmodel.login
 
         private void Logout()
         {
-            // clear session
+            // Clear session
             SessionService.Logout();
 
-            // trigger UI chuyển màn
+            // Trigger UI chuyển màn
             LogoutAction?.Invoke();
         }
 
@@ -67,24 +70,29 @@ namespace WpfApp2.viewmodel.login
                 IsBusy = true;
 
                 // Kiểm tra DB ở luồng phụ để UI mượt 
+                // Sử dụng Task.Run để tránh làm treo UI Thread khi SQLite đang cố gắng kết nối
                 var user = await Task.Run(() => _userService.Login(Username, Password));
-
 
                 if (user != null)
                 {
-                    // lưu session
+                    // Lưu session
                     SessionService.CurrentUser = user;
-
                     LoginSuccessAction?.Invoke();
                 }
                 else
                 {
-                    MessageBox.Show("Sai tài khoản hoặc mật khẩu");
+                    MessageBox.Show("Sai tài khoản hoặc mật khẩu.", "Đăng nhập thất bại", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+            }
+            catch (DatabaseLockedException)
+            {
+                // Xử lý riêng lỗi SQLite bị khóa
+                MessageBox.Show("Hệ thống hiện đang bận xử lý dữ liệu (Database Locked). Vui lòng đợi vài giây và thử đăng nhập lại.",
+                                "Thông báo hệ thống", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}");
+                MessageBox.Show($"Lỗi không xác định: {ex.Message}", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {

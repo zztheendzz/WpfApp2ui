@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows; // Thêm để sử dụng MessageBox
 using System.Windows.Input;
 using WpfApp2.command;
 using WpfApp2.model;
@@ -11,6 +12,7 @@ using WpfApp2.modelDTO;
 using WpfApp2.modelDTO.analysysDto;
 using WpfApp2.Services;
 using WpfApp2.Services.analysisService;
+using WpfApp2.Services.exception;
 
 namespace WpfApp2.viewmodel.analysis
 {
@@ -34,7 +36,6 @@ namespace WpfApp2.viewmodel.analysis
                 _globalSearchText = value;
                 OnPropertyChanged();
 
-                // Chỉ cập nhật gợi ý nếu KHÔNG phải thay đổi nội bộ do chọn item
                 if (!_isInternalChange)
                 {
                     if (string.IsNullOrWhiteSpace(value)) SelectedModelId = 0;
@@ -75,7 +76,6 @@ namespace WpfApp2.viewmodel.analysis
         }
 
         private ModelAnalysisDto _analysis;
-        
         public ModelAnalysisDto Analysis
         {
             get => _analysis;
@@ -96,7 +96,6 @@ namespace WpfApp2.viewmodel.analysis
 
         private void UpdateSuggestions()
         {
-            // Kiểm tra độ dài keyword (tối thiểu 2 ký tự mới search)
             if (string.IsNullOrWhiteSpace(GlobalSearchText) || GlobalSearchText.Length < 2)
             {
                 SearchSuggestions.Clear();
@@ -104,23 +103,26 @@ namespace WpfApp2.viewmodel.analysis
                 return;
             }
 
-            var results = _searchService.SearchModel(GlobalSearchText);
-
-            SearchSuggestions.Clear();
-            foreach (var item in results)
+            try
             {
-                SearchSuggestions.Add(item);
+                var results = _searchService.SearchModel(GlobalSearchText);
+
+                SearchSuggestions.Clear();
+                foreach (var item in results)
+                {
+                    SearchSuggestions.Add(item);
+                }
+
+                IsSearchDropDownOpen = SearchSuggestions.Any();
+                SelectedSearchResult = SearchSuggestions.FirstOrDefault();
             }
-
-            IsSearchDropDownOpen = SearchSuggestions.Any();
-
-            // Mặc định chọn item đầu tiên để hỗ trợ phím Enter
-            SelectedSearchResult = SearchSuggestions.FirstOrDefault();
+            catch (DatabaseLockedException)
+            {
+                // Khi đang gõ phím, nếu DB bị khóa thì tạm thời ẩn gợi ý để tránh làm phiền người dùng
+                IsSearchDropDownOpen = false;
+            }
         }
 
-        /// <summary>
-        /// Hàm này được gọi từ Code-behind khi nhấn Enter hoặc Click vào ListBoxItem
-        /// </summary>
         public void ConfirmSelection()
         {
             if (SelectedSearchResult == null) return;
@@ -128,7 +130,6 @@ namespace WpfApp2.viewmodel.analysis
             _isInternalChange = true;
             try
             {
-                // Xử lý lấy ID và Text tùy theo loại dữ liệu trả về trong SearchResultDto
                 if (SelectedSearchResult.Data is Model model)
                 {
                     SelectedModelId = model.Id;
@@ -141,13 +142,16 @@ namespace WpfApp2.viewmodel.analysis
                 }
                 else
                 {
-                    // Fallback nếu SearchResultDto đã có sẵn Id/Text
                     SelectedModelId = SelectedSearchResult.Id;
                     GlobalSearchText = SelectedSearchResult.Text;
                 }
 
                 IsSearchDropDownOpen = false;
-                LoadData(); // Tự động load dữ liệu ngay khi chọn xong
+                LoadData();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error confirming selection: {ex.Message}");
             }
             finally
             {
@@ -158,8 +162,19 @@ namespace WpfApp2.viewmodel.analysis
         private void LoadData()
         {
             if (SelectedModelId == 0) return;
-            Analysis = _service.GetModelAnalysis(SelectedModelId);
 
+            try
+            {
+                Analysis = _service.GetModelAnalysis(SelectedModelId);
+            }
+            catch (DatabaseLockedException)
+            {
+                MessageBox.Show("Dữ liệu phân tích Model đang bị khóa bởi tiến trình khác. Vui lòng thử lại sau giây lát.", "SQLite Locked");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi tải dữ liệu: {ex.Message}");
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
