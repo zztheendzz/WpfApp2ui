@@ -34,7 +34,7 @@ namespace WpfApp2.viewmodel.tableVm
         public ICommand ShowPurchaseAnalysisPageCommand { get; set; }
         public ICommand ChangeLangCommand { get; set; }
         public ICommand LogoutCommand { get; set; }
-
+        public ICommand ShowCategoryPageCommand { get; set; }
         public ICommand resetCurrencyCommand { get; set; }
 
         public CurrencyService CurrencyService;
@@ -82,9 +82,14 @@ namespace WpfApp2.viewmodel.tableVm
             ShowPurchaseAnalysisPageCommand = new RelayCommand(OpenPagePurchaseAnalysis);
             ChangeLangCommand= new RelayCommand(p => ExecuteChangeLang(p));
             LogoutCommand= new RelayCommand(p => Logout());
-          //  resetCurrencyCommand = new RelayCommand(async p => await currencyRate());
-           // currencyRate();
+            ShowCategoryPageCommand = new RelayCommand( OpenPageCategory);
+            //  resetCurrencyCommand = new RelayCommand(async p => await currencyRate());
+            // currencyRate();
             //CurrentPage = new newModel(); // page mặc định
+        }
+        public void OpenPageCategory(object obj)
+        {
+            CurrentPage = new pageCategory();
         }
 
 
