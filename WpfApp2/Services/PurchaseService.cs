@@ -31,7 +31,7 @@ namespace WpfApp2.Services
                     p.Quantity,
                     p.UnitPrice,
                     p.Quantity * p.UnitPrice AS TotalPrice,
-                    p.CurrencyCode,
+                    p.CurrencyName,
                     p.PurchaseDate,
                     p.Note
                 FROM PurchaseHistory p
@@ -87,7 +87,6 @@ namespace WpfApp2.Services
                         p.Quantity,
                         p.UnitPrice,
                         p.Quantity * p.UnitPrice AS TotalPrice,
-                        p.CurrencyCode,
                         p.PurchaseDate,
                         p.Note,
                         p.CreateAt,
@@ -99,12 +98,16 @@ namespace WpfApp2.Services
                         v.VendorName,
 
                         p.EquipmentId,
-                        e.EquipmentName
+                        e.EquipmentName,
+
+                        p.CurrencyId,
+                        c.CurrencyName
 
                     FROM PurchaseHistory p
                     LEFT JOIN Model m ON p.ModelId = m.Id
                     LEFT JOIN Vendor v ON p.VendorId = v.Id
-                    LEFT JOIN Equipment e ON p.VendorId = e.Id
+                    LEFT JOIN Equipment e ON p.EquipmentId = e.Id
+                    LEFT JOIN Currency c ON p.CurrencyId = c.Id
                     ORDER BY p.PurchaseDate DESC
 ";
 
@@ -148,7 +151,7 @@ namespace WpfApp2.Services
                     EquipmentId = @EquipmentId,
                     Quantity = @Quantity,
                     UnitPrice = @UnitPrice,
-                    CurrencyCode = @CurrencyCode,
+                    CurrencyName = @CurrencyName,
                     PurchaseDate = @PurchaseDate,
                     Note = @Note
                 WHERE Id = @Id
@@ -168,9 +171,9 @@ namespace WpfApp2.Services
 
             string sql = @"
                 INSERT INTO PurchaseHistory
-                (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, CurrencyCode, PurchaseDate, Note,CreateAt)
+                (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, CurrencyName, PurchaseDate, Note,CreateAt)
                 VALUES
-                (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @CurrencyCode, @PurchaseDate, @Note,@currentTime);
+                (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @CurrencyName, @PurchaseDate, @Note,@currentTime);
                 SELECT last_insert_rowid();
 ";
 

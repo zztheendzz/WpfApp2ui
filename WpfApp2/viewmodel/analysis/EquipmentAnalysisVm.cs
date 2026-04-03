@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows; // Thêm để dùng MessageBox
+using System.Windows;
 using System.Windows.Input;
 using WpfApp2.command;
 using WpfApp2.model;
@@ -112,41 +112,40 @@ namespace WpfApp2.viewmodel.analysis
             try
             {
                 var results = _searchService.SearchEquipment(GlobalSearchText);
-
                 SearchSuggestions.Clear();
                 if (results != null)
                 {
-                    foreach (var item in results)
-                    {
-                        SearchSuggestions.Add(item);
-                    }
+                    foreach (var item in results) SearchSuggestions.Add(item);
                 }
 
                 IsSearchDropDownOpen = SearchSuggestions.Any();
+
+                // Mặc định chọn dòng đầu tiên cho bàn phím
                 SelectedSearchResult = SearchSuggestions.FirstOrDefault();
             }
             catch (DatabaseLockedException)
             {
-                // Khi đang gõ mà bị lock thì ẩn gợi ý đi để không gây crash hoặc giật lag
                 IsSearchDropDownOpen = false;
             }
         }
 
-        public void ConfirmSelection()
+        // CẬP NHẬT: Nhận explicitItem để xử lý Click chuột chính xác
+        public void ConfirmSelection(SearchResultDto explicitItem = null)
         {
-            if (SelectedSearchResult == null) return;
+            var target = explicitItem ?? SelectedSearchResult;
+            if (target == null) return;
 
             _isInternalChange = true;
             try
             {
-                SelectedEquipmentId = SelectedSearchResult.Data switch
+                SelectedEquipmentId = target.Data switch
                 {
                     Equipment e => e.Id,
                     EquipmentDto d => d.Id,
-                    _ => SelectedSearchResult.Id
+                    _ => target.Id
                 };
 
-                GlobalSearchText = SelectedSearchResult.Text;
+                GlobalSearchText = target.Text;
                 IsSearchDropDownOpen = false;
 
                 LoadData();
@@ -168,14 +167,11 @@ namespace WpfApp2.viewmodel.analysis
             try
             {
                 var result = _service.GetEquipmentAnalysis(SelectedEquipmentId);
-                if (result != null)
-                {
-                    Analysis = result;
-                }
+                if (result != null) Analysis = result;
             }
             catch (DatabaseLockedException)
             {
-                MessageBox.Show("Cơ sở dữ liệu đang bận tính toán thông số thiết bị. Vui lòng nhấn nút Thống kê lại sau giây lát.", "Thông báo");
+                MessageBox.Show("Cơ sở dữ liệu bận. Vui lòng thử lại sau.", "Thông báo");
             }
             catch (Exception ex)
             {
@@ -185,9 +181,7 @@ namespace WpfApp2.viewmodel.analysis
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
         #endregion
     }

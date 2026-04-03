@@ -31,10 +31,11 @@ SELECT
     m.ModelName,
     v.VendorName,
     e.EquipmentName,
+    c.CurrencyName,
     p.Quantity,
     p.UnitPrice,
     IFNULL(p.Quantity * p.UnitPrice, 0) AS TotalPrice,
-    p.CurrencyCode,
+    p.CurrencyId,
     p.PurchaseDate,
     p.CreateAt,
     u.FullName,
@@ -42,6 +43,7 @@ SELECT
 FROM PurchaseHistory p
 LEFT JOIN Model m ON p.ModelId = m.Id
 LEFT JOIN Vendor v ON p.VendorId = v.Id
+LEFT JOIN Currency c ON p.CurrencyId = c.Id
 LEFT JOIN Equipment e ON p.EquipmentId = e.Id
 LEFT JOIN [User] u ON p.UserId = u.Id
 WHERE m.BrandId = @brandId                    -- ✅ FIX

@@ -78,14 +78,14 @@ namespace WpfApp2.Services
                     p.Quantity,
                     p.UnitPrice,
                     p.Quantity * p.UnitPrice AS TotalPrice,
-                    p.CurrencyCode,
+                    c.CurrencyName,
                     p.PurchaseDate,
                     p.Note
                 FROM Purchase p
                 LEFT JOIN Model m ON p.ModelId = m.Id
                 LEFT JOIN Vendor v ON p.VendorId = v.Id
                 LEFT JOIN Equipment e ON p.EquipmentId = e.Id
-
+                LEFT JOIN Currency c ON p.CurrencyId = c.Id
                 WHERE 1=1
             ");
 

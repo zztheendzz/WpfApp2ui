@@ -31,14 +31,14 @@ SELECT
 
     m.ModelName        AS ModelName,   -- 🔥 linh kiện (chính)
     e.EquipmentName    AS EquipmentName,   -- 🔥 thiết bị cha
-
+    c.CurrencyName,
     b.BrandName,
 
     p.Quantity,
     p.UnitPrice,
     IFNULL(p.Quantity * p.UnitPrice, 0) AS TotalPrice,
 
-    p.CurrencyCode,
+    p.CurrencyId,
     p.PurchaseDate,
     p.CreateAt,
     u.FullName,
@@ -48,7 +48,7 @@ FROM PurchaseHistory p
 LEFT JOIN Model m ON p.ModelId = m.Id
 LEFT JOIN Equipment e ON p.EquipmentId = e.Id
 LEFT JOIN Brand b ON m.BrandId = b.Id
-
+LEFT JOIN Currency c ON p.CurrencyId = c.Id
 LEFT JOIN [User] u ON p.UserId = u.Id
 
 WHERE p.VendorId = @vendorId

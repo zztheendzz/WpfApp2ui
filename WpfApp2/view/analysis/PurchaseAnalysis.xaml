@@ -148,7 +148,7 @@
                     <DataGridTextColumn Header="{DynamicResource dg_Quantity}" Binding="{Binding Quantity, StringFormat={}{0:N0}}"/>
                     <DataGridTextColumn Header="{DynamicResource dg_UnitPrice}" Binding="{Binding UnitPrice, StringFormat={}{0:N0}}"/>
                     <DataGridTextColumn Header="{DynamicResource dg_TotalPrice}" Binding="{Binding TotalPrice, StringFormat={}{0:N0}}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Currency}" Binding="{Binding CurrencyCode}"/>
+                    <DataGridTextColumn Header="{DynamicResource dg_Currency}" Binding="{Binding CurrencyName}"/>
                     <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}" Binding="{Binding PurchaseDate, StringFormat=dd/MM/yyyy}"/>
                     <DataGridTextColumn Header="Full Name" Binding="{Binding FullName}"/>
                     <DataGridTextColumn Header="{DynamicResource dg_Note}" Width="*" Binding="{Binding Note}"/>

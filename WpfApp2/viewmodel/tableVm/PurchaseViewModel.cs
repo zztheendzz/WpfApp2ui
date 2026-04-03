@@ -57,6 +57,7 @@ namespace WpfApp2.viewmodel.tableVm
             {
                 var data = _purchaseService.GetPurchaseDTO();
                 purchases = new ObservableCollection<PurchaseDto>(data);
+                
             }
             catch (DatabaseLockedException)
             {

@@ -70,7 +70,7 @@
                     <TextBlock FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,5,0,0">
                         <Run Text="{Binding Analysis.LatestPrice, StringFormat={}{0:N0}}" />
                         <Run Text=" " />
-                        <Run Text="{Binding Analysis.Currency}" FontSize="14" Foreground="Gray" />
+                        <Run Text="{Binding Analysis.CurrencyName}" FontSize="14" Foreground="Gray" />
                     </TextBlock>
                         </TextBlock>
                     </StackPanel>
@@ -157,7 +157,7 @@
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Binding="{Binding CurrencyCode}">
+                    <DataGridTextColumn Binding="{Binding CurrencyName}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource dg_Currency}"/>
                         </DataGridTextColumn.Header>

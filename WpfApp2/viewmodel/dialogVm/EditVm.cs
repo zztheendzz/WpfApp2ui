@@ -24,7 +24,7 @@ namespace WpfApp2.viewmodel.dialogVm
             {"VendorId", ("Vendor", "VendorName")},
             {"EquipmentId", ("Equipment", "EquipmentName")},
             {"UserId", ("User", "UserName")},
-            {"CurrencyCode", ("Currency", "Name")}
+            {"CurrencyName", ("Currency", "Name")}
         };
 
         private Dictionary<string, List<dynamic>> _cache = new();

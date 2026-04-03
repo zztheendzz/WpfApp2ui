@@ -28,6 +28,8 @@ namespace WpfApp2.modelDTO
 
         public string CurrencyCode { get; set; }
 
+        public string CurrencyName{ get; set; }
+
         public string PurchaseDate { get; set; }
 
         public string CreateAt { get; set; }

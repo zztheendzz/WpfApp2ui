@@ -67,7 +67,7 @@
                     <StackPanel>
                         <TextBlock Text="{DynamicResource lbl_TotalPurchaseValue }"
                                    Foreground="White"/>
-                        <TextBlock Text="{Binding Analysis.TotalPrice , StringFormat={}{0:N0}}"
+                        <TextBlock Text="{Binding Analysis.TotalPrice , StringFormat={}{0:N0 VND}}"
                                    FontSize="16"
                                    FontWeight="Bold"
                                    Foreground="White"/>
@@ -148,7 +148,7 @@
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Binding="{Binding CurrencyCode}">
+                    <DataGridTextColumn Binding="{Binding CurrencyName}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource dg_Currency}"/>
                         </DataGridTextColumn.Header>

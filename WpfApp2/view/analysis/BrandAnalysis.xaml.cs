@@ -1,22 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using WpfApp2.modelDTO;
 using WpfApp2.viewmodel.analysis;
 
 namespace WpfApp2.view.analysis
 {
-    /// <summary>
-    /// Interaction logic for BrandAnalysis.xaml
-    /// </summary>
     public partial class BrandAnalysis : Page
     {
         public BrandAnalysis()
@@ -24,55 +14,55 @@ namespace WpfApp2.view.analysis
             InitializeComponent();
             DataContext = new BrandAnalysisVm();
         }
+
         private void SearchBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (DataContext is BrandAnalysisVm vm)
+            if (!(DataContext is BrandAnalysisVm vm)) return;
+
+            if (e.Key == Key.Enter)
             {
-                // Nhấn Enter để chọn
-                if (e.Key == Key.Enter)
+                vm.ConfirmSelection(); // Chọn item đang highlight
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Down && vm.IsSearchDropDownOpen)
+            {
+                if (lstBrand.SelectedIndex < lstBrand.Items.Count - 1)
                 {
-                    vm.ConfirmSelection();
-                    e.Handled = true;
+                    lstBrand.SelectedIndex++;
+                    lstBrand.ScrollIntoView(lstBrand.SelectedItem);
                 }
-                // Nhấn Down để chọn item phía dưới trong ListBox
-                else if (e.Key == Key.Down && vm.IsSearchDropDownOpen)
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Up && vm.IsSearchDropDownOpen)
+            {
+                if (lstBrand.SelectedIndex > 0)
                 {
-                    if (lstBrand.SelectedIndex < lstBrand.Items.Count - 1)
-                    {
-                        lstBrand.SelectedIndex++;
-                        lstBrand.ScrollIntoView(lstBrand.SelectedItem);
-                    }
-                    e.Handled = true;
+                    lstBrand.SelectedIndex--;
+                    lstBrand.ScrollIntoView(lstBrand.SelectedItem);
                 }
-                // Nhấn Up để chọn item phía trên
-                else if (e.Key == Key.Up && vm.IsSearchDropDownOpen)
-                {
-                    if (lstBrand.SelectedIndex > 0)
-                    {
-                        lstBrand.SelectedIndex--;
-                        lstBrand.ScrollIntoView(lstBrand.SelectedItem);
-                    }
-                    e.Handled = true;
-                }
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Escape)
+            {
+                vm.IsSearchDropDownOpen = false;
+                e.Handled = true;
             }
         }
 
+        // CẬP NHẬT: Xử lý lấy item chính xác khi click chuột
         private void OnListBoxItemClick(object sender, MouseButtonEventArgs e)
         {
-            if (DataContext is BrandAnalysisVm vm)
+            if (!(DataContext is BrandAnalysisVm vm)) return;
+
+            DependencyObject dep = (DependencyObject)e.OriginalSource;
+            while (dep != null && !(dep is ListBoxItem))
             {
-                vm.ConfirmSelection();
+                dep = VisualTreeHelper.GetParent(dep);
             }
-        }
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var cb = sender as ComboBox;
-            // Tìm TextBox bên trong ComboBox và hủy bôi đen
-            var textBox = cb?.Template.FindName("PART_EditableTextBox", cb) as TextBox;
-            if (textBox != null)
+
+            if (dep is ListBoxItem item && item.Content is SearchResultDto data)
             {
-                textBox.SelectionLength = 0; // Hủy bôi đen
-                textBox.CaretIndex = textBox.Text.Length; // Đưa con trỏ về cuối
+                vm.ConfirmSelection(data); // Truyền dữ liệu dòng được click vào VM
             }
         }
     }

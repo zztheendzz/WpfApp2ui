@@ -111,7 +111,7 @@
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Width="Auto" Binding="{Binding CurrencyCode}">
+                    <DataGridTextColumn Width="Auto" Binding="{Binding CurrencyName}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource dg_Currency}"/>
                         </DataGridTextColumn.Header>

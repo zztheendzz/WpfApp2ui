@@ -8,6 +8,7 @@ namespace WpfApp2.modelDTO.analysysDto
     {
         public int TotalModel { get; set; }
         public decimal TotalPrice { get; set; }
+        public string CurrencyName { get; set; }
 
         public List<PurchaseDto> Items { get; set; }
     }

@@ -30,13 +30,14 @@ namespace WpfApp2.Services.analysisService
             p.Quantity,
             p.UnitPrice,
             p.Quantity * p.UnitPrice AS TotalPrice,
-            p.CurrencyCode,
+            p.CurrencyId,
             p.PurchaseDate,
             p.Note
         FROM Purchase p
         LEFT JOIN Model m ON p.ModelId = m.Id
         LEFT JOIN Vendor v ON p.VendorId = v.Id
         LEFT JOIN Equipment e ON p.EquipmentId = e.Id
+        LEFT JOIN Currency c ON p.CurrencyName = c.Id
         WHERE 1=1
     ");
 
@@ -117,12 +118,15 @@ namespace WpfApp2.Services.analysisService
                     m.ModelName,
                     v.VendorName,
                     e.EquipmentName,
-                u.FullName,
+                    c.CurrencyName,
+                    u.FullName,
+                    
                 (SELECT COUNT(*) FROM PurchaseHistory) AS TotalCount
                 FROM PurchaseHistory p
                 LEFT JOIN Model m ON p.ModelId = m.Id
                 LEFT JOIN Vendor v ON p.VendorId = v.Id
                 LEFT JOIN Equipment e ON p.EquipmentId = e.Id
+                LEFT JOIN Currency c ON p.CurrencyId = c.Id
                 LEFT JOIN User u ON p.UserId = u.Id
                 WHERE 1=1
                     AND (@ModelId IS NULL OR p.ModelId = @ModelId)

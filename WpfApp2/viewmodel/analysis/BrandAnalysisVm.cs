@@ -18,7 +18,6 @@ namespace WpfApp2.viewmodel.analysis
     {
         private readonly SearchService _searchService = new SearchService();
         private readonly BrandAnalysisSv _service = new BrandAnalysisSv();
-
         private bool _isInternalChange;
 
         #region ===================== Properties =====================
@@ -103,33 +102,31 @@ namespace WpfApp2.viewmodel.analysis
             try
             {
                 var results = _searchService.SearchBrand(GlobalSearchText);
-
                 SearchSuggestions.Clear();
-                foreach (var item in results)
-                {
-                    SearchSuggestions.Add(item);
-                }
+                foreach (var item in results) SearchSuggestions.Add(item);
 
                 IsSearchDropDownOpen = SearchSuggestions.Any();
+
+                // Tự động highlight dòng đầu tiên cho Enter
                 SelectedSearchResult = SearchSuggestions.FirstOrDefault();
             }
             catch (DatabaseLockedException)
             {
-                // Đối với Suggestion, nếu bị lock thì âm thầm đóng dropdown hoặc ignore 
-                // để tránh gây phiền nhiễu bằng quá nhiều MessageBox khi đang gõ phím
                 IsSearchDropDownOpen = false;
             }
         }
 
-        public void ConfirmSelection()
+        // CẬP NHẬT: Thêm tham số explicitItem để nhận diện item khi click chuột
+        public void ConfirmSelection(SearchResultDto explicitItem = null)
         {
-            if (SelectedSearchResult == null) return;
+            var target = explicitItem ?? SelectedSearchResult;
+            if (target == null) return;
 
             _isInternalChange = true;
             try
             {
-                SelectedBrandId = SelectedSearchResult.Id;
-                GlobalSearchText = SelectedSearchResult.Text;
+                SelectedBrandId = target.Id;
+                GlobalSearchText = target.Text;
 
                 IsSearchDropDownOpen = false;
                 LoadData();
@@ -143,18 +140,17 @@ namespace WpfApp2.viewmodel.analysis
         private void LoadData()
         {
             if (SelectedBrandId == 0) return;
-
             try
             {
                 Analysis = _service.GetBrandAnalysis(SelectedBrandId);
             }
             catch (DatabaseLockedException)
             {
-                MessageBox.Show("Hệ thống đang bận tính toán dữ liệu phân tích. Vui lòng thử lại sau vài giây.", "Thông báo");
+                MessageBox.Show("Hệ thống đang bận tính toán. Vui lòng thử lại sau.", "Thông báo");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải dữ liệu phân tích: {ex.Message}");
+                MessageBox.Show($"Lỗi: {ex.Message}");
             }
         }
 

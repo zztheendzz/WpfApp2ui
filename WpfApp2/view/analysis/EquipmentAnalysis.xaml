@@ -162,7 +162,7 @@
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Binding="{Binding CurrencyCode}">
+                    <DataGridTextColumn Binding="{Binding CurrencyName}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource dg_Currency}"/>
                         </DataGridTextColumn.Header>

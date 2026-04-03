@@ -129,9 +129,9 @@ namespace WpfApp2.Services.improtExcel
                         // 4. Insert vào PurchaseHistory (Thêm cột EquipmentId)
                         conn.Execute(@"
                     INSERT INTO PurchaseHistory 
-                    (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, TotalPrice, PurchaseDate, CreateAt, UserId,CurrencyCode)
+                    (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, TotalPrice, PurchaseDate, CreateAt, UserId,CurrencyName,CurrencyId)
                     VALUES 
-                    (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @TotalPrice, @PurchaseDate, @CreateAt, @UserId,@CurrencyCode)",
+                    (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @TotalPrice, @PurchaseDate, @CreateAt, @UserId,@CurrencyName,@CurrencyId)",
                         new
                         {
                             ModelId = modelId,
@@ -143,7 +143,8 @@ namespace WpfApp2.Services.improtExcel
                             PurchaseDate = DateTime.Now.ToString("yyyy-MM-dd"),
                             CreateAt = DateTime.Now.ToString("HH:mm dd-MM-yyyy"),
                             UserId = UserId,
-                            CurrencyCode="VND"
+                            CurrencyCode = "VND",
+                            CurrencyId = 1// hardcode tạm thời, sau này dieu chinh theo form excel
 
                         }, transaction);
 

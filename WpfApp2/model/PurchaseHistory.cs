@@ -31,8 +31,8 @@ namespace WpfApp2.model
         public decimal UnitPrice { get; set; }
         [Column("TotalPrice")]
         public decimal TotalPrice { get; set; }
-        [Column("CurrencyCode")]
-        public string CurrencyCode { get; set; }
+        [Column("CurrencyName")]
+        public string CurrencyName { get; set; }
         [Column("PurchaseDate")]
         public string PurchaseDate { get; set; }
         [Column("CreatAt")]

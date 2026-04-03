@@ -1,77 +1,69 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using WpfApp2.modelDTO;
 using WpfApp2.viewmodel.analysis;
-
 
 namespace WpfApp2.view.analysis
 {
-    /// <summary>
-    /// Interaction logic for VendorAnalysis.xaml
-    /// </summary>
     public partial class VendorAnalysis : Page
     {
         public VendorAnalysis()
         {
             InitializeComponent();
-            DataContext =new VendorAnalysisVm();
+            DataContext = new VendorAnalysisVm();
         }
+
         private void SearchBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (DataContext is VendorAnalysisVm vm)
-            {
-                // 1. Nhấn Enter để xác nhận lựa chọn
-                if (e.Key == Key.Enter)
-                {
-                    vm.ConfirmSelection();
-                    e.Handled = true;
-                    return;
-                }
+            if (!(DataContext is VendorAnalysisVm vm)) return;
 
-                // 2. Nhấn Down để di chuyển xuống trong ListBox
-                if (e.Key == Key.Down && vm.IsSearchDropDownOpen)
+            if (e.Key == Key.Enter)
+            {
+                vm.ConfirmSelection(); // Dùng item đang được chọn (highlight)
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Down && vm.IsSearchDropDownOpen)
+            {
+                if (lstVendor.SelectedIndex < lstVendor.Items.Count - 1)
                 {
-                    if (lstVendor.SelectedIndex < lstVendor.Items.Count - 1)
-                    {
-                        lstVendor.SelectedIndex++;
-                        lstVendor.ScrollIntoView(lstVendor.SelectedItem);
-                    }
-                    e.Handled = true;
+                    lstVendor.SelectedIndex++;
+                    lstVendor.ScrollIntoView(lstVendor.SelectedItem);
                 }
-                // 3. Nhấn Up để di chuyển lên trong ListBox
-                else if (e.Key == Key.Up && vm.IsSearchDropDownOpen)
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Up && vm.IsSearchDropDownOpen)
+            {
+                if (lstVendor.SelectedIndex > 0)
                 {
-                    if (lstVendor.SelectedIndex > 0)
-                    {
-                        lstVendor.SelectedIndex--;
-                        lstVendor.ScrollIntoView(lstVendor.SelectedItem);
-                    }
-                    e.Handled = true;
+                    lstVendor.SelectedIndex--;
+                    lstVendor.ScrollIntoView(lstVendor.SelectedItem);
                 }
-                // 4. Nhấn Escape để đóng nhanh Popup
-                else if (e.Key == Key.Escape)
-                {
-                    vm.IsSearchDropDownOpen = false;
-                    e.Handled = true;
-                }
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Escape)
+            {
+                vm.IsSearchDropDownOpen = false;
+                e.Handled = true;
             }
         }
 
+        // Chỉnh sửa: Lấy chính xác Item bị Click chuột
         private void OnListBoxItemClick(object sender, MouseButtonEventArgs e)
         {
-            // Khi click chuột vào item trong ListBox, gọi hàm xác nhận trong VM
-            if (DataContext is VendorAnalysisVm vm)
+            if (!(DataContext is VendorAnalysisVm vm)) return;
+
+            // Tìm ListBoxItem chứa điểm click
+            DependencyObject dep = (DependencyObject)e.OriginalSource;
+            while (dep != null && !(dep is ListBoxItem))
             {
-                vm.ConfirmSelection();
+                dep = VisualTreeHelper.GetParent(dep);
+            }
+
+            if (dep is ListBoxItem item && item.Content is SearchResultDto data)
+            {
+                vm.ConfirmSelection(data); // Truyền trực tiếp data của dòng bị click
             }
         }
     }
