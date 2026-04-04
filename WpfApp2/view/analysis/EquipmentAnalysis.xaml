@@ -92,7 +92,7 @@
             <DockPanel Margin="20,0">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <fa:ImageAwesome Icon="Wrench" Foreground="White" Width="18" Margin="0,0,12,0"/>
-                    <TextBlock Text="Phân Tích Chi Phí Theo Thiết Bị" Foreground="White" FontSize="15" FontWeight="Medium"/>
+                    <TextBlock Text="{DynamicResource menu_Inquiry}" Foreground="White" FontSize="15" FontWeight="Medium"/>
                 </StackPanel>
             </DockPanel>
         </Border>
@@ -100,15 +100,15 @@
         <Border Grid.Row="1" Background="White" BorderBrush="#DDD" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
                 <StackPanel Margin="0,0,10,0">
-                    <TextBlock Text="Từ ngày" FontSize="10" Foreground="Gray" Margin="0,0,0,2"/>
+                    <TextBlock Text="{DynamicResource ph_DateFrom}" FontSize="10" Foreground="Gray" Margin="0,0,0,2"/>
                     <DatePicker Width="120" SelectedDate="{Binding FromDate}"/>
                 </StackPanel>
                 <StackPanel Margin="0,0,15,0">
-                    <TextBlock Text="Đến ngày" FontSize="10" Foreground="Gray" Margin="0,0,0,2"/>
+                    <TextBlock Text="{DynamicResource ph_DateTo}" FontSize="10" Foreground="Gray" Margin="0,0,0,2"/>
                     <DatePicker Width="120" SelectedDate="{Binding ToDate}"/>
                 </StackPanel>
                 <StackPanel Margin="0,0,15,0">
-                    <TextBlock Text="Tìm Thiết Bị" FontSize="10" Foreground="Gray"/>
+                    <TextBlock Text="{DynamicResource ph_Equipment}" FontSize="10" Foreground="Gray"/>
                     <Grid>
                         <TextBox x:Name="txtGlobalSearch" Width="250" Height="30" VerticalContentAlignment="Center" Padding="5,0,25,0"
                                  Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
@@ -134,7 +134,7 @@
                         </Popup>
                     </Grid>
                 </StackPanel>
-                <Button Content="Thực hiện Phân tích" VerticalAlignment="Bottom" Height="30" Margin="10,0,0,2"
+                <Button Content="{DynamicResource btn_Analyze}" VerticalAlignment="Bottom" Height="30" Margin="10,0,0,2"
                         Command="{Binding AnalyzeCommand}" Background="{StaticResource AccentBlue}" Foreground="White" Padding="25,0" BorderThickness="0"/>
             </StackPanel>
         </Border>
@@ -144,7 +144,7 @@
                 <StackPanel Orientation="Horizontal">
                     <fa:ImageAwesome Icon="Money" Foreground="#FFD700" Width="25"/>
                     <StackPanel Margin="15,0">
-                        <TextBlock Text="Tổng Giá Trị" Foreground="White" Opacity="0.8" FontSize="11"/>
+                        <TextBlock Text="{DynamicResource lbl_TotalPurchaseValue}" Foreground="White" Opacity="0.8" FontSize="11"/>
                         <TextBlock Text="{Binding Analysis.TotalPrice, StringFormat={}{0:N0} VND}" Foreground="White" FontSize="16" FontWeight="Bold"/>
                     </StackPanel>
                 </StackPanel>
@@ -153,7 +153,7 @@
                 <StackPanel Orientation="Horizontal">
                     <fa:ImageAwesome Icon="Cubes" Foreground="White" Width="25"/>
                     <StackPanel Margin="15,0">
-                        <TextBlock Text="Số Loại Linh Kiện" Foreground="White" Opacity="0.8" FontSize="11"/>
+                        <TextBlock Text="{DynamicResource lbl_TotalParts}" Foreground="White" Opacity="0.8" FontSize="11"/>
                         <TextBlock Text="{Binding Analysis.TotalModel, StringFormat={}{0} Model}" Foreground="White" FontSize="16" FontWeight="Bold"/>
                     </StackPanel>
                 </StackPanel>
@@ -162,7 +162,7 @@
                 <StackPanel Orientation="Horizontal">
                     <fa:ImageAwesome Icon="InfoCircle" Foreground="#90EE90" Width="25"/>
                     <StackPanel Margin="15,0">
-                        <TextBlock Text="Thiết Bị" Foreground="White" Opacity="0.8" FontSize="11"/>
+                        <TextBlock Text="{DynamicResource ph_Equipment}" Foreground="White" Opacity="0.8" FontSize="11"/>
                         <TextBlock Text="{Binding Analysis.EquipmentName}" Foreground="White" FontSize="14" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                 </StackPanel>
@@ -177,7 +177,7 @@
 
             <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="15">
                 <DockPanel>
-                    <TextBlock DockPanel.Dock="Top" Text="Phân Bổ Chi Phí Theo Hãng (Top 10)" FontWeight="Bold" FontSize="13" Margin="0,0,0,5"/>
+                    <TextBlock DockPanel.Dock="Top" Text="{DynamicResource lbl_VendorComparison}" FontWeight="Bold" FontSize="13" Margin="0,0,0,5"/>
                     <lvc:PieChart Series="{Binding PieSeriesCollection}" LegendLocation="Right" InnerRadius="30" 
                                   DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}"/>
                 </DockPanel>
@@ -185,13 +185,13 @@
 
             <Border Grid.Column="1" Style="{StaticResource CardStyle}" Padding="15">
                 <DockPanel>
-                    <TextBlock DockPanel.Dock="Top" Text="Top 5 Linh Kiện Chi Phí Cao" FontWeight="Bold" FontSize="13" Margin="0,0,0,5"/>
+                    <TextBlock DockPanel.Dock="Top" Text="{DynamicResource lbl_PurchasedPartsList}" FontWeight="Bold" FontSize="13" Margin="0,0,0,5"/>
                     <lvc:CartesianChart x:Name="ChartTopItems" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
                         <lvc:CartesianChart.Series>
                             <lvc:RowSeries Values="{Binding TopItemsValues}" Fill="{StaticResource AccentBlue}" DataLabels="True"/>
                         </lvc:CartesianChart.Series>
                         <lvc:CartesianChart.AxisX>
-                            <lvc:Axis Title="Giá trị (Triệu VNĐ)" MinValue="0"/>
+                            <lvc:Axis Title="Value" MinValue="0"/>
                         </lvc:CartesianChart.AxisX>
                         <lvc:CartesianChart.AxisY>
                             <lvc:Axis Labels="{Binding TopItemsLabels}">
@@ -208,10 +208,10 @@
         <Border Grid.Row="4" Style="{StaticResource CardStyle}" Padding="5" Margin="18,10,18,10">
             <DataGrid ItemsSource="{Binding Analysis.Items}" SelectionMode="Single" ScrollViewer.CanContentScroll="True">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Linh Kiện" Width="2*" Binding="{Binding ModelName}"/>
-                    <DataGridTextColumn Header="Hãng" Width="*" Binding="{Binding BrandName}"/>
-                    <DataGridTextColumn Header="Số Lượng" Width="80" Binding="{Binding Quantity, StringFormat={}{0:N0}}"/>
-                    <DataGridTextColumn Header="Thành Tiền" Width="130" Binding="{Binding LineTotal, StringFormat={}{0:N0}}">
+                    <DataGridTextColumn Header="{DynamicResource ph_ModelName}" Width="2*" Binding="{Binding ModelName}"/>
+                    <DataGridTextColumn Header="{DynamicResource lbl_Brand}" Width="*" Binding="{Binding BrandName}"/>
+                    <DataGridTextColumn Header="{DynamicResource dg_Quantity}" Width="80" Binding="{Binding Quantity, StringFormat={}{0:N0}}"/>
+                    <DataGridTextColumn Header="{DynamicResource dg_TotalPrice}" Width="130" Binding="{Binding LineTotal, StringFormat={}{0:N0}}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="FontWeight" Value="SemiBold"/>
@@ -222,7 +222,7 @@
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Ngày Mua" Width="100" Binding="{Binding PurchaseDate, StringFormat='dd/MM/yyyy'}"/>
+                    <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}" Width="100" Binding="{Binding PurchaseDate, StringFormat='dd/MM/yyyy'}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
@@ -238,19 +238,19 @@
                 <Button Style="{StaticResource FooterButtonStyle}" Command="{Binding NavVendorAnalysis}">
                     <StackPanel>
                         <fa:ImageAwesome Icon="Industry" Foreground="White" Width="16" Margin="0,0,0,3"/>
-                        <TextBlock Text="Vendor" FontSize="10"/>
+                        <TextBlock Text="{DynamicResource ph_Vendor}" FontSize="10"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource FooterButtonStyle}" Command="{Binding NavBrandAnalysis}">
                     <StackPanel>
                         <fa:ImageAwesome Icon="Flash" Foreground="White" Width="16" Margin="0,0,0,3"/>
-                        <TextBlock Text="Thương Hiệu" FontSize="10"/>
+                        <TextBlock Text="{DynamicResource lbl_Brand}" FontSize="10"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource FooterButtonStyle}" Tag="Active">
                     <StackPanel>
                         <fa:ImageAwesome Icon="Wrench" Foreground="White" Width="16" Margin="0,0,0,3"/>
-                        <TextBlock Text="Thiết Bị" FontSize="10" FontWeight="Bold"/>
+                        <TextBlock Text="{DynamicResource ph_Equipment}" FontSize="10" FontWeight="Bold"/>
                     </StackPanel>
                 </Button>
             </UniformGrid>

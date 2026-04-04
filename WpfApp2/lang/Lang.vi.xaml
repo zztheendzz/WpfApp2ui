@@ -1,54 +1,54 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <sys:String x:Key="ph_ModelCode">Mã linh kiện</sys:String>
     <sys:String x:Key="ph_ModelName">Tên linh kiện</sys:String>
     <sys:String x:Key="ph_Vendor">Nhà cung cấp</sys:String>
     <sys:String x:Key="ph_Equipment">Thiết bị</sys:String>
-    <sys:String x:Key="ph_DateFrom">Từ ngày</sys:String>
-    <sys:String x:Key="ph_DateTo">Đến ngày</sys:String>
-    <sys:String x:Key="ph_MinPrice">Giá tối thiểu</sys:String>
-    <sys:String x:Key="ph_MaxPrice">Giá tối đa</sys:String>
-    
-    <sys:String x:Key="btn_SelectFile">Chọn tệp</sys:String>
+    <sys:String x:Key="ph_DateFrom">Ngày bắt đầu</sys:String>
+    <sys:String x:Key="ph_DateTo">Ngày kết thúc</sys:String>
+    <sys:String x:Key="ph_MinPrice">Giá thấp nhất</sys:String>
+    <sys:String x:Key="ph_MaxPrice">Giá cao nhất</sys:String>
+    <sys:String x:Key="ph_GlobalSearch">Tìm kiếm chung...</sys:String>
+
+    <sys:String x:Key="btn_Logout">Đăng xuất</sys:String>
+    <sys:String x:Key="btn_SelectFile">Chọn file</sys:String>
     <sys:String x:Key="btn_Import">Nhập dữ liệu</sys:String>
-    <sys:String x:Key="btn_Clear">Xóa bộ lọc</sys:String>
-    <sys:String x:Key="btn_Search">Tìm kiếm</sys:String>
+    <sys:String x:Key="btn_Clear">Đặt lại bộ lọc</sys:String>
     <sys:String x:Key="btn_Add">Thêm mới</sys:String>
     <sys:String x:Key="btn_Analyze">Phân tích</sys:String>
     <sys:String x:Key="btn_Prev">◀</sys:String>
     <sys:String x:Key="btn_Next">▶</sys:String>
 
     <sys:String x:Key="dg_Id">STT</sys:String>
-    <sys:String x:Key="dg_Model">Linh kiện</sys:String>
+    <sys:String x:Key="dg_Model">Linh kiện / Model</sys:String>
     <sys:String x:Key="dg_Vendor">Nhà cung cấp</sys:String>
     <sys:String x:Key="dg_Equipment">Thiết bị</sys:String>
     <sys:String x:Key="dg_Quantity">Số lượng</sys:String>
     <sys:String x:Key="dg_UnitPrice">Đơn giá</sys:String>
-    <sys:String x:Key="dg_TotalPrice">Tổng tiền</sys:String>
-    <sys:String x:Key="dg_Currency">Tiền tệ</sys:String>
+    <sys:String x:Key="dg_TotalPrice">Thành tiền</sys:String>
+    <sys:String x:Key="dg_Currency">Đơn vị tiền</sys:String>
     <sys:String x:Key="dg_PurchaseDate">Ngày mua</sys:String>
     <sys:String x:Key="dg_Note">Ghi chú</sys:String>
     <sys:String x:Key="dg_Edit">Sửa</sys:String>
     <sys:String x:Key="dg_Delete">Xóa</sys:String>
     <sys:String x:Key="dg_CreateAt">Ngày tạo</sys:String>
-    <sys:String x:Key="dg_User">Người thực hiện</sys:String>
-    <sys:String x:Key="dg_ModelCode">Mã sản phẩm</sys:String>
+    <sys:String x:Key="dg_User">Người tạo</sys:String>
+    <sys:String x:Key="dg_ModelCode">Mã model</sys:String>
 
+    <sys:String x:Key="lbl_PriceManagementSystem">Hệ Thống Quản Lý Giá</sys:String>
     <sys:String x:Key="lbl_Equipment">Thiết bị</sys:String>
     <sys:String x:Key="lbl_PurchaseHistory">Lịch sử mua hàng</sys:String>
     <sys:String x:Key="lbl_Vendor">Nhà cung cấp:</sys:String>
     <sys:String x:Key="lbl_Brand">Thương hiệu:</sys:String>
+    <sys:String x:Key="lbl_Model">Model:</sys:String>
     <sys:String x:Key="lbl_TotalPurchaseValue">Tổng giá trị mua</sys:String>
-    <sys:String x:Key="lbl_SupplyCount">Số lần cung cấp</sys:String>
-    <sys:String x:Key="lbl_TotalParts">Số lượng linh kiện</sys:String>
+    <sys:String x:Key="lbl_SupplyCount">Số lần cung ứng</sys:String>
+    <sys:String x:Key="lbl_TotalParts">Tổng số linh kiện</sys:String>
     <sys:String x:Key="lbl_UsageRate">Tỷ lệ sử dụng</sys:String>
     <sys:String x:Key="lbl_PurchasedPartsList">Danh sách linh kiện đã mua</sys:String>
-
-    <sys:String x:Key="msg_ConfirmDelete">Bạn có chắc chắn muốn xóa bản ghi này không?</sys:String>
-    <sys:String x:Key="msg_DeleteSuccess">Xóa thành công!</sys:String>
-    <sys:String x:Key="lbl_Model">Linh kiện:</sys:String>
     <sys:String x:Key="lbl_LatestPrice">Giá gần nhất</sys:String>
     <sys:String x:Key="lbl_MinPrice">Giá thấp nhất</sys:String>
     <sys:String x:Key="lbl_MaxPrice">Giá cao nhất</sys:String>
@@ -56,44 +56,36 @@
     <sys:String x:Key="lbl_VendorComparison">So sánh giá theo nhà cung cấp</sys:String>
     <sys:String x:Key="lbl_TotalRecords">Tổng số bản ghi:</sys:String>
 
-    <sys:String x:Key="menu_Inquiry">Truy vấn / Phân tích</sys:String>
+    <sys:String x:Key="msg_ConfirmDelete">Bạn có chắc chắn muốn xóa không?</sys:String>
+    <sys:String x:Key="msg_DeleteSuccess">Đã xóa thành công!</sys:String>
+
+    <sys:String x:Key="menu_Inquiry">Tra cứu / Phân tích</sys:String>
     <sys:String x:Key="menu_DataManagement">Quản lý dữ liệu</sys:String>
     <sys:String x:Key="menu_PriceManagement">Quản lý giá</sys:String>
-    <sys:String x:Key="menu_Excel">Xuất nhập Excel</sys:String>
-    <sys:String x:Key="menu_Settings">Cài đặt hệ thống</sys:String>
+    <sys:String x:Key="menu_Excel">Excel</sys:String>
+    <sys:String x:Key="menu_Settings">Cài đặt</sys:String>
 
-    <sys:String x:Key="sub_PurchaseAnalysis">Phân tích mua hàng</sys:String>
-    <sys:String x:Key="sub_ModelAnalysis">Phân tích giá linh kiện</sys:String>
-    <sys:String x:Key="sub_VendorAnalysis">Phân tích nhà cung cấp</sys:String>
-    <sys:String x:Key="sub_BrandAnalysis">Phân tích thương hiệu</sys:String>
-    <sys:String x:Key="sub_EquipmentAnalysis">Phân tích thiết bị</sys:String>
-    <sys:String x:Key="sub_Model">Danh mục linh kiện</sys:String>
-    <sys:String x:Key="sub_Brand">Danh mục thương hiệu</sys:String>
-    <sys:String x:Key="sub_Vendor">Danh mục nhà cung cấp</sys:String>
-    <sys:String x:Key="sub_Equipment">Danh mục thiết bị</sys:String>
-    <sys:String x:Key="sub_PurchaseHistory">Lịch sử mua hàng</sys:String>
-    <sys:String x:Key="sub_Currency">Quản lý tiền tệ</sys:String>
-    <sys:String x:Key="sub_RegisterPrice">Đăng ký đơn giá</sys:String>
-    <sys:String x:Key="sub_EditPrice">Chỉnh sửa đơn giá</sys:String>
-    <sys:String x:Key="sub_DeletePrice">Xóa đơn giá</sys:String>
-    <sys:String x:Key="sub_ExcelUpload">Tải lên từ Excel</sys:String>
-    <sys:String x:Key="sub_Backup">Sao lưu dữ liệu</sys:String>
-    <sys:String x:Key="sub_User">Người dùng</sys:String>
-    <sys:String x:Key="sub_Language">Ngôn ngữ</sys:String>
+    <sys:String x:Key="sub_PurchaseAnalysis">Phân tích Mua hàng</sys:String>
+    <sys:String x:Key="sub_ModelAnalysis">Phân tích Giá Model</sys:String>
+    <sys:String x:Key="sub_VendorAnalysis">Phân tích Nhà cung cấp</sys:String>
+    <sys:String x:Key="sub_BrandAnalysis">Phân tích Thương hiệu</sys:String>
+    <sys:String x:Key="sub_EquipmentAnalysis">Phân tích Thiết bị</sys:String>
+    <sys:String x:Key="sub_Model">Quản lý Model</sys:String>
+    <sys:String x:Key="sub_Brand">Quản lý Thương hiệu</sys:String>
+    <sys:String x:Key="sub_Vendor">Quản lý Nhà cung cấp</sys:String>
+    <sys:String x:Key="sub_Equipment">Quản lý Thiết bị</sys:String>
+    <sys:String x:Key="sub_PurchaseHistory">Lịch sử Mua hàng</sys:String>
+    <sys:String x:Key="sub_Currency">Quản lý Tỷ giá</sys:String>
+    <sys:String x:Key="sub_ExcelUpload">Tải lên Excel</sys:String>
+    <sys:String x:Key="sub_User">Quản lý Người dùng</sys:String>
 
-    <sys:String x:Key="lbl_Account">Tài khoản:</sys:String>
-    <sys:String x:Key="lbl_Password">Mật khẩu:</sys:String>
-    <sys:String x:Key="lbl_Role">Quyền hạn:</sys:String>
-    <sys:String x:Key="lbl_Status">Trạng thái:</sys:String>
-    <sys:String x:Key="lbl_ActiveStatus">Đang hoạt động</sys:String>
+    <sys:String x:Key="title_UserManagement">Quản lý người dùng</sys:String>
+    <sys:String x:Key="title_Login">Đăng nhập</sys:String>
+    <sys:String x:Key="lbl_SystemName">Hệ thống Tự động hóa</sys:String>
+    <sys:String x:Key="lbl_RememberMe">Ghi nhớ tài khoản</sys:String>
 
-    <sys:String x:Key="ph_EnterUsername">Nhập tên đăng nhập</sys:String>
-    <sys:String x:Key="ph_EnterPassword">Nhập mật khẩu</sys:String>
-    <sys:String x:Key="ph_SelectRole">Chọn quyền</sys:String>
-
-    <sys:String x:Key="btn_Logout">Đăng xuất</sys:String>
-    <sys:String x:Key="btn_Save">LƯU</sys:String>
-    <sys:String x:Key="btn_Cancel">HỦY</sys:String>
-    <sys:String x:Key="title_UserEditAdd">Chỉnh sửa / Thêm người dùng</sys:String>
+    <sys:String x:Key="lang_VN">Tiếng Việt</sys:String>
+    <sys:String x:Key="lang_EN">Tiếng Anh</sys:String>
+    <sys:String x:Key="lang_KR">Tiếng Hàn</sys:String>
 
 </ResourceDictionary>

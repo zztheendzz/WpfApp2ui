@@ -109,15 +109,12 @@ namespace WpfApp2.viewmodel.tableVm
 
         private void ExecuteChangeLang(object param)
         {
-
-            // Ép kiểu từ object sang string
             string langCode = param as string;
-
             if (string.IsNullOrEmpty(langCode)) return;
 
-            // Logic đổi ResourceDictionary
             ResourceDictionary dict = new ResourceDictionary();
 
+            // 1. Xác định Source mới
             switch (langCode)
             {
                 case "vi-VN":
@@ -129,21 +126,25 @@ namespace WpfApp2.viewmodel.tableVm
                 case "ko-KR":
                     dict.Source = new Uri("lang/Lang.ko.xaml", UriKind.Relative);
                     break;
+                default:
+                    return;
             }
 
-            // Xóa ngôn ngữ cũ và thêm ngôn ngữ mới vào App
-            var oldDict = Application.Current.Resources.MergedDictionaries
-                          .FirstOrDefault(d => d.Source != null &&
-                          (d.Source.OriginalString.Contains("Vietnamese") ||
-                           d.Source.OriginalString.Contains("English") ||
-                           d.Source.OriginalString.Contains("Korean")));
+            // 2. Tìm và xóa Dictionary ngôn ngữ cũ
+            // Sửa lại điều kiện Contains để khớp với tên file "Lang.vi", "Lang.en", "Lang.ko"
+            var mergedDicts = Application.Current.Resources.MergedDictionaries;
+            var oldDict = mergedDicts.FirstOrDefault(d => d.Source != null &&
+                          (d.Source.OriginalString.Contains("Lang.vi") ||
+                           d.Source.OriginalString.Contains("Lang.en") ||
+                           d.Source.OriginalString.Contains("Lang.ko")));
 
             if (oldDict != null)
             {
-                Application.Current.Resources.MergedDictionaries.Remove(oldDict);
+                mergedDicts.Remove(oldDict);
             }
 
-            Application.Current.Resources.MergedDictionaries.Add(dict);
+            // 3. Thêm ngôn ngữ mới
+            mergedDicts.Add(dict);
         }
 
         public void OpenPagePurchaseAnalysis(object obj)

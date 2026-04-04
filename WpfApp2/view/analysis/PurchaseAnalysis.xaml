@@ -22,13 +22,13 @@
 
                 <materialDesign:Card Padding="15" Margin="0,0,0,15" materialDesign:ElevationAssist.Elevation="Dp2">
                     <StackPanel>
-                        <TextBlock Text="BỘ LỌC PHÂN TÍCH" FontSize="16" FontWeight="Bold" Margin="0,0,0,15" Foreground="#2C3E50"/>
+                        <TextBlock Text="{DynamicResource menu_Inquiry}" FontSize="16" FontWeight="Bold" Margin="0,0,0,15" Foreground="#2C3E50"/>
                         <WrapPanel Orientation="Horizontal">
                             <StackPanel Width="220" Margin="5">
-                                <TextBlock Text="Model:" Margin="0,0,0,5" FontWeight="SemiBold" Foreground="#666"/>
+                                <TextBlock Text="{DynamicResource dg_ModelCode}" Margin="0,0,0,5" FontWeight="SemiBold" Foreground="#666"/>
                                 <Grid>
                                     <TextBox x:Name="txtSearchModel" Tag="M" Text="{Binding SearchModelText, UpdateSourceTrigger=PropertyChanged}" 
-                                             PreviewKeyDown="SearchBox_PreviewKeyDown" materialDesign:HintAssist.Hint="Nhập model..."/>
+                                             PreviewKeyDown="SearchBox_PreviewKeyDown" materialDesign:HintAssist.Hint="..."/>
                                     <Popup IsOpen="{Binding IsDropDownOpenM}" PlacementTarget="{Binding ElementName=txtSearchModel}" StaysOpen="False" AllowsTransparency="True">
                                         <Border Background="White" BorderBrush="#DDD" BorderThickness="1" Width="{Binding ElementName=txtSearchModel, Path=ActualWidth}">
                                             <ListBox x:Name="lstModel" DisplayMemberPath="Text" ItemsSource="{Binding ModelSuggestions}" SelectedItem="{Binding SelectedModel}">
@@ -44,7 +44,7 @@
                             </StackPanel>
 
                             <StackPanel Width="220" Margin="5">
-                                <TextBlock Text="Vendor:" Margin="0,0,0,5" FontWeight="SemiBold" Foreground="#666"/>
+                                <TextBlock Text="{DynamicResource ph_Vendor}" Margin="0,0,0,5" FontWeight="SemiBold" Foreground="#666"/>
                                 <Grid>
                                     <TextBox x:Name="txtSearchVendor" Tag="V" Text="{Binding SearchVendorText, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="SearchBox_PreviewKeyDown"/>
                                     <Popup IsOpen="{Binding IsDropDownOpenV}" PlacementTarget="{Binding ElementName=txtSearchVendor}" StaysOpen="False" AllowsTransparency="True">
@@ -62,7 +62,7 @@
                             </StackPanel>
 
                             <StackPanel Width="220" Margin="5">
-                                <TextBlock Text="Thiết bị:" Margin="0,0,0,5" FontWeight="SemiBold" Foreground="#666"/>
+                                <TextBlock Text="{DynamicResource ph_Equipment}" Margin="0,0,0,5" FontWeight="SemiBold" Foreground="#666"/>
                                 <Grid>
                                     <TextBox x:Name="txtSearchEquip" Tag="E" Text="{Binding SearchEquipmentText, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="SearchBox_PreviewKeyDown"/>
                                     <Popup IsOpen="{Binding IsDropDownOpenE}" PlacementTarget="{Binding ElementName=txtSearchEquip}" StaysOpen="False" AllowsTransparency="True">
@@ -79,16 +79,16 @@
                                 </Grid>
                             </StackPanel>
 
-                            <Button Content="TÌM KIẾM" Command="{Binding SearchCommand}" Margin="10,20,5,0" Width="100" Height="38"/>
-                            <Button Content="XÓA LỌC" Command="{Binding ClearCommand}" Margin="5,20,0,0" Width="100" Height="38" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                            <Button Content="{DynamicResource btn_Analyze}" Command="{Binding SearchCommand}" Margin="10,20,5,0" Width="100" Height="38"/>
+                            <Button Content="{DynamicResource btn_Clear}" Command="{Binding ClearCommand}" Margin="5,20,0,0" Width="100" Height="38" Style="{StaticResource MaterialDesignOutlinedButton}"/>
                         </WrapPanel>
 
                         <StackPanel Orientation="Horizontal" Margin="5,15,0,0">
-                            <DatePicker Width="130" SelectedDate="{Binding SelectedDateFrom}" materialDesign:HintAssist.Hint="Từ ngày" Margin="0,0,10,0"/>
-                            <DatePicker Width="130" SelectedDate="{Binding SelectedDateTo}" materialDesign:HintAssist.Hint="Đến ngày" Margin="0,0,20,0"/>
-                            <TextBlock Text="Giá từ:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <DatePicker Width="130" SelectedDate="{Binding SelectedDateFrom}" materialDesign:HintAssist.Hint="{DynamicResource ph_DateFrom}" Margin="0,0,10,0"/>
+                            <DatePicker Width="130" SelectedDate="{Binding SelectedDateTo}" materialDesign:HintAssist.Hint="{DynamicResource ph_DateTo}" Margin="0,0,20,0"/>
+                            <TextBlock Text="{DynamicResource ph_MinPrice}" VerticalAlignment="Center" Margin="0,0,5,0" Foreground="#666"/>
                             <xctk:DoubleUpDown Value="{Binding PriceMin}" Width="100" Margin="0,0,10,0" FormatString="N0"/>
-                            <TextBlock Text="Đến:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <TextBlock Text="{DynamicResource ph_MaxPrice}" VerticalAlignment="Center" Margin="0,0,5,0" Foreground="#666"/>
                             <xctk:DoubleUpDown Value="{Binding PriceMax}" Width="100" FormatString="N0"/>
                         </StackPanel>
                     </StackPanel>
@@ -97,7 +97,7 @@
                 <UniformGrid Columns="4" Margin="0,0,0,15">
                     <materialDesign:Card Background="#2C3E50" Foreground="White" Margin="5" Padding="15">
                         <StackPanel>
-                            <TextBlock Text="GIÁ GẦN NHẤT" FontSize="11" Opacity="0.7"/>
+                            <TextBlock Text="{DynamicResource lbl_LatestPrice}" FontSize="11" Opacity="0.7"/>
                             <TextBlock Margin="0,5,0,0" FontWeight="Bold" FontSize="20">
                                 <Run Text="{Binding Analysis.LastPrice, StringFormat={}{0:N0}}"/>
                                 <Run Text=" " FontSize="12"/><Run Text="{Binding Analysis.CurrencyName}" FontSize="12"/>
@@ -108,21 +108,21 @@
 
                     <materialDesign:Card Background="#27AE60" Foreground="White" Margin="5" Padding="15">
                         <StackPanel>
-                            <TextBlock Text="GIÁ THẤP NHẤT" FontSize="11" Opacity="0.7"/>
+                            <TextBlock Text="{DynamicResource lbl_MinPrice}" FontSize="11" Opacity="0.7"/>
                             <TextBlock Text="{Binding Analysis.MinPrice, StringFormat={}{0:N0}}" Margin="0,5,0,0" FontWeight="Bold" FontSize="20"/>
                         </StackPanel>
                     </materialDesign:Card>
 
                     <materialDesign:Card Background="#E67E22" Foreground="White" Margin="5" Padding="15">
                         <StackPanel>
-                            <TextBlock Text="GIÁ TRUNG BÌNH" FontSize="11" Opacity="0.7"/>
+                            <TextBlock Text="{DynamicResource lbl_AvgPrice}" FontSize="11" Opacity="0.7"/>
                             <TextBlock Text="{Binding Analysis.AvgPrice, StringFormat={}{0:N0}}" Margin="0,5,0,0" FontWeight="Bold" FontSize="20"/>
                         </StackPanel>
                     </materialDesign:Card>
 
                     <materialDesign:Card Background="#E74C3C" Foreground="White" Margin="5" Padding="15">
                         <StackPanel>
-                            <TextBlock Text="GIÁ CAO NHẤT" FontSize="11" Opacity="0.7"/>
+                            <TextBlock Text="{DynamicResource lbl_MaxPrice}" FontSize="11" Opacity="0.7"/>
                             <TextBlock Text="{Binding Analysis.MaxPrice, StringFormat={}{0:N0}}" Margin="0,5,0,0" FontWeight="Bold" FontSize="20"/>
                         </StackPanel>
                     </materialDesign:Card>
@@ -136,23 +136,17 @@
 
                     <materialDesign:Card Grid.Column="0" Margin="5" Padding="15">
                         <StackPanel>
-                            <TextBlock Text="SO SÁNH GIÁ GIỮA CÁC VENDOR" FontWeight="Bold" Margin="0,0,0,10" Foreground="#2C3E50"/>
+                            <TextBlock Text="{DynamicResource lbl_VendorComparison}" FontWeight="Bold" Margin="0,0,0,10" Foreground="#2C3E50"/>
                             <lvc:CartesianChart x:Name="ChartVendor" Series="{Binding VendorPriceSeries}" Height="250" LegendLocation="None">
-                                
                                 <lvc:CartesianChart.AxisX>
-                                    <lvc:Axis Title="Vendor" Labels="{Binding VendorLabels}">
+                                    <lvc:Axis Title="{DynamicResource ph_Vendor}" Labels="{Binding VendorLabels}">
                                         <lvc:Axis.Separator>
                                             <lvc:Separator Step="1" IsEnabled="False"/>
                                         </lvc:Axis.Separator>
                                     </lvc:Axis>
                                 </lvc:CartesianChart.AxisX>
-                                
                                 <lvc:CartesianChart.AxisY>
-                                    <lvc:Axis Title="Giá (VNĐ)" LabelFormatter="{Binding YFormatter}" MinValue="0">
-                                        <lvc:Axis.Separator>
-                                            <lvc:Separator StrokeThickness="1" Stroke="#F0F0F0" Step="{Binding YAxisStep}"/>
-                                        </lvc:Axis.Separator>
-                                    </lvc:Axis>
+                                    <lvc:Axis Title="VNĐ" LabelFormatter="{Binding YFormatter}" MinValue="0"/>
                                 </lvc:CartesianChart.AxisY>
                             </lvc:CartesianChart>
                         </StackPanel>
@@ -160,16 +154,13 @@
 
                     <materialDesign:Card Grid.Column="1" Margin="5" Padding="15">
                         <StackPanel>
-                            <TextBlock Text="BIẾN ĐỘNG GIÁ THEO THỜI GIAN" FontWeight="Bold" Margin="0,0,0,10" Foreground="#2C3E50"/>
+                            <TextBlock Text="{DynamicResource lbl_TotalPurchaseValue}" FontWeight="Bold" Margin="0,0,0,10" Foreground="#2C3E50"/>
                             <lvc:CartesianChart x:Name="ChartTrend" Series="{Binding PriceTrendSeries}" Height="250" LegendLocation="None">
-                               
                                 <lvc:CartesianChart.AxisX>
-                                    <lvc:Axis Title="Ngày" Labels="{Binding TrendLabels}"/>
-                                    
+                                    <lvc:Axis Title="{DynamicResource dg_PurchaseDate}" Labels="{Binding TrendLabels}"/>
                                 </lvc:CartesianChart.AxisX>
-                                
                                 <lvc:CartesianChart.AxisY>
-                                    <lvc:Axis Title="Giá" LabelFormatter="{Binding YFormatter}"/>
+                                    <lvc:Axis LabelFormatter="{Binding YFormatter}"/>
                                 </lvc:CartesianChart.AxisY>
                             </lvc:CartesianChart>
                         </StackPanel>
@@ -179,9 +170,9 @@
                 <materialDesign:Card Padding="0" Margin="5" materialDesign:ElevationAssist.Elevation="Dp2">
                     <StackPanel>
                         <Grid Margin="15,10">
-                            <TextBlock Text="LỊCH SỬ GIAO DỊCH CHI TIẾT" FontWeight="Bold" VerticalAlignment="Center" Foreground="#2C3E50"/>
+                            <TextBlock Text="{DynamicResource lbl_PurchasedPartsList}" FontWeight="Bold" VerticalAlignment="Center" Foreground="#2C3E50"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <TextBlock Text="Tổng: " VerticalAlignment="Center"/>
+                                <TextBlock Text="{DynamicResource lbl_TotalRecords}" VerticalAlignment="Center" Margin="0,0,5,0"/>
                                 <TextBlock Text="{Binding SelectedCount}" FontWeight="Bold" Foreground="#1976D2" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Grid>
@@ -190,24 +181,24 @@
                                   CanUserSortColumns="True" Background="White"
                                   MinHeight="300" MaxHeight="600" materialDesign:DataGridAssist.CellPadding="10">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Ngày" Binding="{Binding PurchaseDate, StringFormat=dd/MM/yyyy}"/>
-                                <DataGridTextColumn Header="Model" Binding="{Binding ModelName}"/>
-                                <DataGridTextColumn Header="Vendor" Binding="{Binding VendorName}" Width="150"/>
-                                <DataGridTextColumn Header="Thiết bị" Binding="{Binding EquipmentName}"/>
-                                <DataGridTextColumn Header="SL" Binding="{Binding Quantity, StringFormat={}{0:N0}}"/>
-                                <DataGridTextColumn Header="Đơn giá" Binding="{Binding UnitPrice, StringFormat={}{0:N0}}"/>
-                                <DataGridTextColumn Header="Thành tiền" Binding="{Binding TotalPrice, StringFormat={}{0:N0}}" FontWeight="Bold"/>
-                                <DataGridTextColumn Header="Tiền tệ" Binding="{Binding CurrencyName}"/>
-                                <DataGridTextColumn Header="Ghi chú" Binding="{Binding Note}" Width="*"/>
+                                <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}" Binding="{Binding PurchaseDate, StringFormat=dd/MM/yyyy}"/>
+                                <DataGridTextColumn Header="{DynamicResource dg_Model}" Binding="{Binding ModelName}"/>
+                                <DataGridTextColumn Header="{DynamicResource ph_Vendor}" Binding="{Binding VendorName}" Width="150"/>
+                                <DataGridTextColumn Header="{DynamicResource ph_Equipment}" Binding="{Binding EquipmentName}"/>
+                                <DataGridTextColumn Header="{DynamicResource dg_Quantity}" Binding="{Binding Quantity, StringFormat={}{0:N0}}"/>
+                                <DataGridTextColumn Header="{DynamicResource dg_UnitPrice}" Binding="{Binding UnitPrice, StringFormat={}{0:N0}}"/>
+                                <DataGridTextColumn Header="{DynamicResource dg_TotalPrice}" Binding="{Binding TotalPrice, StringFormat={}{0:N0}}" FontWeight="Bold"/>
+                                <DataGridTextColumn Header="{DynamicResource dg_Currency}" Binding="{Binding CurrencyName}"/>
+                                <DataGridTextColumn Header="{DynamicResource dg_Note}" Binding="{Binding Note}" Width="*"/>
                             </DataGrid.Columns>
                         </DataGrid>
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
-                            <Button Content="Trước" Command="{Binding PrevCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
+                            <Button Content="&lt;" Command="{Binding PrevCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
                             <Border Background="#1976D2" CornerRadius="15" Width="30" Height="30" Margin="10,0">
                                 <TextBlock Text="{Binding CurrentPage}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
                             </Border>
-                            <Button Content="Sau" Command="{Binding NextCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
+                            <Button Content="&gt;" Command="{Binding NextCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
                         </StackPanel>
                     </StackPanel>
                 </materialDesign:Card>
