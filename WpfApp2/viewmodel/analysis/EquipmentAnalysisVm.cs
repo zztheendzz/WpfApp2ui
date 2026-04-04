@@ -171,7 +171,7 @@ namespace WpfApp2.viewmodel.analysis
             var sortedBrands = data.BrandShares.OrderByDescending(x => x.TotalAmount).ToList();
 
             // Lấy 10 thằng đầu tiên
-            var top10Brands = sortedBrands.Take(2).ToList();
+            var top10Brands = sortedBrands.Take(10).ToList();
 
             // Những thằng còn lại (từ vị trí thứ 11 trở đi)
             var otherBrands = sortedBrands.Skip(10).ToList();

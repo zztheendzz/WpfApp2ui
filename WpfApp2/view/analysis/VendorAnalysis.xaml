@@ -162,7 +162,10 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <TextBlock Text="Biến Động Chi Tiêu Hàng Tháng" FontWeight="Bold" FontSize="14" Margin="0,0,0,10"/>
-                            <lvc:CartesianChart Grid.Row="1" LegendLocation="None">
+                            <lvc:CartesianChart x:Name="ChartMonthlySpend" Grid.Row="1" LegendLocation="None">
+                                <lvc:CartesianChart.AxisY>
+                                    <lvc:Axis Title="Triệu VNĐ" MinValue="0"/>
+                                </lvc:CartesianChart.AxisY>
                                 <lvc:CartesianChart.Series>
                                     <lvc:ColumnSeries Title="Giá trị" Values="{Binding MonthlyValues}" Fill="{StaticResource AccentBlue}"/>
                                 </lvc:CartesianChart.Series>

@@ -186,10 +186,13 @@
             <Border Grid.Column="1" Style="{StaticResource CardStyle}" Padding="15">
                 <DockPanel>
                     <TextBlock DockPanel.Dock="Top" Text="Top 5 Linh Kiện Chi Phí Cao" FontWeight="Bold" FontSize="13" Margin="0,0,0,5"/>
-                    <lvc:CartesianChart DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
+                    <lvc:CartesianChart x:Name="ChartTopItems" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
                         <lvc:CartesianChart.Series>
                             <lvc:RowSeries Values="{Binding TopItemsValues}" Fill="{StaticResource AccentBlue}" DataLabels="True"/>
                         </lvc:CartesianChart.Series>
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis Title="Giá trị (Triệu VNĐ)" MinValue="0"/>
+                        </lvc:CartesianChart.AxisX>
                         <lvc:CartesianChart.AxisY>
                             <lvc:Axis Labels="{Binding TopItemsLabels}">
                                 <lvc:Axis.Separator>

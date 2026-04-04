@@ -19,20 +19,23 @@
     <Grid Background="#F5F6F7">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="15">
-                
-                <materialDesign:Card Padding="15" Margin="0,0,0,15">
+
+                <materialDesign:Card Padding="15" Margin="0,0,0,15" materialDesign:ElevationAssist.Elevation="Dp2">
                     <StackPanel>
                         <TextBlock Text="BỘ LỌC PHÂN TÍCH" FontSize="16" FontWeight="Bold" Margin="0,0,0,15" Foreground="#2C3E50"/>
                         <WrapPanel Orientation="Horizontal">
                             <StackPanel Width="220" Margin="5">
                                 <TextBlock Text="Model:" Margin="0,0,0,5" FontWeight="SemiBold" Foreground="#666"/>
                                 <Grid>
-                                    <TextBox x:Name="txtSearchModel" Tag="M" Text="{Binding SearchModelText, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="SearchBox_PreviewKeyDown" materialDesign:HintAssist.Hint="{DynamicResource ph_Model}"/>
+                                    <TextBox x:Name="txtSearchModel" Tag="M" Text="{Binding SearchModelText, UpdateSourceTrigger=PropertyChanged}" 
+                                             PreviewKeyDown="SearchBox_PreviewKeyDown" materialDesign:HintAssist.Hint="Nhập model..."/>
                                     <Popup IsOpen="{Binding IsDropDownOpenM}" PlacementTarget="{Binding ElementName=txtSearchModel}" StaysOpen="False" AllowsTransparency="True">
                                         <Border Background="White" BorderBrush="#DDD" BorderThickness="1" Width="{Binding ElementName=txtSearchModel, Path=ActualWidth}">
                                             <ListBox x:Name="lstModel" DisplayMemberPath="Text" ItemsSource="{Binding ModelSuggestions}" SelectedItem="{Binding SelectedModel}">
                                                 <ListBox.ItemContainerStyle>
-                                                    <Style TargetType="ListBoxItem"><EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/></Style>
+                                                    <Style TargetType="ListBoxItem">
+                                                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/>
+                                                    </Style>
                                                 </ListBox.ItemContainerStyle>
                                             </ListBox>
                                         </Border>
@@ -48,7 +51,9 @@
                                         <Border Background="White" BorderBrush="#DDD" BorderThickness="1" Width="{Binding ElementName=txtSearchVendor, Path=ActualWidth}">
                                             <ListBox x:Name="lstVendor" DisplayMemberPath="Text" ItemsSource="{Binding VendorSuggestions}" SelectedItem="{Binding SelectedVendor}">
                                                 <ListBox.ItemContainerStyle>
-                                                    <Style TargetType="ListBoxItem"><EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/></Style>
+                                                    <Style TargetType="ListBoxItem">
+                                                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/>
+                                                    </Style>
                                                 </ListBox.ItemContainerStyle>
                                             </ListBox>
                                         </Border>
@@ -64,7 +69,9 @@
                                         <Border Background="White" BorderBrush="#DDD" BorderThickness="1" Width="{Binding ElementName=txtSearchEquip, Path=ActualWidth}">
                                             <ListBox x:Name="lstEquip" DisplayMemberPath="Text" ItemsSource="{Binding EquipmentSuggestions}" SelectedItem="{Binding SelectedEquipment}">
                                                 <ListBox.ItemContainerStyle>
-                                                    <Style TargetType="ListBoxItem"><EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/></Style>
+                                                    <Style TargetType="ListBoxItem">
+                                                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/>
+                                                    </Style>
                                                 </ListBox.ItemContainerStyle>
                                             </ListBox>
                                         </Border>
@@ -80,9 +87,9 @@
                             <DatePicker Width="130" SelectedDate="{Binding SelectedDateFrom}" materialDesign:HintAssist.Hint="Từ ngày" Margin="0,0,10,0"/>
                             <DatePicker Width="130" SelectedDate="{Binding SelectedDateTo}" materialDesign:HintAssist.Hint="Đến ngày" Margin="0,0,20,0"/>
                             <TextBlock Text="Giá từ:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                            <xctk:DoubleUpDown Value="{Binding PriceMin}" Width="100" Margin="0,0,10,0"/>
+                            <xctk:DoubleUpDown Value="{Binding PriceMin}" Width="100" Margin="0,0,10,0" FormatString="N0"/>
                             <TextBlock Text="Đến:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                            <xctk:DoubleUpDown Value="{Binding PriceMax}" Width="100"/>
+                            <xctk:DoubleUpDown Value="{Binding PriceMax}" Width="100" FormatString="N0"/>
                         </StackPanel>
                     </StackPanel>
                 </materialDesign:Card>
@@ -129,38 +136,58 @@
 
                     <materialDesign:Card Grid.Column="0" Margin="5" Padding="15">
                         <StackPanel>
-                            <TextBlock Text="SO SÁNH GIÁ GIỮA CÁC VENDOR" FontWeight="Bold" Margin="0,0,0,10"/>
-                            <lvc:CartesianChart Series="{Binding VendorPriceSeries}" Height="250" LegendLocation="None">
+                            <TextBlock Text="SO SÁNH GIÁ GIỮA CÁC VENDOR" FontWeight="Bold" Margin="0,0,0,10" Foreground="#2C3E50"/>
+                            <lvc:CartesianChart x:Name="ChartVendor" Series="{Binding VendorPriceSeries}" Height="250" LegendLocation="None">
+                                
                                 <lvc:CartesianChart.AxisX>
-                                    <lvc:Axis Title="Vendor" Labels="{Binding VendorLabels}"/>
+                                    <lvc:Axis Title="Vendor" Labels="{Binding VendorLabels}">
+                                        <lvc:Axis.Separator>
+                                            <lvc:Separator Step="1" IsEnabled="False"/>
+                                        </lvc:Axis.Separator>
+                                    </lvc:Axis>
                                 </lvc:CartesianChart.AxisX>
+                                
+                                <lvc:CartesianChart.AxisY>
+                                    <lvc:Axis Title="Giá (VNĐ)" LabelFormatter="{Binding YFormatter}" MinValue="0">
+                                        <lvc:Axis.Separator>
+                                            <lvc:Separator StrokeThickness="1" Stroke="#F0F0F0" Step="{Binding YAxisStep}"/>
+                                        </lvc:Axis.Separator>
+                                    </lvc:Axis>
+                                </lvc:CartesianChart.AxisY>
                             </lvc:CartesianChart>
                         </StackPanel>
                     </materialDesign:Card>
 
                     <materialDesign:Card Grid.Column="1" Margin="5" Padding="15">
                         <StackPanel>
-                            <TextBlock Text="BIẾN ĐỘNG GIÁ THEO THỜI GIAN" FontWeight="Bold" Margin="0,0,0,10"/>
-                            <lvc:CartesianChart Series="{Binding PriceTrendSeries}" Height="250" LegendLocation="None">
+                            <TextBlock Text="BIẾN ĐỘNG GIÁ THEO THỜI GIAN" FontWeight="Bold" Margin="0,0,0,10" Foreground="#2C3E50"/>
+                            <lvc:CartesianChart x:Name="ChartTrend" Series="{Binding PriceTrendSeries}" Height="250" LegendLocation="None">
+                               
                                 <lvc:CartesianChart.AxisX>
                                     <lvc:Axis Title="Ngày" Labels="{Binding TrendLabels}"/>
+                                    
                                 </lvc:CartesianChart.AxisX>
+                                
+                                <lvc:CartesianChart.AxisY>
+                                    <lvc:Axis Title="Giá" LabelFormatter="{Binding YFormatter}"/>
+                                </lvc:CartesianChart.AxisY>
                             </lvc:CartesianChart>
                         </StackPanel>
                     </materialDesign:Card>
                 </Grid>
 
-                <materialDesign:Card Padding="0" Margin="5">
+                <materialDesign:Card Padding="0" Margin="5" materialDesign:ElevationAssist.Elevation="Dp2">
                     <StackPanel>
                         <Grid Margin="15,10">
-                            <TextBlock Text="LỊCH SỬ GIAO DỊCH CHI TIẾT" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <TextBlock Text="LỊCH SỬ GIAO DỊCH CHI TIẾT" FontWeight="Bold" VerticalAlignment="Center" Foreground="#2C3E50"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <TextBlock Text="Tổng: " VerticalAlignment="Center"/>
                                 <TextBlock Text="{Binding SelectedCount}" FontWeight="Bold" Foreground="#1976D2" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Grid>
-                        
+
                         <DataGrid ItemsSource="{Binding PurchaseDtos}" AutoGenerateColumns="False" IsReadOnly="True" 
+                                  CanUserSortColumns="True" Background="White"
                                   MinHeight="300" MaxHeight="600" materialDesign:DataGridAssist.CellPadding="10">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Ngày" Binding="{Binding PurchaseDate, StringFormat=dd/MM/yyyy}"/>

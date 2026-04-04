@@ -12,12 +12,31 @@ namespace WpfApp2.view.analysis
         public PurchaseAnalysis()
         {
             InitializeComponent();
-            // DataContext đã được định nghĩa trong XAML nên không cần khởi tạo lại ở đây
+
+            // Định dạng hiển thị cho trục Y của CẢ 2 BIỂU ĐỒ
+            // Logic: Chia cho 1.000.000 và thêm hậu tố "Tr"
+            Func<double, string> trieuFormatter = value => (value / 1000000).ToString("N1") + " Tr";
+
+            // Áp dụng cho biểu đồ Vendor (Bên trái)
+            if (ChartVendor != null && ChartVendor.AxisY.Count > 0)
+            {
+                ChartVendor.AxisY[0].LabelFormatter = trieuFormatter;
+            }
+
+            if (ChartVendor != null && ChartVendor.AxisY.Count > 0)
+            {
+                ChartVendor.AxisY[0].LabelFormatter = trieuFormatter;
+            }
+
+            // Áp dụng cho biểu đồ 2 (Trend)
+            if (ChartTrend != null && ChartTrend.AxisY.Count > 0)
+            {
+                ChartTrend.AxisY[0].LabelFormatter = trieuFormatter;
+            }
         }
 
-        /// <summary>
-        /// Xử lý điều hướng phím (Lên, Xuống, Enter, Esc) cho các ô SearchBox
-        /// </summary>
+        // --- GIỮ NGUYÊN CÁC HÀM XỬ LÝ SEARCH BOX BÊN DƯỚI ---
+
         private void SearchBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             var textBox = sender as TextBox;
@@ -26,9 +45,8 @@ namespace WpfApp2.view.analysis
             var vm = this.DataContext as PurchaseAnalysisVm;
             if (vm == null) return;
 
-            string type = textBox.Tag.ToString(); // "M", "V", hoặc "E" lấy từ Tag trong XAML
+            string type = textBox.Tag.ToString();
 
-            // Xác định ListBox tương ứng dựa trên loại tìm kiếm để điều khiển Index
             ListBox activeList = type switch
             {
                 "M" => lstModel,
@@ -44,38 +62,30 @@ namespace WpfApp2.view.analysis
                 case Key.Down:
                     if (activeList.Items.Count > 0)
                     {
-                        // Di chuyển xuống trong danh sách gợi ý
                         int nextIndex = activeList.SelectedIndex + 1;
                         activeList.SelectedIndex = (nextIndex >= activeList.Items.Count) ? 0 : nextIndex;
                         activeList.ScrollIntoView(activeList.SelectedItem);
                     }
                     e.Handled = true;
                     break;
-
                 case Key.Up:
                     if (activeList.Items.Count > 0)
                     {
-                        // Di chuyển lên trong danh sách gợi ý
                         int prevIndex = activeList.SelectedIndex - 1;
                         activeList.SelectedIndex = (prevIndex < 0) ? activeList.Items.Count - 1 : prevIndex;
                         activeList.ScrollIntoView(activeList.SelectedItem);
                     }
                     e.Handled = true;
                     break;
-
                 case Key.Enter:
-                    // Khi nhấn Enter, xác nhận lựa chọn đang highlight trong ListBox
                     if (activeList.SelectedItem != null)
                     {
                         vm.ConfirmSelection(type);
-                        // Chuyển focus sang control tiếp theo để tăng trải nghiệm nhập liệu
                         textBox.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
                         e.Handled = true;
                     }
                     break;
-
                 case Key.Escape:
-                    // Đóng Popup khi nhấn Esc
                     if (type == "M") vm.IsDropDownOpenM = false;
                     else if (type == "V") vm.IsDropDownOpenV = false;
                     else if (type == "E") vm.IsDropDownOpenE = false;
@@ -84,32 +94,25 @@ namespace WpfApp2.view.analysis
             }
         }
 
-        /// <summary>
-        /// Xử lý khi click chuột trực tiếp vào một dòng gợi ý trong ListBox của Popup
-        /// </summary>
         private void OnListBoxItemClick(object sender, MouseButtonEventArgs e)
         {
             var vm = this.DataContext as PurchaseAnalysisVm;
             if (vm == null) return;
 
-            // Truy tìm ListBoxItem cha của thành phần bị click (OriginalSource)
             DependencyObject dep = (DependencyObject)e.OriginalSource;
             while (dep != null && !(dep is ListBoxItem))
                 dep = VisualTreeHelper.GetParent(dep);
 
             if (dep is ListBoxItem item)
             {
-                // Tìm ListBox chứa Item này để biết người dùng đang chọn ở ô nào (Model, Vendor hay Equip)
                 var listBox = ItemsControl.ItemsControlFromItemContainer(item) as ListBox;
                 if (listBox == null) return;
 
                 string type = (listBox.Name == "lstModel") ? "M" :
                               (listBox.Name == "lstVendor") ? "V" : "E";
 
-                // Gọi hàm xác nhận trong ViewModel
                 vm.ConfirmSelection(type);
 
-                // Sau khi click chọn, trả lại Focus cho TextBox tương ứng để người dùng biết mình đang ở đâu
                 if (type == "M") txtSearchModel.Focus();
                 else if (type == "V") txtSearchVendor.Focus();
                 else if (type == "E") txtSearchEquip.Focus();

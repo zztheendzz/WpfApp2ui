@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System; // Thêm thư viện này
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -12,8 +13,15 @@ namespace WpfApp2.view.analysis
         public VendorAnalysis()
         {
             InitializeComponent();
-            // Khởi tạo DataContext là Vendor ViewModel
+
+            // Khởi tạo DataContext
             DataContext = new VendorAnalysisVm();
+
+            // Định dạng biểu đồ: Chia cho 1.000.000 và thêm chữ "Tr"
+            if (ChartMonthlySpend != null && ChartMonthlySpend.AxisY.Count > 0)
+            {
+                ChartMonthlySpend.AxisY[0].LabelFormatter = value => (value / 1000000).ToString("N1") + " Tr";
+            }
         }
 
         /// <summary>
@@ -23,7 +31,6 @@ namespace WpfApp2.view.analysis
         {
             if (!(DataContext is VendorAnalysisVm vm)) return;
 
-            // Nếu Dropdown không mở, không cần xử lý các phím điều hướng danh sách
             if (!vm.IsSearchDropDownOpen) return;
 
             switch (e.Key)
@@ -46,7 +53,7 @@ namespace WpfApp2.view.analysis
                     if (lstVendor.SelectedItem is SearchResultDto selected)
                     {
                         vm.ConfirmSelection(selected);
-                        e.Handled = true; // Chặn Enter kích hoạt lệnh khác của TextBox
+                        e.Handled = true;
                     }
                     break;
 
@@ -64,7 +71,6 @@ namespace WpfApp2.view.analysis
         {
             if (!(DataContext is VendorAnalysisVm vm)) return;
 
-            // Tìm đối tượng ListBoxItem thực sự bị click trong Visual Tree
             DependencyObject dep = (DependencyObject)e.OriginalSource;
             while (dep != null && !(dep is ListBoxItem))
                 dep = VisualTreeHelper.GetParent(dep);
@@ -72,7 +78,6 @@ namespace WpfApp2.view.analysis
             if (dep is ListBoxItem item && item.Content is SearchResultDto data)
             {
                 vm.ConfirmSelection(data);
-                // Trả focus về TextBox sau khi chọn để người dùng có thể gõ tiếp nếu muốn
                 txtSearchVendor.Focus();
             }
         }

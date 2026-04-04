@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System; // Thêm thư viện này
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -13,7 +14,15 @@ namespace WpfApp2.view.analysis
         {
             InitializeComponent();
             DataContext = new BrandAnalysisVm();
+
+            // Định dạng biểu đồ: Chia giá trị cho 1.000.000 và thêm hậu tố "Tr"
+            if (ChartBrandMonthly != null && ChartBrandMonthly.AxisY.Count > 0)
+            {
+                ChartBrandMonthly.AxisY[0].LabelFormatter = value => (value / 1000000).ToString("N1") + " Tr";
+            }
         }
+
+        // --- CÁC HÀM XỬ LÝ SEARCH BOX GIỮ NGUYÊN ---
 
         private void SearchBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
@@ -38,11 +47,12 @@ namespace WpfApp2.view.analysis
                     if (LstSuggestions.SelectedItem is SearchResultDto selected)
                     {
                         vm.ConfirmSelection(selected);
-                        e.Handled = true; // Chặn Enter kích hoạt lệnh tìm kiếm gốc của TextBox
+                        e.Handled = true;
                     }
                     break;
                 case Key.Escape:
                     vm.IsSearchDropDownOpen = false;
+                    e.Handled = true;
                     break;
             }
         }
@@ -51,7 +61,6 @@ namespace WpfApp2.view.analysis
         {
             if (!(DataContext is BrandAnalysisVm vm)) return;
 
-            // Tìm item thực sự bị click
             DependencyObject dep = (DependencyObject)e.OriginalSource;
             while (dep != null && !(dep is ListBoxItem))
                 dep = VisualTreeHelper.GetParent(dep);
@@ -59,6 +68,8 @@ namespace WpfApp2.view.analysis
             if (dep is ListBoxItem item && item.Content is SearchResultDto data)
             {
                 vm.ConfirmSelection(data);
+                // Thêm dòng này để trả focus về TextBox sau khi chọn
+                TxtSearch.Focus();
             }
         }
     }

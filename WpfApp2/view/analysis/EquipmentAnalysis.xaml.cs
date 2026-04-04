@@ -17,6 +17,13 @@ namespace WpfApp2.view.analysis
             InitializeComponent();
             _viewModel = new EquipmentAnalysisVm();
             this.DataContext = _viewModel;
+
+            // Định dạng biểu đồ: Chia cho 1.000.000 và hiện hậu tố "Tr"
+            // Đối với RowSeries (biểu đồ ngang), giá trị hiển thị phụ thuộc vào LabelFormatter của trục X
+            if (ChartTopItems != null && ChartTopItems.AxisX.Count > 0)
+            {
+                ChartTopItems.AxisX[0].LabelFormatter = value => (value / 1000000).ToString("N1") + " Tr";
+            }
         }
 
         /// <summary>
