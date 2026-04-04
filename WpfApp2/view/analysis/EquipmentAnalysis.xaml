@@ -99,32 +99,25 @@
 
         <Border Grid.Row="1" Background="White" BorderBrush="#DDD" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
-                <StackPanel Margin="0,0,10,0">
-                    <TextBlock Text="{DynamicResource ph_DateFrom}" FontSize="10" Foreground="Gray" Margin="0,0,0,2"/>
-                    <DatePicker Width="120" SelectedDate="{Binding FromDate}"/>
-                </StackPanel>
-                <StackPanel Margin="0,0,15,0">
-                    <TextBlock Text="{DynamicResource ph_DateTo}" FontSize="10" Foreground="Gray" Margin="0,0,0,2"/>
-                    <DatePicker Width="120" SelectedDate="{Binding ToDate}"/>
-                </StackPanel>
+
                 <StackPanel Margin="0,0,15,0">
                     <TextBlock Text="{DynamicResource ph_Equipment}" FontSize="10" Foreground="Gray"/>
                     <Grid>
                         <TextBox x:Name="txtGlobalSearch" Width="250" Height="30" VerticalContentAlignment="Center" Padding="5,0,25,0"
-                                 Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
-                                 PreviewKeyDown="SearchBox_PreviewKeyDown"/>
+                         Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
+                         PreviewKeyDown="SearchBox_PreviewKeyDown"/>
                         <fa:ImageAwesome Icon="Search" Foreground="#CCC" Width="12" HorizontalAlignment="Right" Margin="0,0,8,0" IsHitTestVisible="False"/>
                         <Popup IsOpen="{Binding IsSearchDropDownOpen}" PlacementTarget="{Binding ElementName=txtGlobalSearch}" StaysOpen="False" AllowsTransparency="True">
                             <Border Background="White" BorderBrush="#DDD" BorderThickness="1" Width="250" MaxHeight="300">
                                 <ListBox x:Name="lstSearchResults" ItemsSource="{Binding SearchSuggestions}" SelectedItem="{Binding SelectedSearchResult}"
-                                         DisplayMemberPath="Text" BorderThickness="0" PreviewMouseLeftButtonDown="OnListBoxItemClick">
+                                 DisplayMemberPath="Text" BorderThickness="0" PreviewMouseLeftButtonDown="OnListBoxItemClick">
                                     <ListBox.ItemContainerStyle>
                                         <Style TargetType="ListBoxItem">
                                             <Setter Property="Padding" Value="8,5"/>
                                             <Style.Triggers>
                                                 <Trigger Property="IsSelected" Value="True">
                                                     <Setter Property="Background" Value="{StaticResource AccentBlue}"/>
-                                                    <Setter Property="Foreground" Value="White"/>
+                                                    <Setter Property="Foreground" Value="Black"/>
                                                 </Trigger>
                                             </Style.Triggers>
                                         </Style>
@@ -134,8 +127,20 @@
                         </Popup>
                     </Grid>
                 </StackPanel>
+
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="{DynamicResource ph_DateFrom}" FontSize="10" Foreground="Gray" Margin="0,0,0,2"/>
+                    <DatePicker Width="120" SelectedDate="{Binding FromDate}"/>
+                </StackPanel>
+
+                <StackPanel Margin="0,0,15,0">
+                    <TextBlock Text="{DynamicResource ph_DateTo}" FontSize="10" Foreground="Gray" Margin="0,0,0,2"/>
+                    <DatePicker Width="120" SelectedDate="{Binding ToDate}"/>
+                </StackPanel>
+
                 <Button Content="{DynamicResource btn_Analyze}" VerticalAlignment="Bottom" Height="30" Margin="10,0,0,2"
-                        Command="{Binding AnalyzeCommand}" Background="{StaticResource AccentBlue}" Foreground="White" Padding="25,0" BorderThickness="0"/>
+                Command="{Binding AnalyzeCommand}" Background="{StaticResource AccentBlue}" Foreground="White" Padding="25,0" BorderThickness="0"/>
+
             </StackPanel>
         </Border>
 
