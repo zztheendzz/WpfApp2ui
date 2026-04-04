@@ -8,5 +8,6 @@ namespace WpfApp2.modelDTO.analysisDto
     {
 
         public List<PurchaseDto> Items { get; set; }
+        public decimal LineTotal { get; set; }
     }
 }

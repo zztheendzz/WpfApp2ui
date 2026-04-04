@@ -10,7 +10,8 @@ namespace WpfApp2.modelDTO
         public int Id { get; set; }
         public int ModelId { get; set; }
         public string ModelName { get; set; }
-
+        public string ModelCode { get; set; }
+        public decimal LineTotal { get; set; }
         public int VendorId { get; set; }
         public string VendorName { get; set; }
 
@@ -30,7 +31,7 @@ namespace WpfApp2.modelDTO
 
         public string CurrencyName{ get; set; }
 
-        public string PurchaseDate { get; set; }
+        public DateTime PurchaseDate { get; set; }
 
         public string CreateAt { get; set; }
 

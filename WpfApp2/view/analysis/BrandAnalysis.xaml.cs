@@ -17,36 +17,7 @@ namespace WpfApp2.view.analysis
 
         private void SearchBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (!(DataContext is BrandAnalysisVm vm)) return;
 
-            if (e.Key == Key.Enter)
-            {
-                vm.ConfirmSelection(); // Chọn item đang highlight
-                e.Handled = true;
-            }
-            else if (e.Key == Key.Down && vm.IsSearchDropDownOpen)
-            {
-                if (lstBrand.SelectedIndex < lstBrand.Items.Count - 1)
-                {
-                    lstBrand.SelectedIndex++;
-                    lstBrand.ScrollIntoView(lstBrand.SelectedItem);
-                }
-                e.Handled = true;
-            }
-            else if (e.Key == Key.Up && vm.IsSearchDropDownOpen)
-            {
-                if (lstBrand.SelectedIndex > 0)
-                {
-                    lstBrand.SelectedIndex--;
-                    lstBrand.ScrollIntoView(lstBrand.SelectedItem);
-                }
-                e.Handled = true;
-            }
-            else if (e.Key == Key.Escape)
-            {
-                vm.IsSearchDropDownOpen = false;
-                e.Handled = true;
-            }
         }
 
         // CẬP NHẬT: Xử lý lấy item chính xác khi click chuột
