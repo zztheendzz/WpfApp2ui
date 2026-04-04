@@ -12,237 +12,72 @@
       TextOptions.TextFormattingMode="Display"
       RenderOptions.EdgeMode="Aliased">
 
-    <Page.Resources>
-        <SolidColorBrush x:Key="MainNavy" Color="#162D46"/>
-        <SolidColorBrush x:Key="SubBlue" Color="#254D76"/>
-        <SolidColorBrush x:Key="AccentBlue" Color="#3A75B0"/>
-        <SolidColorBrush x:Key="BorderLight" Color="#44FFFFFF"/>
-
-        <Style x:Key="CardStyle" TargetType="Border">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="CornerRadius" Value="6"/>
-            <Setter Property="Margin" Value="8"/>
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.1"/>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="FooterButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BorderLight}"/>
-            <Setter Property="Margin" Value="6,4"/>
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" 
-                                Background="{TemplateBinding Background}" 
-                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}" 
-                                CornerRadius="4"
-                                SnapsToDevicePixels="True">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#22FFFFFF"/>
-                                <Setter TargetName="border" Property="BorderBrush" Value="White"/>
-                            </Trigger>
-                            <Trigger Property="Tag" Value="Active">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource AccentBlue}"/>
-                                <Setter TargetName="border" Property="BorderThickness" Value="0"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="{StaticResource MainNavy}"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Padding" Value="10,8"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="BorderThickness" Value="0,0,1,0"/>
-            <Setter Property="BorderBrush" Value="#333"/>
-        </Style>
-    </Page.Resources>
-
-    <Grid Background="#F0F2F5">
+    <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="65"/>
+            <RowDefinition Height="Auto"/>
+            <!-- Toolbar -->
+            <RowDefinition Height="Auto"/>
+            <!-- Header -->
             <RowDefinition Height="*"/>
-            <RowDefinition Height="65"/>
+            <!-- Detail Grid -->
+            <RowDefinition Height="120"/>
+            <!-- Note -->
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="{StaticResource MainNavy}">
-            <DockPanel Margin="20,0">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <fa:ImageAwesome Icon="BarChart" Foreground="White" Width="18" Margin="0,0,12,0"/>
-                    <TextBlock Text="Phân Tích Đơn Giá Theo Nhà Cung Cấp" Foreground="White" FontSize="15" FontWeight="Medium"/>
-                </StackPanel>
-                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Content="Xuất Excel" Margin="5" Padding="10,2" Cursor="Hand" Background="Transparent" Foreground="White" BorderBrush="White"/>
-                    <Button Content="Xuất PDF" Margin="5" Padding="10,2" Cursor="Hand" Background="Transparent" Foreground="White" BorderBrush="White"/>
-                </StackPanel>
-            </DockPanel>
-        </Border>
+        <!-- ===== Toolbar ===== -->
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
+            <Button Content="Lưu" Width="80" Margin="5" Command="{Binding SaveCommand}"/>
+            <Button Content="Thêm" Width="80" Margin="5" Command="{Binding AddCommand}"/>
+            <Button Content="Xóa" Width="80" Margin="5" Command="{Binding DeleteCommand}"/>
+            <Button Content="Import Excel" Width="120" Margin="5" Command="{Binding ImportCommand}"/>
+        </StackPanel>
 
-        <Border Grid.Row="1" Background="White" BorderBrush="#DDD" BorderThickness="0,0,0,1">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
-                <StackPanel Margin="0,0,20,0">
-                    <TextBlock Text="Nhà Cung Cấp" FontSize="10" Foreground="Gray" Margin="0,0,0,2"/>
-                    <ComboBox Width="150" SelectedIndex="0">
-                        <ComboBoxItem Content="Vendor B"/>
-                    </ComboBox>
-                </StackPanel>
+        <!-- ===== Header Form ===== -->
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-                <StackPanel Margin="0,0,10,0">
-                    <TextBlock Text="Từ ngày" FontSize="10" Foreground="Gray" Margin="0,0,0,2"/>
-                    <DatePicker Width="120" SelectedDate="2021-01-01"/>
-                </StackPanel>
+            <!-- Row 1 -->
+            <TextBlock Text="Model" Grid.Column="0" VerticalAlignment="Center"/>
+            <TextBox Grid.Column="1" Margin="5" Text="{Binding Model}"/>
 
-                <StackPanel Margin="0,0,20,0">
-                    <TextBlock Text="Đến ngày" FontSize="10" Foreground="Gray" Margin="0,0,0,2"/>
-                    <DatePicker Width="120" SelectedDate="2021-12-31"/>
-                </StackPanel>
+            <TextBlock Text="Brand" Grid.Column="2" VerticalAlignment="Center"/>
+            <ComboBox Grid.Column="3" Margin="5" ItemsSource="{Binding Brands}" SelectedItem="{Binding SelectedBrand}"/>
 
-                <Button Content="Áp dụng" VerticalAlignment="Bottom" Height="30" Margin="10,0,0,2"
-                        Background="{StaticResource AccentBlue}" Foreground="White" Padding="25,0" BorderThickness="0">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="4"/>
-                        </Style>
-                    </Button.Resources>
-                </Button>
-            </StackPanel>
-        </Border>
+            <!-- Row 2 -->
+            <TextBlock Text="Vendor" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center"/>
+            <ComboBox Grid.Column="1" Grid.Row="1" Margin="5" ItemsSource="{Binding Vendors}" SelectedItem="{Binding SelectedVendor}"/>
 
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
-            <Grid Margin="10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="100"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+            <TextBlock Text="Ngày hiệu lực" Grid.Column="2" Grid.Row="1" VerticalAlignment="Center"/>
+            <DatePicker Grid.Column="3" Grid.Row="1" Margin="5" SelectedDate="{Binding EffectiveDate}"/>
+        </Grid>
 
-                <UniformGrid Grid.Row="0" Columns="3">
-                    <Border Background="{StaticResource SubBlue}" CornerRadius="5" Margin="6">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
-                            <fa:ImageAwesome Icon="Money" Foreground="#FFD700" Width="30"/>
-                            <StackPanel Margin="20,0,0,0">
-                                <TextBlock Text="Tổng Giá Trị Mua Hàng" Foreground="White" Opacity="0.8" FontSize="11"/>
-                                <TextBlock Text="2,580,000,000 VND" Foreground="White" FontSize="18" FontWeight="Bold"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                    <Border Background="{StaticResource SubBlue}" CornerRadius="5" Margin="6">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
-                            <fa:ImageAwesome Icon="Exchange" Foreground="White" Width="30"/>
-                            <StackPanel Margin="20,0,0,0">
-                                <TextBlock Text="Số Lần Giao Dịch" Foreground="White" Opacity="0.8" FontSize="11"/>
-                                <TextBlock Text="27 Giao dịch" Foreground="White" FontSize="18" FontWeight="Bold"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                    <Border Background="{StaticResource SubBlue}" CornerRadius="5" Margin="6">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
-                            <fa:ImageAwesome Icon="PieChart" Foreground="#90EE90" Width="30"/>
-                            <StackPanel Margin="20,0,0,0">
-                                <TextBlock Text="% Phân Phối Theo Model" Foreground="White" Opacity="0.8" FontSize="11"/>
-                                <TextBlock Text="Model A chiếm 45%" Foreground="White" FontSize="18" FontWeight="Bold"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </UniformGrid>
+        <!-- ===== Detail Grid ===== -->
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding PriceDetails}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="True"
+                  CanUserDeleteRows="True"
+                  Margin="0,0,0,10">
 
-                <Grid Grid.Row="1" Margin="0,5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1.4*"/>
-                    </Grid.ColumnDefinitions>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Model Code" Binding="{Binding ModelCode}" Width="*"/>
+                <DataGridTextColumn Header="Vendor" Binding="{Binding Vendor}" Width="*"/>
+                <DataGridTextColumn Header="Số lượng" Binding="{Binding Quantity}" Width="*"/>
+                <DataGridTextColumn Header="Đơn giá" Binding="{Binding Price}" Width="*"/>
+                <DataGridTextColumn Header="Thành tiền" Binding="{Binding Total}" Width="*" IsReadOnly="True"/>
+            </DataGrid.Columns>
+        </DataGrid>
 
-                    <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="20">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Text="Tỷ Lệ Cung Cấp Theo Model" FontWeight="Bold" FontSize="14"/>
-                            <lvc:PieChart Grid.Row="1" LegendLocation="Bottom" Margin="0,15,0,0">
-                                <lvc:PieChart.Series>
-                                    <lvc:PieSeries Title="Model A" Values="45" DataLabels="True" Fill="#2E5A88"/>
-                                    <lvc:PieSeries Title="Model B" Values="30" DataLabels="True" Fill="#E67E22"/>
-                                    <lvc:PieSeries Title="Model C" Values="15" DataLabels="True" Fill="#27AE60"/>
-                                    <lvc:PieSeries Title="Model D" Values="10" DataLabels="True" Fill="#E74C3C"/>
-                                </lvc:PieChart.Series>
-                            </lvc:PieChart>
-                        </Grid>
-                    </Border>
+        <!-- ===== Note ===== -->
+        <StackPanel Grid.Row="3">
+            <TextBlock Text="Ghi chú"/>
+            <TextBox Text="{Binding Note}" AcceptsReturn="True" Height="80"/>
+        </StackPanel>
 
-                    <StackPanel Grid.Column="1">
-                        <Border Style="{StaticResource CardStyle}" Height="210" Padding="15">
-                            <DockPanel>
-                                <TextBlock Text="Tổng Giá Trị Mua Hàng Theo Thời Gian" FontWeight="Bold" DockPanel.Dock="Top" Margin="0,0,0,10"/>
-                                <DataGrid AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Horizontal">
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Tháng" Width="*" Binding="{Binding Thang}"/>
-                                        <DataGridTextColumn Header="Tổng Giá Trị (VND)" Width="*" Binding="{Binding Value}"/>
-                                    </DataGrid.Columns>
-                                </DataGrid>
-                            </DockPanel>
-                        </Border>
-
-                        <Border Style="{StaticResource CardStyle}" Height="280" Padding="15">
-                            <DockPanel>
-                                <TextBlock Text="Danh Sách Linh Kiện Đã Mua" FontWeight="Bold" DockPanel.Dock="Top" Margin="0,0,0,10"/>
-                                <DataGrid AutoGenerateColumns="False" IsReadOnly="True" VerticalScrollBarVisibility="Auto">
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Ngày" Width="85"/>
-                                        <DataGridTextColumn Header="Tên Linh Kiện" Width="*"/>
-                                        <DataGridTextColumn Header="Model" Width="80"/>
-                                        <DataGridTextColumn Header="Số Lượng" Width="70"/>
-                                        <DataGridTextColumn Header="Thành Tiền" Width="100"/>
-                                    </DataGrid.Columns>
-                                </DataGrid>
-                            </DockPanel>
-                        </Border>
-                    </StackPanel>
-                </Grid>
-            </Grid>
-        </ScrollViewer>
-
-        <Border Grid.Row="3" Background="{StaticResource MainNavy}" Padding="10,5">
-            <UniformGrid Columns="4">
-                <Button Style="{StaticResource FooterButtonStyle}" Tag="Active">
-                    <StackPanel>
-                        <fa:ImageAwesome Icon="Cube" Foreground="White" Width="16" Margin="0,0,0,3"/>
-                        <TextBlock Text="Phân Tích Theo Model" FontSize="10" FontWeight="SemiBold"/>
-                    </StackPanel>
-                </Button>
-                <Button Style="{StaticResource FooterButtonStyle}">
-                    <StackPanel>
-                        <fa:ImageAwesome Icon="Industry" Foreground="White" Width="16" Margin="0,0,0,3"/>
-                        <TextBlock Text="Phân Tích Theo Vendor" FontSize="10"/>
-                    </StackPanel>
-                </Button>
-                <Button Style="{StaticResource FooterButtonStyle}">
-                    <StackPanel>
-                        <fa:ImageAwesome Icon="Flash" Foreground="White" Width="16" Margin="0,0,0,3"/>
-                        <TextBlock Text="Phân Tích Thường Phái" FontSize="10"/>
-                    </StackPanel>
-                </Button>
-                <Button Style="{StaticResource FooterButtonStyle}">
-                    <StackPanel>
-                        <fa:ImageAwesome Icon="Wrench" Foreground="White" Width="16" Margin="0,0,0,3"/>
-                        <TextBlock Text="Phân Tích Thiết Bị" FontSize="10"/>
-                    </StackPanel>
-                </Button>
-            </UniformGrid>
-        </Border>
     </Grid>
 </Page>

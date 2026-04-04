@@ -1,20 +1,22 @@
 ﻿using Dapper;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using WpfApp2.modelDTO;
 using WpfApp2.modelDTO.analysysDto;
+using WpfApp2.modelDTO.analysisDto.ShareDto;
 
 namespace WpfApp2.Services.analysisService
 {
     public class PurchaseAnalysisSv
     {
-        public DatabaseService _db = new DatabaseService();
-        // Equipment equipoment
-        public IEnumerable<PurchaseDto> Search(
-            string modelName,
-            string vendor,
-            string equipment,
+        private readonly DatabaseService _db = new DatabaseService();
+
+        public ModelAnalysisDto GetComprehensiveAnalysis(
+            string modelSearch,
+            int? modelId,
+            int? vendorId,
             int? equipmentId,
             DateTime? from,
             DateTime? to,
@@ -22,74 +24,71 @@ namespace WpfApp2.Services.analysisService
             decimal? maxPrice)
         {
             var sql = new StringBuilder(@"
-        SELECT 
-            p.Id,
-            m.ModelName,
-            v.VendorName,
-            e.EquipmentName,
-            p.Quantity,
-            p.UnitPrice,
-            p.Quantity * p.UnitPrice AS TotalPrice,
-            p.CurrencyId,
-            p.PurchaseDate,
-            p.Note
-        FROM Purchase p
-        LEFT JOIN Model m ON p.ModelId = m.Id
-        LEFT JOIN Vendor v ON p.VendorId = v.Id
-        LEFT JOIN Equipment e ON p.EquipmentId = e.Id
-        LEFT JOIN Currency c ON p.CurrencyName = c.Id
-        WHERE 1=1
-    ");
+                SELECT 
+                    p.Id, 
+                    m.ModelName, m.ModelCode,
+                    v.VendorName, 
+                    e.EquipmentName, 
+                    p.Quantity, 
+                    p.UnitPrice, 
+                    (p.Quantity * p.UnitPrice) AS LineTotal, -- Tính thành tiền
+                    c.CurrencyName,
+                    p.PurchaseDate, 
+                    u.UserName AS FullName,
+                    p.Note
+                FROM PurchaseHistory p
+                LEFT JOIN Model m ON p.ModelId = m.Id
+                LEFT JOIN Vendor v ON p.VendorId = v.Id
+                LEFT JOIN Equipment e ON p.EquipmentId = e.Id
+                LEFT JOIN Currency c ON p.CurrencyId = c.Id
+                LEFT JOIN [User] u ON p.UserId = u.Id
+                WHERE 1=1
+            ");
 
             var param = new DynamicParameters();
 
-            // ✅ Model Name
-            if (!string.IsNullOrWhiteSpace(modelName))
+            // Lọc theo ID (Dropdown) hoặc Text (Searchbox)
+            if (modelId.HasValue)
             {
-                sql.Append(" AND LOWER(m.ModelName) LIKE @modelName");
-                param.Add("modelName", $"%{modelName.ToLower().Trim()}%");
+                sql.Append(" AND p.ModelId = @modelId");
+                param.Add("modelId", modelId);
+            }
+            else if (!string.IsNullOrWhiteSpace(modelSearch))
+            {
+                sql.Append(" AND (LOWER(m.ModelName) LIKE @ms OR LOWER(m.ModelCode) LIKE @ms)");
+                param.Add("ms", $"%{modelSearch.ToLower()}%");
             }
 
-            // ✅ Vendor
-            if (!string.IsNullOrWhiteSpace(vendor))
+            if (vendorId.HasValue)
             {
-                sql.Append(" AND LOWER(v.VendorName) LIKE @vendor");
-                param.Add("vendor", $"%{vendor.ToLower().Trim()}%");
+                sql.Append(" AND p.VendorId = @vendorId");
+                param.Add("vendorId", vendorId);
             }
 
-            // ✅ Equipment (text search)
-            if (!string.IsNullOrWhiteSpace(equipment))
-            {
-                sql.Append(" AND LOWER(e.EquipmentName) LIKE @equipment");
-                param.Add("equipment", $"%{equipment.ToLower().Trim()}%");
-            }
-
-            // ✅ Dropdown filter
             if (equipmentId.HasValue)
             {
                 sql.Append(" AND p.EquipmentId = @equipmentId");
                 param.Add("equipmentId", equipmentId);
             }
 
-
+            // Lọc theo khoảng thời gian
             if (from.HasValue)
             {
-                sql.Append(" AND p.PurchaseDate >= @from");
+                sql.Append(" AND date(p.PurchaseDate) >= date(@from)");
                 param.Add("from", from);
             }
-
             if (to.HasValue)
             {
-                sql.Append(" AND p.PurchaseDate <= @to");
+                sql.Append(" AND date(p.PurchaseDate) <= date(@to)");
                 param.Add("to", to);
             }
 
+            // Lọc theo đơn giá
             if (minPrice.HasValue)
             {
                 sql.Append(" AND p.UnitPrice >= @minPrice");
                 param.Add("minPrice", minPrice);
             }
-
             if (maxPrice.HasValue)
             {
                 sql.Append(" AND p.UnitPrice <= @maxPrice");
@@ -99,61 +98,43 @@ namespace WpfApp2.Services.analysisService
             sql.Append(" ORDER BY p.PurchaseDate DESC");
 
             using var conn = _db.GetConnection();
-            return conn.Query<PurchaseDto>(sql.ToString(), param);
-        }
+            var items = conn.Query<PurchaseDto>(sql.ToString(), param).ToList();
 
-        public IEnumerable<PurchaseDto> Search3(
-            int? EquipmentId,
-            int? ModelId,
-            int? VendorId,
-            decimal? PriceMin,
-            decimal? PriceMax,
-            DateTime? DateFrom,
-            DateTime? DateTo
-            )
-        {
-            string sql = @"
-                SELECT 
-                    p.*,
-                    m.ModelName,
-                    v.VendorName,
-                    e.EquipmentName,
-                    c.CurrencyName,
-                    u.FullName,
-                    
-                (SELECT COUNT(*) FROM PurchaseHistory) AS TotalCount
-                FROM PurchaseHistory p
-                LEFT JOIN Model m ON p.ModelId = m.Id
-                LEFT JOIN Vendor v ON p.VendorId = v.Id
-                LEFT JOIN Equipment e ON p.EquipmentId = e.Id
-                LEFT JOIN Currency c ON p.CurrencyId = c.Id
-                LEFT JOIN User u ON p.UserId = u.Id
-                WHERE 1=1
-                    AND (@ModelId IS NULL OR p.ModelId = @ModelId)
-                    AND (@VendorId IS NULL OR p.VendorId = @VendorId)
-                    AND (@EquipmentId IS NULL OR p.EquipmentId = @EquipmentId)
-                    AND (@PriceMin IS NULL OR p.TotalPrice >= @PriceMin)
-                    AND (@PriceMax IS NULL OR p.TotalPrice <= @PriceMax)
-                    AND (@DateFrom IS NULL OR date(p.PurchaseDate) >= date(@DateFrom))
-                    AND (@DateTo IS NULL OR date(p.PurchaseDate) <= date(@DateTo))
-    ";
+            // Khởi tạo kết quả trả về
+            var result = new ModelAnalysisDto { Items = items };
 
-            using var conn = _db.GetConnection();
-
-            var param = new
+            if (items.Any())
             {
-                ModelId = ModelId,
-                VendorId = VendorId,
-                EquipmentId = EquipmentId,
-                PriceMin=PriceMin,
-                PriceMax=PriceMax,
-                DateFrom = DateFrom,
-                DateTo = DateTo
-            };
+                // --- 1. TÍNH TOÁN KPI GIÁ ---
+                result.MinPrice = items.Min(x => x.UnitPrice);
+                result.MaxPrice = items.Max(x => x.UnitPrice);
+                result.AvgPrice = items.Average(x => x.UnitPrice);
 
-            return conn.Query<PurchaseDto>(sql, param);
+                var lastPurchase = items.OrderByDescending(x => x.PurchaseDate).First();
+                result.LastPrice = lastPurchase.UnitPrice;
+                result.LastVendorName = lastPurchase.VendorName;
+
+                // --- 2. DỮ LIỆU BIỂU ĐỒ CỘT (So sánh giá giữa các Vendor) ---
+                // Lấy đơn giá trung bình mà mỗi Vendor đang bán cho Model này
+                result.VendorComparison = items.GroupBy(x => x.VendorName)
+                    .Select(g => new AnalysisShareDto
+                    {
+                        CategoryName = g.Key,
+                        TotalAmount = g.Average(x => x.UnitPrice)
+                    })
+                    .OrderBy(x => x.TotalAmount)
+                    .ToList();
+
+                // --- 3. DỮ LIỆU BIỂU ĐỒ ĐƯỜNG (Biến động giá theo thời gian) ---
+                result.PriceTrend = items.OrderBy(x => x.PurchaseDate)
+                    .Select(x => new MonthlySpendDto
+                    {
+                        MonthYear = x.PurchaseDate.ToString("dd/MM/yy"),
+                        Amount = x.UnitPrice
+                    }).ToList();
+            }
+
+            return result;
         }
-
-
     }
 }

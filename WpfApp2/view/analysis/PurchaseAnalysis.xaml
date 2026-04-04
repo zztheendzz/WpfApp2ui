@@ -7,164 +7,185 @@
       xmlns:vm="clr-namespace:WpfApp2.viewmodel.analysis"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
       mc:Ignorable="d" 
-      d:DesignHeight="600" d:DesignWidth="1100"
+      d:DesignHeight="1200" d:DesignWidth="1100"
       Title="PurchaseAnalysis">
 
     <Page.DataContext>
         <vm:PurchaseAnalysisVm/>
     </Page.DataContext>
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <Grid Background="#F5F6F7">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="15">
+                
+                <materialDesign:Card Padding="15" Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="BỘ LỌC PHÂN TÍCH" FontSize="16" FontWeight="Bold" Margin="0,0,0,15" Foreground="#2C3E50"/>
+                        <WrapPanel Orientation="Horizontal">
+                            <StackPanel Width="220" Margin="5">
+                                <TextBlock Text="Model:" Margin="0,0,0,5" FontWeight="SemiBold" Foreground="#666"/>
+                                <Grid>
+                                    <TextBox x:Name="txtSearchModel" Tag="M" Text="{Binding SearchModelText, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="SearchBox_PreviewKeyDown" materialDesign:HintAssist.Hint="{DynamicResource ph_Model}"/>
+                                    <Popup IsOpen="{Binding IsDropDownOpenM}" PlacementTarget="{Binding ElementName=txtSearchModel}" StaysOpen="False" AllowsTransparency="True">
+                                        <Border Background="White" BorderBrush="#DDD" BorderThickness="1" Width="{Binding ElementName=txtSearchModel, Path=ActualWidth}">
+                                            <ListBox x:Name="lstModel" DisplayMemberPath="Text" ItemsSource="{Binding ModelSuggestions}" SelectedItem="{Binding SelectedModel}">
+                                                <ListBox.ItemContainerStyle>
+                                                    <Style TargetType="ListBoxItem"><EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/></Style>
+                                                </ListBox.ItemContainerStyle>
+                                            </ListBox>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+                            </StackPanel>
 
-        <Grid Margin="0,0,0,15">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+                            <StackPanel Width="220" Margin="5">
+                                <TextBlock Text="Vendor:" Margin="0,0,0,5" FontWeight="SemiBold" Foreground="#666"/>
+                                <Grid>
+                                    <TextBox x:Name="txtSearchVendor" Tag="V" Text="{Binding SearchVendorText, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="SearchBox_PreviewKeyDown"/>
+                                    <Popup IsOpen="{Binding IsDropDownOpenV}" PlacementTarget="{Binding ElementName=txtSearchVendor}" StaysOpen="False" AllowsTransparency="True">
+                                        <Border Background="White" BorderBrush="#DDD" BorderThickness="1" Width="{Binding ElementName=txtSearchVendor, Path=ActualWidth}">
+                                            <ListBox x:Name="lstVendor" DisplayMemberPath="Text" ItemsSource="{Binding VendorSuggestions}" SelectedItem="{Binding SelectedVendor}">
+                                                <ListBox.ItemContainerStyle>
+                                                    <Style TargetType="ListBoxItem"><EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/></Style>
+                                                </ListBox.ItemContainerStyle>
+                                            </ListBox>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+                            </StackPanel>
 
-            <StackPanel Orientation="Horizontal">
+                            <StackPanel Width="220" Margin="5">
+                                <TextBlock Text="Thiết bị:" Margin="0,0,0,5" FontWeight="SemiBold" Foreground="#666"/>
+                                <Grid>
+                                    <TextBox x:Name="txtSearchEquip" Tag="E" Text="{Binding SearchEquipmentText, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="SearchBox_PreviewKeyDown"/>
+                                    <Popup IsOpen="{Binding IsDropDownOpenE}" PlacementTarget="{Binding ElementName=txtSearchEquip}" StaysOpen="False" AllowsTransparency="True">
+                                        <Border Background="White" BorderBrush="#DDD" BorderThickness="1" Width="{Binding ElementName=txtSearchEquip, Path=ActualWidth}">
+                                            <ListBox x:Name="lstEquip" DisplayMemberPath="Text" ItemsSource="{Binding EquipmentSuggestions}" SelectedItem="{Binding SelectedEquipment}">
+                                                <ListBox.ItemContainerStyle>
+                                                    <Style TargetType="ListBoxItem"><EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/></Style>
+                                                </ListBox.ItemContainerStyle>
+                                            </ListBox>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+                            </StackPanel>
 
-                <StackPanel Width="220" Margin="5">
-                    <TextBlock Text="Model:" Margin="0,0,0,5" Foreground="#666"/>
-                    <Grid>
-                        <TextBox x:Name="txtSearchModel" Tag="M"
-                                 materialDesign:HintAssist.Hint="{DynamicResource ph_Model}"
-                                 Text="{Binding SearchModelText, UpdateSourceTrigger=PropertyChanged}"
-                                 PreviewKeyDown="SearchBox_PreviewKeyDown"/>
-                        <Popup IsOpen="{Binding IsDropDownOpenM}" PlacementTarget="{Binding ElementName=txtSearchModel}"
-                               StaysOpen="False" AllowsTransparency="True" PopupAnimation="Slide">
-                            <Border Background="White" BorderBrush="#DDD" BorderThickness="1" CornerRadius="2"
-                                    Width="{Binding ElementName=txtSearchModel, Path=ActualWidth}" MaxHeight="250">
-                                <ListBox x:Name="lstModel" DisplayMemberPath="Text" BorderThickness="0"
-                                         ItemsSource="{Binding ModelSuggestions}" SelectedItem="{Binding SelectedModel}">
-                                    <ListBox.ItemContainerStyle>
-                                        <Style TargetType="ListBoxItem">
-                                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/>
-                                        </Style>
-                                    </ListBox.ItemContainerStyle>
-                                </ListBox>
+                            <Button Content="TÌM KIẾM" Command="{Binding SearchCommand}" Margin="10,20,5,0" Width="100" Height="38"/>
+                            <Button Content="XÓA LỌC" Command="{Binding ClearCommand}" Margin="5,20,0,0" Width="100" Height="38" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                        </WrapPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="5,15,0,0">
+                            <DatePicker Width="130" SelectedDate="{Binding SelectedDateFrom}" materialDesign:HintAssist.Hint="Từ ngày" Margin="0,0,10,0"/>
+                            <DatePicker Width="130" SelectedDate="{Binding SelectedDateTo}" materialDesign:HintAssist.Hint="Đến ngày" Margin="0,0,20,0"/>
+                            <TextBlock Text="Giá từ:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <xctk:DoubleUpDown Value="{Binding PriceMin}" Width="100" Margin="0,0,10,0"/>
+                            <TextBlock Text="Đến:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <xctk:DoubleUpDown Value="{Binding PriceMax}" Width="100"/>
+                        </StackPanel>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <UniformGrid Columns="4" Margin="0,0,0,15">
+                    <materialDesign:Card Background="#2C3E50" Foreground="White" Margin="5" Padding="15">
+                        <StackPanel>
+                            <TextBlock Text="GIÁ GẦN NHẤT" FontSize="11" Opacity="0.7"/>
+                            <TextBlock Margin="0,5,0,0" FontWeight="Bold" FontSize="20">
+                                <Run Text="{Binding Analysis.LastPrice, StringFormat={}{0:N0}}"/>
+                                <Run Text=" " FontSize="12"/><Run Text="{Binding Analysis.CurrencyName}" FontSize="12"/>
+                            </TextBlock>
+                            <TextBlock Text="{Binding Analysis.LastVendorName}" FontSize="10" Opacity="0.6" TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <materialDesign:Card Background="#27AE60" Foreground="White" Margin="5" Padding="15">
+                        <StackPanel>
+                            <TextBlock Text="GIÁ THẤP NHẤT" FontSize="11" Opacity="0.7"/>
+                            <TextBlock Text="{Binding Analysis.MinPrice, StringFormat={}{0:N0}}" Margin="0,5,0,0" FontWeight="Bold" FontSize="20"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <materialDesign:Card Background="#E67E22" Foreground="White" Margin="5" Padding="15">
+                        <StackPanel>
+                            <TextBlock Text="GIÁ TRUNG BÌNH" FontSize="11" Opacity="0.7"/>
+                            <TextBlock Text="{Binding Analysis.AvgPrice, StringFormat={}{0:N0}}" Margin="0,5,0,0" FontWeight="Bold" FontSize="20"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <materialDesign:Card Background="#E74C3C" Foreground="White" Margin="5" Padding="15">
+                        <StackPanel>
+                            <TextBlock Text="GIÁ CAO NHẤT" FontSize="11" Opacity="0.7"/>
+                            <TextBlock Text="{Binding Analysis.MaxPrice, StringFormat={}{0:N0}}" Margin="0,5,0,0" FontWeight="Bold" FontSize="20"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </UniformGrid>
+
+                <Grid Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <materialDesign:Card Grid.Column="0" Margin="5" Padding="15">
+                        <StackPanel>
+                            <TextBlock Text="SO SÁNH GIÁ GIỮA CÁC VENDOR" FontWeight="Bold" Margin="0,0,0,10"/>
+                            <lvc:CartesianChart Series="{Binding VendorPriceSeries}" Height="250" LegendLocation="None">
+                                <lvc:CartesianChart.AxisX>
+                                    <lvc:Axis Title="Vendor" Labels="{Binding VendorLabels}"/>
+                                </lvc:CartesianChart.AxisX>
+                            </lvc:CartesianChart>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <materialDesign:Card Grid.Column="1" Margin="5" Padding="15">
+                        <StackPanel>
+                            <TextBlock Text="BIẾN ĐỘNG GIÁ THEO THỜI GIAN" FontWeight="Bold" Margin="0,0,0,10"/>
+                            <lvc:CartesianChart Series="{Binding PriceTrendSeries}" Height="250" LegendLocation="None">
+                                <lvc:CartesianChart.AxisX>
+                                    <lvc:Axis Title="Ngày" Labels="{Binding TrendLabels}"/>
+                                </lvc:CartesianChart.AxisX>
+                            </lvc:CartesianChart>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </Grid>
+
+                <materialDesign:Card Padding="0" Margin="5">
+                    <StackPanel>
+                        <Grid Margin="15,10">
+                            <TextBlock Text="LỊCH SỬ GIAO DỊCH CHI TIẾT" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <TextBlock Text="Tổng: " VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding SelectedCount}" FontWeight="Bold" Foreground="#1976D2" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Grid>
+                        
+                        <DataGrid ItemsSource="{Binding PurchaseDtos}" AutoGenerateColumns="False" IsReadOnly="True" 
+                                  MinHeight="300" MaxHeight="600" materialDesign:DataGridAssist.CellPadding="10">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Ngày" Binding="{Binding PurchaseDate, StringFormat=dd/MM/yyyy}"/>
+                                <DataGridTextColumn Header="Model" Binding="{Binding ModelName}"/>
+                                <DataGridTextColumn Header="Vendor" Binding="{Binding VendorName}" Width="150"/>
+                                <DataGridTextColumn Header="Thiết bị" Binding="{Binding EquipmentName}"/>
+                                <DataGridTextColumn Header="SL" Binding="{Binding Quantity, StringFormat={}{0:N0}}"/>
+                                <DataGridTextColumn Header="Đơn giá" Binding="{Binding UnitPrice, StringFormat={}{0:N0}}"/>
+                                <DataGridTextColumn Header="Thành tiền" Binding="{Binding TotalPrice, StringFormat={}{0:N0}}" FontWeight="Bold"/>
+                                <DataGridTextColumn Header="Tiền tệ" Binding="{Binding CurrencyName}"/>
+                                <DataGridTextColumn Header="Ghi chú" Binding="{Binding Note}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+                            <Button Content="Trước" Command="{Binding PrevCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
+                            <Border Background="#1976D2" CornerRadius="15" Width="30" Height="30" Margin="10,0">
+                                <TextBlock Text="{Binding CurrentPage}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
                             </Border>
-                        </Popup>
-                    </Grid>
-                </StackPanel>
+                            <Button Content="Sau" Command="{Binding NextCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </materialDesign:Card>
 
-                <StackPanel Width="220" Margin="5">
-                    <TextBlock Text="{DynamicResource ph_Vendor}" Margin="0,0,0,5" Foreground="#666"/>
-                    <Grid>
-                        <TextBox x:Name="txtSearchVendor" Tag="V"
-                                 materialDesign:HintAssist.Hint=""
-                                 Text="{Binding SearchVendorText, UpdateSourceTrigger=PropertyChanged}"
-                                 PreviewKeyDown="SearchBox_PreviewKeyDown"/>
-                        <Popup IsOpen="{Binding IsDropDownOpenV}" PlacementTarget="{Binding ElementName=txtSearchVendor}"
-                               StaysOpen="False" AllowsTransparency="True" PopupAnimation="Slide">
-                            <Border Background="White" BorderBrush="#DDD" BorderThickness="1" CornerRadius="2"
-                                    Width="{Binding ElementName=txtSearchVendor, Path=ActualWidth}" MaxHeight="250">
-                                <ListBox x:Name="lstVendor" DisplayMemberPath="Text" BorderThickness="0"
-                                         ItemsSource="{Binding VendorSuggestions}" SelectedItem="{Binding SelectedVendor}">
-                                    <ListBox.ItemContainerStyle>
-                                        <Style TargetType="ListBoxItem">
-                                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/>
-                                        </Style>
-                                    </ListBox.ItemContainerStyle>
-                                </ListBox>
-                            </Border>
-                        </Popup>
-                    </Grid>
-                </StackPanel>
-
-                <StackPanel Width="220" Margin="5">
-                    <TextBlock Text="{DynamicResource ph_Equipment}" Margin="0,0,0,5" Foreground="#666"/>
-                    <Grid>
-                        <TextBox x:Name="txtSearchEquip" Tag="E"
-                                 materialDesign:HintAssist.Hint=""
-                                 Text="{Binding SearchEquipmentText, UpdateSourceTrigger=PropertyChanged}"
-                                 PreviewKeyDown="SearchBox_PreviewKeyDown"/>
-                        <Popup IsOpen="{Binding IsDropDownOpenE}" PlacementTarget="{Binding ElementName=txtSearchEquip}"
-                               StaysOpen="False" AllowsTransparency="True" PopupAnimation="Slide">
-                            <Border Background="White" BorderBrush="#DDD" BorderThickness="1" CornerRadius="2"
-                                    Width="{Binding ElementName=txtSearchEquip, Path=ActualWidth}" MaxHeight="250">
-                                <ListBox x:Name="lstEquip" DisplayMemberPath="Text" BorderThickness="0"
-                                         ItemsSource="{Binding EquipmentSuggestions}" SelectedItem="{Binding SelectedEquipment}">
-                                    <ListBox.ItemContainerStyle>
-                                        <Style TargetType="ListBoxItem">
-                                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/>
-                                        </Style>
-                                    </ListBox.ItemContainerStyle>
-                                </ListBox>
-                            </Border>
-                        </Popup>
-                    </Grid>
-                </StackPanel>
-
-                <Button Content="{DynamicResource btn_Search}" Width="90" Height="35"
-                        Margin="15,20,0,0" Command="{Binding SearchCommand}"
-                        Style="{StaticResource MaterialDesignRaisedButton}"/>
-
-                <Button Content="{DynamicResource btn_Clear}" Width="100" Height="35"
-                        Margin="10,20,0,0" Command="{Binding ClearCommand}"
-                        Style="{StaticResource MaterialDesignOutlinedButton}"/>
             </StackPanel>
-
-            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5,15,0,10" VerticalAlignment="Center">
-                <DatePicker Width="130" SelectedDate="{Binding SelectedDateFrom}"
-                            materialDesign:HintAssist.Hint="{DynamicResource ph_DateFrom}"/>
-
-                <DatePicker Width="130" Margin="10,0,0,0" SelectedDate="{Binding SelectedDateTo}"
-                            materialDesign:HintAssist.Hint="{DynamicResource ph_DateTo}"/>
-
-                <TextBlock Text="{DynamicResource ph_MinPrice}" VerticalAlignment="Center" Margin="25,0,0,0" Foreground="#666"/>
-                <xctk:DoubleUpDown Value="{Binding PriceMin, Mode=TwoWay}" Minimum="0" Width="100" Margin="10,0,0,0"/>
-
-                <TextBlock Text="{DynamicResource ph_MaxPrice}" VerticalAlignment="Center" Margin="25,0,0,0" Foreground="#666"/>
-                <xctk:DoubleUpDown Value="{Binding PriceMax, Mode=TwoWay}" Minimum="0" Width="100" Margin="10,0,0,0"/>
-
-                <StackPanel Orientation="Horizontal" Margin="30,0,0,0" VerticalAlignment="Center">
-                    <TextBlock Text="{DynamicResource lbl_TotalRecords}" FontSize="14"/>
-                    <TextBlock Text="{Binding SelectedCount, StringFormat={}{0:N0}}" Margin="5,0,0,0" 
-                               FontSize="14" FontWeight="Bold" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
-                </StackPanel>
-            </StackPanel>
-        </Grid>
-
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-
-            <DataGrid ItemsSource="{Binding PurchaseDtos}" AutoGenerateColumns="False" 
-                      IsReadOnly="True" ColumnHeaderHeight="40" materialDesign:DataGridAssist.CellPadding="8">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Model}" Binding="{Binding ModelName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Vendor}" Binding="{Binding VendorName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Equipment}" Binding="{Binding EquipmentName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Quantity}" Binding="{Binding Quantity, StringFormat={}{0:N0}}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_UnitPrice}" Binding="{Binding UnitPrice, StringFormat={}{0:N0}}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_TotalPrice}" Binding="{Binding TotalPrice, StringFormat={}{0:N0}}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Currency}" Binding="{Binding CurrencyName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}" Binding="{Binding PurchaseDate, StringFormat=dd/MM/yyyy}"/>
-                    <DataGridTextColumn Header="Full Name" Binding="{Binding FullName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Note}" Width="*" Binding="{Binding Note}"/>
-                </DataGrid.Columns>
-            </DataGrid>
-
-            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                <Button Content="{DynamicResource btn_Prev}" Width="60" Height="30" 
-                        Command="{Binding PrevCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
-                <Border Background="{DynamicResource PrimaryHueMidBrush}" CornerRadius="15" Width="30" Height="30" Margin="10,0">
-                    <TextBlock Text="{Binding CurrentPage}" Foreground="White" 
-                               HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
-                </Border>
-                <Button Content="{DynamicResource btn_Next}" Width="60" Height="30" 
-                        Command="{Binding NextCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
-            </StackPanel>
-        </Grid>
+        </ScrollViewer>
     </Grid>
 </Page>

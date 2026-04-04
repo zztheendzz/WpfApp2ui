@@ -6,6 +6,7 @@
       xmlns:local="clr-namespace:WpfApp2.view.analysis"
       xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
       xmlns:fa="http://schemas.fontawesome.io/icons/"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       mc:Ignorable="d" 
       d:DesignHeight="700" d:DesignWidth="1100"
       Title="BrandAnalysis"
@@ -94,22 +95,32 @@
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
 
                 <StackPanel Margin="0,0,15,0">
-                    <TextBlock Text="Tìm Thương Hiệu (Gõ tối thiểu 2 ký tự)" FontSize="10" Foreground="Gray" Margin="0,0,0,2"/>
+                    <TextBlock Text="Tìm Thương Hiệu" FontSize="10" Foreground="Gray"/>
                     <Grid>
                         <TextBox x:Name="TxtSearch" Width="220" Height="30" VerticalContentAlignment="Center" Padding="5,0,25,0"
-                                 Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}">
-                            <TextBox.InputBindings>
-                                <KeyBinding Key="Enter" Command="{Binding AnalyzeCommand}"/>
-                            </TextBox.InputBindings>
-                        </TextBox>
-                        <fa:ImageAwesome Icon="Search" Foreground="#CCC" Width="12" HorizontalAlignment="Right" Margin="0,0,8,0"/>
+                                 Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
+                                 PreviewKeyDown="SearchBox_PreviewKeyDown"/>
+                        
+                        <fa:ImageAwesome Icon="Search" Foreground="#CCC" Width="12" HorizontalAlignment="Right" Margin="0,0,8,0" IsHitTestVisible="False"/>
 
                         <Popup IsOpen="{Binding IsSearchDropDownOpen}" PlacementTarget="{Binding ElementName=TxtSearch}" StaysOpen="False" AllowsTransparency="True">
                             <Border Background="White" BorderBrush="#DDD" BorderThickness="1" Width="220" MaxHeight="300">
-                                <ListBox ItemsSource="{Binding SearchSuggestions}" SelectedItem="{Binding SelectedSearchResult}" BorderThickness="0" DisplayMemberPath="Text">
-                                    <ListBox.InputBindings>
-                                        <MouseBinding MouseAction="LeftClick" Command="{Binding AnalyzeCommand}"/>
-                                    </ListBox.InputBindings>
+                                <ListBox x:Name="LstSuggestions" 
+                                         ItemsSource="{Binding SearchSuggestions}" 
+                                         SelectedItem="{Binding SelectedSearchResult}"
+                                         DisplayMemberPath="Text" BorderThickness="0"
+                                         PreviewMouseLeftButtonDown="OnListBoxItemClick">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="Padding" Value="8,5"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter Property="Background" Value="{StaticResource AccentBlue}"/>
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
                                 </ListBox>
                             </Border>
                         </Popup>
@@ -211,13 +222,13 @@
                         <TextBlock DockPanel.Dock="Top" Text="Chi Tiết Linh Kiện" FontWeight="Bold" FontSize="14" Margin="0,0,0,10"/>
                         <DataGrid ItemsSource="{Binding Analysis.Items}">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Ngày" Width="100" Binding="{Binding PurchaseDate, StringFormat='dd/MM/yyyy'}"/>
-                                <DataGridTextColumn Header="Tên Linh Kiện" Width="*" Binding="{Binding ModelName}"/>
-                                <DataGridTextColumn Header="Model" Width="120" Binding="{Binding ModelCode}"/>
-                                <DataGridTextColumn Header="Thiết Bị" Width="120" Binding="{Binding EquipmentName}"/>
-                                <DataGridTextColumn Header="SL" Width="50" Binding="{Binding Quantity}"/>
-                                <DataGridTextColumn Header="Đơn Giá" Width="100" Binding="{Binding UnitPrice, StringFormat={}{0:N0}}"/>
-                                <DataGridTextColumn Header="Thành Tiền" Width="120" Binding="{Binding LineTotal, StringFormat={}{0:N0}}"/>
+                                <DataGridTextColumn Header="Ngày" Width="auto" Binding="{Binding PurchaseDate, StringFormat='dd/MM/yyyy'}"/>
+                                <DataGridTextColumn Header="Tên Linh Kiện" Width="auto" Binding="{Binding ModelName}"/>
+                                <DataGridTextColumn Header="Model" Width="auto" Binding="{Binding ModelCode}"/>
+                                <DataGridTextColumn Header="Thiết Bị" Width="auto" Binding="{Binding EquipmentName}"/>
+                                <DataGridTextColumn Header="SL" Width="auto" Binding="{Binding Quantity}"/>
+                                <DataGridTextColumn Header="Đơn Giá" Width="auto" Binding="{Binding UnitPrice, StringFormat={}{0:N0}}"/>
+                                <DataGridTextColumn Header="Thành Tiền" Width="auto" Binding="{Binding LineTotal, StringFormat={}{0:N0}}"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </DockPanel>

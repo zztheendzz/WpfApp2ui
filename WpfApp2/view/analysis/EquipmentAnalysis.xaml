@@ -5,196 +5,252 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WpfApp2.view.analysis"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+      xmlns:fa="http://schemas.fontawesome.io/icons/"
       mc:Ignorable="d" 
-      d:DesignHeight="600" d:DesignWidth="1000"
-      Title="EquipmentAnalysis">
+      d:DesignHeight="700" d:DesignWidth="1100"
+      Title="EquipmentAnalysis"
+      TextOptions.TextFormattingMode="Display"
+      RenderOptions.EdgeMode="Aliased"
+      RenderOptions.BitmapScalingMode="LowQuality">
 
-    <Grid>
-        <StackPanel Margin="20">
+    <Page.Resources>
+        <SolidColorBrush x:Key="MainNavy" Color="#162D46"/>
+        <SolidColorBrush x:Key="SubBlue" Color="#254D76"/>
+        <SolidColorBrush x:Key="AccentBlue" Color="#3A75B0"/>
 
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+        </Style>
 
-                <StackPanel Orientation="Horizontal" Margin="10">
-                    <StackPanel Width="300">
-                        <TextBlock Text="{DynamicResource lbl_Equipment}" 
-                   Margin="0,0,0,5" 
-                   Foreground="Black" 
-                   FontWeight="SemiBold"/>
-                        <Grid>
-                            <TextBox x:Name="txtGlobalSearch" 
-                     materialDesign:HintAssist.Hint="{DynamicResource ph_Search}"
-                     Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
-                     PreviewKeyDown="SearchBox_PreviewKeyDown"/>
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+            <Setter Property="RowHeight" Value="38"/>
+            <Setter Property="AlternatingRowBackground" Value="#F9FAFB"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
+            <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
+            <Setter Property="EnableRowVirtualization" Value="True"/>
+        </Style>
 
-                            <Popup IsOpen="{Binding IsSearchDropDownOpen}" 
-                   PlacementTarget="{Binding ElementName=txtGlobalSearch}"
-                   StaysOpen="False" 
-                   AllowsTransparency="True" 
-                   PopupAnimation="Slide">
-                                <Border Background="White" 
-                        BorderBrush="#DDD" 
-                        BorderThickness="1" 
-                        CornerRadius="2"
-                        Width="{Binding ElementName=txtGlobalSearch, Path=ActualWidth}" 
-                        MaxHeight="250">
-                                    <ListBox x:Name="lstSearchResults" 
-                             DisplayMemberPath="Text" 
-                             BorderThickness="0"
-                             ItemsSource="{Binding SearchSuggestions}" 
-                             SelectedItem="{Binding SelectedSearchResult}">
-                                        <ListBox.ItemContainerStyle>
-                                            <Style TargetType="ListBoxItem">
-                                                <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/>
-                                            </Style>
-                                        </ListBox.ItemContainerStyle>
-                                    </ListBox>
-                                </Border>
-                            </Popup>
-                        </Grid>
-                    </StackPanel>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#F3F4F6"/>
+            <Setter Property="Foreground" Value="{StaticResource MainNavy}"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+        </Style>
 
-                    <Button Content="{DynamicResource btn_Analyze}"
-            Width="120"
-            Height="35"
-            VerticalAlignment="Bottom"
-            Margin="10,0,0,0"
-            Command="{Binding AnalyzeCommand}"/>
+        <Style x:Key="FooterButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#44FFFFFF"/>
+            <Setter Property="Margin" Value="6,4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"  CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#22FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="Tag" Value="Active">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource AccentBlue}"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <Grid Background="#F0F2F5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="65"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="280"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="65"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="{StaticResource MainNavy}">
+            <DockPanel Margin="20,0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <fa:ImageAwesome Icon="Wrench" Foreground="White" Width="18" Margin="0,0,12,0"/>
+                    <TextBlock Text="Phân Tích Chi Phí Theo Thiết Bị" Foreground="White" FontSize="15" FontWeight="Medium"/>
                 </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <Border Grid.Row="1" Background="White" BorderBrush="#DDD" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="Từ ngày" FontSize="10" Foreground="Gray" Margin="0,0,0,2"/>
+                    <DatePicker Width="120" SelectedDate="{Binding FromDate}"/>
+                </StackPanel>
+                <StackPanel Margin="0,0,15,0">
+                    <TextBlock Text="Đến ngày" FontSize="10" Foreground="Gray" Margin="0,0,0,2"/>
+                    <DatePicker Width="120" SelectedDate="{Binding ToDate}"/>
+                </StackPanel>
+                <StackPanel Margin="0,0,15,0">
+                    <TextBlock Text="Tìm Thiết Bị" FontSize="10" Foreground="Gray"/>
+                    <Grid>
+                        <TextBox x:Name="txtGlobalSearch" Width="250" Height="30" VerticalContentAlignment="Center" Padding="5,0,25,0"
+                                 Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
+                                 PreviewKeyDown="SearchBox_PreviewKeyDown"/>
+                        <fa:ImageAwesome Icon="Search" Foreground="#CCC" Width="12" HorizontalAlignment="Right" Margin="0,0,8,0" IsHitTestVisible="False"/>
+                        <Popup IsOpen="{Binding IsSearchDropDownOpen}" PlacementTarget="{Binding ElementName=txtGlobalSearch}" StaysOpen="False" AllowsTransparency="True">
+                            <Border Background="White" BorderBrush="#DDD" BorderThickness="1" Width="250" MaxHeight="300">
+                                <ListBox x:Name="lstSearchResults" ItemsSource="{Binding SearchSuggestions}" SelectedItem="{Binding SelectedSearchResult}"
+                                         DisplayMemberPath="Text" BorderThickness="0" PreviewMouseLeftButtonDown="OnListBoxItemClick">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="Padding" Value="8,5"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter Property="Background" Value="{StaticResource AccentBlue}"/>
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                </ListBox>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                </StackPanel>
+                <Button Content="Thực hiện Phân tích" VerticalAlignment="Bottom" Height="30" Margin="10,0,0,2"
+                        Command="{Binding AnalyzeCommand}" Background="{StaticResource AccentBlue}" Foreground="White" Padding="25,0" BorderThickness="0"/>
             </StackPanel>
+        </Border>
 
-            <Grid Margin="0,10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-
-                <Border Background="#2C3E50" Margin="5" Padding="15" CornerRadius="5">
-                    <StackPanel>
-                        <TextBlock Text="{DynamicResource lbl_TotalPurchaseValue}"
-                                   Foreground="#BDC3C7" FontSize="12"/>
-                        <TextBlock Text="{Binding Analysis.TotalPrice , StringFormat={}{0:N0}}"
-                                   FontSize="20"
-                                   FontWeight="Bold"
-                                   Foreground="White"
-                                   Margin="0,5,0,0"/>
+        <UniformGrid Grid.Row="2" Columns="3" Margin="10,5">
+            <Border Background="{StaticResource SubBlue}" CornerRadius="5" Margin="6" Padding="15">
+                <StackPanel Orientation="Horizontal">
+                    <fa:ImageAwesome Icon="Money" Foreground="#FFD700" Width="25"/>
+                    <StackPanel Margin="15,0">
+                        <TextBlock Text="Tổng Giá Trị" Foreground="White" Opacity="0.8" FontSize="11"/>
+                        <TextBlock Text="{Binding Analysis.TotalPrice, StringFormat={}{0:N0} VND}" Foreground="White" FontSize="16" FontWeight="Bold"/>
                     </StackPanel>
-                </Border>
-
-                <Border Grid.Column="1" Background="#2C3E50" Margin="5" Padding="15" CornerRadius="5">
-                    <StackPanel>
-                        <TextBlock Text="{DynamicResource lbl_TotalParts}"
-                                   Foreground="#BDC3C7" FontSize="12"/>
-                        <TextBlock Text="{Binding Analysis.TotalModel , StringFormat={}{0:N0}}"
-                                   FontSize="20"
-                                   FontWeight="Bold"
-                                   Foreground="White"
-                                   Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Background="{StaticResource SubBlue}" CornerRadius="5" Margin="6" Padding="15">
+                <StackPanel Orientation="Horizontal">
+                    <fa:ImageAwesome Icon="Cubes" Foreground="White" Width="25"/>
+                    <StackPanel Margin="15,0">
+                        <TextBlock Text="Số Loại Linh Kiện" Foreground="White" Opacity="0.8" FontSize="11"/>
+                        <TextBlock Text="{Binding Analysis.TotalModel, StringFormat={}{0} Model}" Foreground="White" FontSize="16" FontWeight="Bold"/>
                     </StackPanel>
-                </Border>
-
-                <!--<Border Grid.Column="2" Background="#2C3E50" Margin="5" Padding="15" CornerRadius="5">
-                    <StackPanel>
-                        <TextBlock Text="{DynamicResource lbl_UsageRate}"
-                                   Foreground="#BDC3C7" FontSize="12"/>
-                        <TextBlock Text="" 
-                                   FontSize="20"
-                                   FontWeight="Bold"
-                                   Foreground="White"
-                                   Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Background="{StaticResource SubBlue}" CornerRadius="5" Margin="6" Padding="15">
+                <StackPanel Orientation="Horizontal">
+                    <fa:ImageAwesome Icon="InfoCircle" Foreground="#90EE90" Width="25"/>
+                    <StackPanel Margin="15,0">
+                        <TextBlock Text="Thiết Bị" Foreground="White" Opacity="0.8" FontSize="11"/>
+                        <TextBlock Text="{Binding Analysis.EquipmentName}" Foreground="White" FontSize="14" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
-                </Border>-->
-            </Grid>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
 
-            <StackPanel Orientation="Horizontal" Margin="0,20,0,5">
-                <TextBlock FontWeight="Bold" FontSize="14" Text="{DynamicResource lbl_PurchasedPartsList}"/>
-                <TextBlock FontWeight="Bold" FontSize="14" Text=": "/>
-                <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Analysis.EquipmentName}" 
-                           Foreground="{DynamicResource PrimaryHueMidBrush}"/>
-            </StackPanel>
+        <Grid Grid.Row="3" Margin="10,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <DataGrid ItemsSource="{Binding Analysis.Items}"
-                      AutoGenerateColumns="False" 
-                      IsReadOnly="True"
-                      ColumnHeaderHeight="40"
-                      MaxHeight="450">
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="15">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Phân Bổ Chi Phí Theo Hãng (Top 10)" FontWeight="Bold" FontSize="13" Margin="0,0,0,5"/>
+                    <lvc:PieChart Series="{Binding PieSeriesCollection}" LegendLocation="Right" InnerRadius="30" 
+                                  DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}"/>
+                </DockPanel>
+            </Border>
+
+            <Border Grid.Column="1" Style="{StaticResource CardStyle}" Padding="15">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Top 5 Linh Kiện Chi Phí Cao" FontWeight="Bold" FontSize="13" Margin="0,0,0,5"/>
+                    <lvc:CartesianChart DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
+                        <lvc:CartesianChart.Series>
+                            <lvc:RowSeries Values="{Binding TopItemsValues}" Fill="{StaticResource AccentBlue}" DataLabels="True"/>
+                        </lvc:CartesianChart.Series>
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis Labels="{Binding TopItemsLabels}">
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator Step="1" IsEnabled="False"/>
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisY>
+                    </lvc:CartesianChart>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="4" Style="{StaticResource CardStyle}" Padding="5" Margin="18,10,18,10">
+            <DataGrid ItemsSource="{Binding Analysis.Items}" SelectionMode="Single" ScrollViewer.CanContentScroll="True">
                 <DataGrid.Columns>
-
-                    <DataGridTextColumn Binding="{Binding Id}">
-                        <DataGridTextColumn.Header>
-                            <TextBlock Text="{DynamicResource dg_Id}"/>
-                        </DataGridTextColumn.Header>
+                    <DataGridTextColumn Header="Linh Kiện" Width="2*" Binding="{Binding ModelName}"/>
+                    <DataGridTextColumn Header="Hãng" Width="*" Binding="{Binding BrandName}"/>
+                    <DataGridTextColumn Header="Số Lượng" Width="80" Binding="{Binding Quantity, StringFormat={}{0:N0}}"/>
+                    <DataGridTextColumn Header="Thành Tiền" Width="130" Binding="{Binding LineTotal, StringFormat={}{0:N0}}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Foreground" Value="{StaticResource SubBlue}"/>
+                                <Setter Property="TextAlignment" Value="Right"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Margin" Value="0,0,10,0"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-
-                    <DataGridTextColumn Width="Auto" MinWidth="100" Binding="{Binding ModelName}">
-                        <DataGridTextColumn.Header>
-                            <TextBlock Text="{DynamicResource dg_Model}"/>
-                        </DataGridTextColumn.Header>
-                    </DataGridTextColumn>
-
-                    <DataGridTextColumn Width="Auto" MinWidth="100" Binding="{Binding VendorName}">
-                        <DataGridTextColumn.Header>
-                            <TextBlock Text="{DynamicResource dg_Vendor}"/>
-                        </DataGridTextColumn.Header>
-                    </DataGridTextColumn>
-
-                    <DataGridTextColumn Width="Auto" MinWidth="100" Binding="{Binding EquipmentName}">
-                        <DataGridTextColumn.Header>
-                            <TextBlock Text="{DynamicResource dg_Equipment}"/>
-                        </DataGridTextColumn.Header>
-                    </DataGridTextColumn>
-
-                    <DataGridTextColumn Binding="{Binding Quantity , StringFormat={}{0:N0}}">
-                        <DataGridTextColumn.Header>
-                            <TextBlock Text="{DynamicResource dg_Quantity}"/>
-                        </DataGridTextColumn.Header>
-                    </DataGridTextColumn>
-
-                    <DataGridTextColumn Binding="{Binding UnitPrice , StringFormat={}{0:N0}}">
-                        <DataGridTextColumn.Header>
-                            <TextBlock Text="{DynamicResource dg_UnitPrice}"/>
-                        </DataGridTextColumn.Header>
-                    </DataGridTextColumn>
-
-                    <DataGridTextColumn Binding="{Binding TotalPrice , StringFormat={}{0:N0}}">
-                        <DataGridTextColumn.Header>
-                            <TextBlock Text="{DynamicResource dg_TotalPrice}"/>
-                        </DataGridTextColumn.Header>
-                    </DataGridTextColumn>
-
-                    <DataGridTextColumn Binding="{Binding CurrencyName}">
-                        <DataGridTextColumn.Header>
-                            <TextBlock Text="{DynamicResource dg_Currency}"/>
-                        </DataGridTextColumn.Header>
-                    </DataGridTextColumn>
-
-                    <DataGridTextColumn Binding="{Binding PurchaseDate}">
-                        <DataGridTextColumn.Header>
-                            <TextBlock Text="{DynamicResource dg_PurchaseDate}"/>
-                        </DataGridTextColumn.Header>
-                    </DataGridTextColumn>
-
-                    <DataGridTextColumn Binding="{Binding CreateAt}">
-                        <DataGridTextColumn.Header>
-                            <TextBlock Text="{DynamicResource dg_CreateAt}"/>
-                        </DataGridTextColumn.Header>
-                    </DataGridTextColumn>
-
-                    <DataGridTextColumn Binding="{Binding FullName}">
-                        <DataGridTextColumn.Header>
-                            <TextBlock Text="{DynamicResource dg_User}"/>
-                        </DataGridTextColumn.Header>
-                    </DataGridTextColumn>
-
-                    <DataGridTextColumn Width="*" Binding="{Binding Note}">
-                        <DataGridTextColumn.Header>
-                            <TextBlock Text="{DynamicResource dg_Note}"/>
-                        </DataGridTextColumn.Header>
-                    </DataGridTextColumn>
-
+                    <DataGridTextColumn Header="Ngày Mua" Width="100" Binding="{Binding PurchaseDate, StringFormat='dd/MM/yyyy'}"/>
                 </DataGrid.Columns>
             </DataGrid>
+        </Border>
 
-        </StackPanel>
+        <Border Grid.Row="5" Background="{StaticResource MainNavy}" Padding="10,5">
+            <UniformGrid Columns="4">
+                <Button Style="{StaticResource FooterButtonStyle}" Command="{Binding NavModelAnalysis}">
+                    <StackPanel>
+                        <fa:ImageAwesome Icon="Cube" Foreground="White" Width="16" Margin="0,0,0,3"/>
+                        <TextBlock Text="Model" FontSize="10"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource FooterButtonStyle}" Command="{Binding NavVendorAnalysis}">
+                    <StackPanel>
+                        <fa:ImageAwesome Icon="Industry" Foreground="White" Width="16" Margin="0,0,0,3"/>
+                        <TextBlock Text="Vendor" FontSize="10"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource FooterButtonStyle}" Command="{Binding NavBrandAnalysis}">
+                    <StackPanel>
+                        <fa:ImageAwesome Icon="Flash" Foreground="White" Width="16" Margin="0,0,0,3"/>
+                        <TextBlock Text="Thương Hiệu" FontSize="10"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource FooterButtonStyle}" Tag="Active">
+                    <StackPanel>
+                        <fa:ImageAwesome Icon="Wrench" Foreground="White" Width="16" Margin="0,0,0,3"/>
+                        <TextBlock Text="Thiết Bị" FontSize="10" FontWeight="Bold"/>
+                    </StackPanel>
+                </Button>
+            </UniformGrid>
+        </Border>
     </Grid>
 </Page>

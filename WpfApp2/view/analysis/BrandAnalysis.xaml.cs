@@ -17,23 +17,48 @@ namespace WpfApp2.view.analysis
 
         private void SearchBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            if (!(DataContext is BrandAnalysisVm vm)) return;
+            if (!vm.IsSearchDropDownOpen) return;
 
+            switch (e.Key)
+            {
+                case Key.Down:
+                    if (LstSuggestions.SelectedIndex < LstSuggestions.Items.Count - 1)
+                        LstSuggestions.SelectedIndex++;
+                    LstSuggestions.ScrollIntoView(LstSuggestions.SelectedItem);
+                    e.Handled = true;
+                    break;
+                case Key.Up:
+                    if (LstSuggestions.SelectedIndex > 0)
+                        LstSuggestions.SelectedIndex--;
+                    LstSuggestions.ScrollIntoView(LstSuggestions.SelectedItem);
+                    e.Handled = true;
+                    break;
+                case Key.Enter:
+                    if (LstSuggestions.SelectedItem is SearchResultDto selected)
+                    {
+                        vm.ConfirmSelection(selected);
+                        e.Handled = true; // Chặn Enter kích hoạt lệnh tìm kiếm gốc của TextBox
+                    }
+                    break;
+                case Key.Escape:
+                    vm.IsSearchDropDownOpen = false;
+                    break;
+            }
         }
 
-        // CẬP NHẬT: Xử lý lấy item chính xác khi click chuột
         private void OnListBoxItemClick(object sender, MouseButtonEventArgs e)
         {
             if (!(DataContext is BrandAnalysisVm vm)) return;
 
+            // Tìm item thực sự bị click
             DependencyObject dep = (DependencyObject)e.OriginalSource;
             while (dep != null && !(dep is ListBoxItem))
-            {
                 dep = VisualTreeHelper.GetParent(dep);
-            }
 
             if (dep is ListBoxItem item && item.Content is SearchResultDto data)
             {
-                vm.ConfirmSelection(data); // Truyền dữ liệu dòng được click vào VM
+                vm.ConfirmSelection(data);
             }
         }
     }

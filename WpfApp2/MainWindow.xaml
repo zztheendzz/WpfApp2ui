@@ -149,7 +149,7 @@
                 <Expander Header="{DynamicResource menu_Inquiry}" Foreground="Black" Background="#ECF0F1" IsExpanded="True" Margin="5,2">
                     <StackPanel Background="White">
                         <Button Content="{DynamicResource sub_PurchaseAnalysis}" Command="{Binding ShowPurchaseAnalysisPageCommand}" Style="{StaticResource SidebarButtonStyle}"/>
-                        <Button Content="{DynamicResource sub_ModelAnalysis}" Command="{Binding ShowModelAnalysisCommand}" Style="{StaticResource SidebarButtonStyle}" />
+                        <!--<Button Content="{DynamicResource sub_ModelAnalysis}" Command="{Binding ShowModelAnalysisCommand}" Style="{StaticResource SidebarButtonStyle}" />-->
                         <Button Content="{DynamicResource sub_VendorAnalysis}" Command="{Binding ShowVendorAnalysisCommand}" Style="{StaticResource SidebarButtonStyle}"/>
                         <Button Content="{DynamicResource sub_BrandAnalysis}" Command="{Binding ShowBrandAnalysisCommand}" Style="{StaticResource SidebarButtonStyle}"/>
                         <Button Content="{DynamicResource sub_EquipmentAnalysis}" Command="{Binding ShowEquipmentAnalysisCommand}" Style="{StaticResource SidebarButtonStyle}"/>

@@ -8,93 +8,87 @@ using WpfApp2.viewmodel.analysis;
 
 namespace WpfApp2.view.analysis
 {
-    /// <summary>
-    /// Interaction logic for EquipmentAnalysis.xaml
-    /// </summary>
     public partial class EquipmentAnalysis : Page
     {
+        private EquipmentAnalysisVm _viewModel;
+
         public EquipmentAnalysis()
         {
             InitializeComponent();
-            DataContext = new EquipmentAnalysisVm();
+            _viewModel = new EquipmentAnalysisVm();
+            this.DataContext = _viewModel;
         }
 
         /// <summary>
-        /// Xử lý điều hướng bằng phím mũi tên và xác nhận bằng phím Enter trên TextBox tìm kiếm
+        /// Xử lý phím mũi tên lên/xuống, Enter và Escape trên ô tìm kiếm
         /// </summary>
         private void SearchBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (!(DataContext is EquipmentAnalysisVm vm)) return;
+            // Nếu Popup không mở thì không xử lý các phím điều hướng danh sách
+            if (!_viewModel.IsSearchDropDownOpen) return;
 
-            // 1. Nhấn Enter để xác nhận lựa chọn từ danh sách gợi ý (Sử dụng item đang highlight)
-            if (e.Key == Key.Enter)
+            switch (e.Key)
             {
-                vm.ConfirmSelection();
-                e.Handled = true;
-            }
-            // 2. Nhấn mũi tên xuống (Down) để duyệt danh sách gợi ý
-            else if (e.Key == Key.Down && vm.IsSearchDropDownOpen)
-            {
-                if (lstSearchResults.SelectedIndex < lstSearchResults.Items.Count - 1)
-                {
-                    lstSearchResults.SelectedIndex++;
-                    lstSearchResults.ScrollIntoView(lstSearchResults.SelectedItem);
-                }
-                e.Handled = true;
-            }
-            // 3. Nhấn mũi tên lên (Up) để duyệt ngược danh sách gợi ý
-            else if (e.Key == Key.Up && vm.IsSearchDropDownOpen)
-            {
-                if (lstSearchResults.SelectedIndex > 0)
-                {
-                    lstSearchResults.SelectedIndex--;
-                    lstSearchResults.ScrollIntoView(lstSearchResults.SelectedItem);
-                }
-                e.Handled = true;
-            }
-            // 4. Nhấn Escape để đóng nhanh DropDown
-            else if (e.Key == Key.Escape)
-            {
-                vm.IsSearchDropDownOpen = false;
-                e.Handled = true;
+                case Key.Down:
+                    MoveSelection(1);
+                    e.Handled = true;
+                    break;
+
+                case Key.Up:
+                    MoveSelection(-1);
+                    e.Handled = true;
+                    break;
+
+                case Key.Enter:
+                    _viewModel.ConfirmSelection();
+                    // Clear focus để đóng bàn phím ảo hoặc kết thúc trạng thái nhập liệu
+                    Keyboard.ClearFocus();
+                    e.Handled = true;
+                    break;
+
+                case Key.Escape:
+                    _viewModel.IsSearchDropDownOpen = false;
+                    e.Handled = true;
+                    break;
             }
         }
 
         /// <summary>
-        /// Xử lý sự kiện khi người dùng click chuột trực tiếp vào một item trong danh sách gợi ý.
-        /// Tìm chính xác DataContext của ListBoxItem bị click để truyền vào ViewModel.
+        /// Di chuyển mục đang chọn trong ListBox gợi ý
+        /// </summary>
+        private void MoveSelection(int direction)
+        {
+            if (lstSearchResults.Items.Count == 0) return;
+
+            int nextIndex = lstSearchResults.SelectedIndex + direction;
+
+            // Giới hạn index trong phạm vi danh sách
+            if (nextIndex < 0) nextIndex = 0;
+            if (nextIndex >= lstSearchResults.Items.Count) nextIndex = lstSearchResults.Items.Count - 1;
+
+            lstSearchResults.SelectedIndex = nextIndex;
+            // Tự động cuộn đến mục đang chọn nếu danh sách dài
+            lstSearchResults.ScrollIntoView(lstSearchResults.SelectedItem);
+        }
+
+        /// <summary>
+        /// Xử lý khi người dùng click chuột trực tiếp vào một mục trong danh sách gợi ý
         /// </summary>
         private void OnListBoxItemClick(object sender, MouseButtonEventArgs e)
         {
-            if (!(DataContext is EquipmentAnalysisVm vm)) return;
-
-            // Tìm đối tượng ListBoxItem từ điểm click chuột (OriginalSource)
+            // Tìm Item thực sự chứa dữ liệu (tránh click vào khoảng trắng của Border)
             DependencyObject dep = (DependencyObject)e.OriginalSource;
+
             while (dep != null && !(dep is ListBoxItem))
             {
                 dep = VisualTreeHelper.GetParent(dep);
             }
 
-            // Nếu tìm thấy ListBoxItem và nó chứa dữ liệu SearchResultDto
-            if (dep is ListBoxItem item && item.Content is SearchResultDto data)
+            if (dep is ListBoxItem item && item.DataContext is SearchResultDto selectedItem)
             {
-                vm.ConfirmSelection(data); // Truyền trực tiếp item được click vào VM
-            }
-        }
-
-        /// <summary>
-        /// Hủy bôi đen tự động và đưa con trỏ về cuối TextBox khi Selection thay đổi (nếu dùng ComboBox)
-        /// </summary>
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (sender is ComboBox cb)
-            {
-                var textBox = cb.Template.FindName("PART_EditableTextBox", cb) as TextBox;
-                if (textBox != null)
-                {
-                    textBox.SelectionLength = 0;
-                    textBox.CaretIndex = textBox.Text.Length;
-                }
+                _viewModel.ConfirmSelection(selectedItem);
+                // Sau khi chọn xong bằng chuột, trả lại focus cho TextBox hoặc Grid chính
+                txtGlobalSearch.Focus();
             }
         }
     }

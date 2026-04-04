@@ -10,6 +10,7 @@ using LiveCharts.Wpf;
 using WpfApp2.command;
 using WpfApp2.modelDTO;
 using WpfApp2.modelDTO.analysysDto;
+using WpfApp2.modelDTO.analysisDto.ShareDto; // Namespace chứa AnalysisShareDto
 using WpfApp2.Services;
 using WpfApp2.Services.analysisService;
 using WpfApp2.Services.exception;
@@ -20,11 +21,10 @@ namespace WpfApp2.viewmodel.analysis
     {
         private readonly SearchService _searchService = new SearchService();
         private readonly BrandAnalysisSv _service = new BrandAnalysisSv();
-        private bool _isInternalChange;
+        private bool _isInternalChange; // Cờ chặn vòng lặp khi cập nhật UI từ code
 
         #region ===================== Properties =====================
 
-        // DTO Tổng chứa toàn bộ dữ liệu (TotalPrice, TotalTransactions, Items...)
         private BrandAnalysisDto _analysis;
         public BrandAnalysisDto Analysis
         {
@@ -33,7 +33,7 @@ namespace WpfApp2.viewmodel.analysis
         }
 
         // --- CHART BINDING ---
-        private ChartValues<decimal> _monthlyValues;
+        private ChartValues<decimal> _monthlyValues = new ChartValues<decimal>();
         public ChartValues<decimal> MonthlyValues
         {
             get => _monthlyValues;
@@ -47,7 +47,7 @@ namespace WpfApp2.viewmodel.analysis
             set { _monthlyLabels = value; OnPropertyChanged(); }
         }
 
-        private SeriesCollection _pieSeriesCollection;
+        private SeriesCollection _pieSeriesCollection = new SeriesCollection();
         public SeriesCollection PieSeriesCollection
         {
             get => _pieSeriesCollection;
@@ -62,14 +62,15 @@ namespace WpfApp2.viewmodel.analysis
         }
 
         // --- FILTER & SEARCH ---
-        private DateTime? _fromDate = new DateTime(DateTime.Now.Year, 1, 1);
-        public DateTime? FromDate { get => _fromDate; set { _fromDate = value; OnPropertyChanged(); } }
-
-        private DateTime? _toDate = DateTime.Now;
-        public DateTime? ToDate { get => _toDate; set { _toDate = value; OnPropertyChanged(); } }
+        public DateTime? FromDate { get; set; } = new DateTime(DateTime.Now.Year, 1, 1);
+        public DateTime? ToDate { get; set; } = DateTime.Now;
 
         private int _selectedBrandId;
-        public int SelectedBrandId { get => _selectedBrandId; set { _selectedBrandId = value; OnPropertyChanged(); } }
+        public int SelectedBrandId
+        {
+            get => _selectedBrandId;
+            set { _selectedBrandId = value; OnPropertyChanged(); }
+        }
 
         private string _globalSearchText;
         public string GlobalSearchText
@@ -80,9 +81,10 @@ namespace WpfApp2.viewmodel.analysis
                 if (_globalSearchText == value) return;
                 _globalSearchText = value;
                 OnPropertyChanged();
+
+                // Chỉ tìm kiếm nếu sự thay đổi đến từ việc người dùng gõ phím
                 if (!_isInternalChange)
                 {
-                    if (string.IsNullOrWhiteSpace(value)) SelectedBrandId = 0;
                     UpdateSuggestions();
                 }
             }
@@ -105,44 +107,40 @@ namespace WpfApp2.viewmodel.analysis
         }
 
         // --- COMMANDS ---
-        public ICommand AnalyzeCommand { get; set; }
-        public ICommand ExportExcelCommand { get; set; }
-        public ICommand ExportPdfCommand { get; set; }
-
-        // Navigation Commands
-        public ICommand NavModelAnalysis { get; set; }
-        public ICommand NavVendorAnalysis { get; set; }
-        public ICommand NavEquipmentAnalysis { get; set; }
+        public ICommand AnalyzeCommand { get; }
+        public ICommand NavModelAnalysis { get; }
+        public ICommand NavVendorAnalysis { get; }
+        public ICommand NavEquipmentAnalysis { get; }
 
         #endregion
 
         public BrandAnalysisVm()
         {
-            // Khởi tạo các Command
             AnalyzeCommand = new RelayCommand(_ => LoadData());
 
-            ExportExcelCommand = new RelayCommand(_ => MessageBox.Show("Tính năng Xuất Excel đang được phát triển."));
-            ExportPdfCommand = new RelayCommand(_ => MessageBox.Show("Tính năng Xuất PDF đang được phát triển."));
-
-            // Giả lập điều hướng (Thay bằng logic NavigationService của bạn)
-            NavModelAnalysis = new RelayCommand(_ => MessageBox.Show("Chuyển sang Phân tích Model"));
-            NavVendorAnalysis = new RelayCommand(_ => MessageBox.Show("Chuyển sang Phân tích Vendor"));
-            NavEquipmentAnalysis = new RelayCommand(_ => MessageBox.Show("Chuyển sang Phân tích Thiết bị"));
+            // Điều hướng giữa các trang phân tích
+            NavModelAnalysis = new RelayCommand(_ => MessageBox.Show("Tính năng Phân tích Model đang được cập nhật."));
+            NavVendorAnalysis = new RelayCommand(_ => MessageBox.Show("Tính năng Phân tích Vendor đang được cập nhật."));
+            NavEquipmentAnalysis = new RelayCommand(_ => MessageBox.Show("Tính năng Phân tích Thiết bị đang được cập nhật."));
         }
 
         #region ===================== Methods =====================
 
+        /// <summary>
+        /// Thực thi lấy dữ liệu từ Service dựa trên ID Thương hiệu và Ngày tháng
+        /// </summary>
         private void LoadData()
         {
-            // Nếu người dùng chọn item từ Suggestion mà chưa ConfirmSelection thì tự confirm luôn
+            // Nếu chưa chốt ID nhưng có gợi ý đang highlight, tự động xác nhận
             if (SelectedBrandId == 0 && SelectedSearchResult != null)
             {
-                ConfirmSelection();
+                ConfirmSelection(SelectedSearchResult);
+                return;
             }
 
             if (SelectedBrandId == 0)
             {
-                MessageBox.Show("Vui lòng chọn một Thương hiệu để phân tích.", "Thông báo");
+                MessageBox.Show("Vui lòng nhập và chọn một Thương hiệu để phân tích.", "Thông báo");
                 return;
             }
 
@@ -150,33 +148,37 @@ namespace WpfApp2.viewmodel.analysis
             {
                 var data = _service.GetBrandAnalysis(SelectedBrandId, FromDate, ToDate);
                 Analysis = data;
-                UpdateChartData(data);
+                UpdateUIComponents(data);
             }
             catch (DatabaseLockedException)
             {
-                MessageBox.Show("Hệ thống Database đang bận. Vui lòng thử lại sau.", "Thông báo");
+                MessageBox.Show("Database đang bận (Locked). Vui lòng thử lại sau.", "Thông báo");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}");
+                MessageBox.Show($"Lỗi tải dữ liệu: {ex.Message}");
             }
         }
 
-        private void UpdateChartData(BrandAnalysisDto data)
+        /// <summary>
+        /// Cập nhật các thành phần Biểu đồ và Thẻ thông tin
+        /// </summary>
+        private void UpdateUIComponents(BrandAnalysisDto data)
         {
             if (data == null) return;
 
-            // 1. Biểu đồ cột (Chi tiêu hàng tháng)
-            MonthlyValues = new ChartValues<decimal>(data.MonthlySpends.Select(x => x.Amount));
+            // 1. Biểu đồ cột: Chi tiêu theo tháng
+            MonthlyValues.Clear();
+            MonthlyValues.AddRange(data.MonthlySpends.Select(x => x.Amount));
             MonthlyLabels = data.MonthlySpends.Select(x => x.MonthYear).ToArray();
 
-            // 2. Biểu đồ tròn (Tỷ lệ Model)
+            // 2. Biểu đồ tròn: Tỷ lệ theo Model (Dùng chung CategoryName từ AnalysisShareDto)
             var pieCollection = new SeriesCollection();
             foreach (var share in data.ModelShares)
             {
                 pieCollection.Add(new PieSeries
                 {
-                    Title = share.ModelCode,
+                    Title = share.CategoryName, // Chỗ này quan trọng: đồng bộ với Common Share DTO
                     Values = new ChartValues<decimal> { share.TotalAmount },
                     DataLabels = true,
                     LabelPoint = p => $"{p.Participation:P1}"
@@ -184,21 +186,24 @@ namespace WpfApp2.viewmodel.analysis
             }
             PieSeriesCollection = pieCollection;
 
-            // 3. Thẻ KPI Top Model
-            var topModel = data.ModelShares.OrderByDescending(x => x.TotalAmount).FirstOrDefault();
-            TopModelDisplay = topModel != null
-                ? $"{topModel.ModelCode} ({topModel.Percentage:F1}%)"
-                : "N/A";
+            // 3. KPI Top Model (Lấy Model chiếm tỉ trọng tiền cao nhất)
+            var top = data.ModelShares.OrderByDescending(x => x.TotalAmount).FirstOrDefault();
+            TopModelDisplay = top != null ? $"{top.CategoryName} ({top.Percentage:F1}%)" : "N/A";
         }
 
+        /// <summary>
+        /// Cập nhật danh sách gợi ý khi gõ TextBox
+        /// </summary>
         private void UpdateSuggestions()
         {
             if (string.IsNullOrWhiteSpace(GlobalSearchText) || GlobalSearchText.Length < 2)
             {
                 SearchSuggestions.Clear();
                 IsSearchDropDownOpen = false;
+                SelectedBrandId = 0;
                 return;
             }
+
             try
             {
                 var results = _searchService.SearchBrand(GlobalSearchText);
@@ -211,9 +216,12 @@ namespace WpfApp2.viewmodel.analysis
             catch (DatabaseLockedException) { IsSearchDropDownOpen = false; }
         }
 
-        public void ConfirmSelection(SearchResultDto explicitItem = null)
+        /// <summary>
+        /// Xác nhận lựa chọn Thương hiệu từ gợi ý
+        /// </summary>
+        public void ConfirmSelection(SearchResultDto item = null)
         {
-            var target = explicitItem ?? SelectedSearchResult;
+            var target = item ?? SelectedSearchResult;
             if (target == null) return;
 
             _isInternalChange = true;
@@ -221,9 +229,9 @@ namespace WpfApp2.viewmodel.analysis
             {
                 SelectedBrandId = target.Id;
                 GlobalSearchText = target.Text;
-                IsSearchDropDownOpen = false; // Đóng popup
+                IsSearchDropDownOpen = false;
 
-                // Gọi lệnh phân tích ngay lập tức sau khi chọn
+                // Tự động load dữ liệu ngay sau khi chọn xong
                 LoadData();
             }
             finally

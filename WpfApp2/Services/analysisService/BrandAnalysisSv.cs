@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using WpfApp2.modelDTO;
+using WpfApp2.modelDTO.analysisDto.ShareDto; // Thư mục chứa AnalysisShareDto
 using WpfApp2.modelDTO.analysysDto;
 
 namespace WpfApp2.Services.analysisService
@@ -59,24 +60,27 @@ namespace WpfApp2.Services.analysisService
 
             if (items.Any())
             {
-                // 1. Tính toán cho Biểu đồ Tròn (Tỷ lệ sử dụng theo Model)
+                // 1. Tính toán cho Biểu đồ Tròn (Dùng AnalysisShareDto thay cho ModelShareDto)
                 result.ModelShares = items
                     .GroupBy(x => x.ModelCode)
-                    .Select(g => new ModelShareDto
+                    .Select(g => new AnalysisShareDto // Sử dụng Class dùng chung
                     {
-                        ModelCode = g.Key,
+                        // Gán mã Model vào thuộc tính CategoryName chuẩn
+                        CategoryName = g.Key,
                         TotalAmount = g.Sum(x => x.LineTotal),
-                        Percentage = (double)(g.Sum(x => x.LineTotal) / result.TotalPrice * 100)
+                        Percentage = result.TotalPrice > 0
+                            ? (double)(g.Sum(x => x.LineTotal) / result.TotalPrice * 100)
+                            : 0
                     })
                     .OrderByDescending(x => x.TotalAmount)
+                    .Take(10) // Lấy Top 10 để biểu đồ sạch đẹp
                     .ToList();
 
-                // 2. Tính toán cho Biểu đồ Cột (Giá trị mua theo tháng)
+                // 2. Tính toán cho Biểu đồ Cột (Giữ nguyên MonthlySpendDto)
                 result.MonthlySpends = items
                     .GroupBy(x => new { x.PurchaseDate.Year, x.PurchaseDate.Month })
                     .Select(g => new MonthlySpendDto
                     {
-                        // Tạo chuỗi hiển thị MM/yyyy để làm Label cho trục X
                         MonthYear = $"{g.Key.Month:D2}/{g.Key.Year}",
                         Amount = g.Sum(x => x.LineTotal)
                     })
@@ -85,7 +89,7 @@ namespace WpfApp2.Services.analysisService
             }
             else
             {
-                result.ModelShares = new List<ModelShareDto>();
+                result.ModelShares = new List<AnalysisShareDto>();
                 result.MonthlySpends = new List<MonthlySpendDto>();
             }
 
