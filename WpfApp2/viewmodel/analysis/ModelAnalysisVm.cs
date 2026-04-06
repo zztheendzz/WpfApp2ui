@@ -217,12 +217,12 @@ namespace WpfApp2.viewmodel.analysis
                 if (SelectedSearchResult.Data is Model model)
                 {
                     SelectedModelId = model.Id;
-                    GlobalSearchText = model.ModelName;
+                    GlobalSearchText = model.ModelCode;
                 }
                 else if (SelectedSearchResult.Data is ModelDto modelDto)
                 {
                     SelectedModelId = modelDto.Id;
-                    GlobalSearchText = modelDto.ModelName;
+                    GlobalSearchText = modelDto.ModelCode;
                 }
                 else
                 {

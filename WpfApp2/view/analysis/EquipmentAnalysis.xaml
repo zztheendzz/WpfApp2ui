@@ -216,23 +216,111 @@
             </ScrollViewer>
 
             <Border Grid.Column="1" Style="{StaticResource CardStyle}" Padding="5">
-                <DataGrid ItemsSource="{Binding Analysis.Items}" SelectionMode="Single" ScrollViewer.CanContentScroll="True">
+                <DataGrid ItemsSource="{Binding Analysis.Items}"
+          SelectionMode="Single"
+          AutoGenerateColumns="False"
+          RowHeight="50"
+          
+          ScrollViewer.CanContentScroll="True">
+
+                    <!-- STYLE CHUNG -->
+                    <DataGrid.Resources>
+
+                        <!-- Mặc định: căn giữa -->
+                        <Style TargetType="TextBlock">
+                            <Setter Property="TextAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="TextWrapping" Value="Wrap"/>
+                        </Style>
+
+                        <Style TargetType="TextBox">
+                            <Setter Property="TextAlignment" Value="Center"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        </Style>
+
+                    </DataGrid.Resources>
+
+                    <!-- Header căn giữa -->
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="{DynamicResource ph_ModelName}" Width="2*" Binding="{Binding ModelName}"/>
-                        <DataGridTextColumn Header="{DynamicResource lbl_Brand}" Width="*" Binding="{Binding BrandName}"/>
-                        <DataGridTextColumn Header="{DynamicResource dg_Quantity}" Width="70" Binding="{Binding Quantity, StringFormat={}{0:N0}}"/>
-                        <DataGridTextColumn Header="{DynamicResource dg_TotalPrice}" Width="120" Binding="{Binding LineTotal, StringFormat={}{0:N0}}">
+
+                        <!-- ModelName: trái + wrap -->
+                        <DataGridTextColumn Header="{DynamicResource ph_ModelName}"
+                        MinWidth="150"
+                        MaxWidth="300"
+                        Binding="{Binding ModelName}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="Foreground" Value="{StaticResource SubBlue}"/>
-                                    <Setter Property="TextAlignment" Value="Right"/>
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="Margin" Value="0,0,10,0"/>
+                                    <Setter Property="TextAlignment" Value="Left"/>
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}" Width="100" Binding="{Binding PurchaseDate, StringFormat='dd/MM/yyyy'}"/>
+
+                        <!-- ModelCode: trái -->
+                        <DataGridTextColumn Header="{DynamicResource ph_ModelCode}"
+                        MinWidth="120"
+                        MaxWidth="250"
+                        Binding="{Binding ModelCode}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <!-- Brand: giữa -->
+                        <DataGridTextColumn Header="{DynamicResource lbl_Brand}"
+                        Width="140"
+                        Binding="{Binding BrandName}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <!-- Quantity: phải -->
+                        <DataGridTextColumn Header="{DynamicResource dg_Quantity}"
+                        Width="90"
+                        Binding="{Binding Quantity, StringFormat={}{0:N0}}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <!-- TotalPrice: phải -->
+                        <DataGridTextColumn Header="{DynamicResource dg_TotalPrice}"
+                        Width="120"
+                        Binding="{Binding LineTotal, StringFormat={}{0:N0}}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Center"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="Foreground" Value="{StaticResource SubBlue}"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <!-- Date: giữa -->
+                        <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}"
+                        Width="110"
+                        Binding="{Binding PurchaseDate, StringFormat={}{0:dd/MM/yyyy}}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>
