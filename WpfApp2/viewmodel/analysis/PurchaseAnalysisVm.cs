@@ -234,26 +234,28 @@ namespace WpfApp2.viewmodel.analysis
                 if (type == "E") { EquipmentSuggestions.Clear(); IsDropDownOpenE = false; SelectedEquipmentId = 0; }
                 return;
             }
-
             switch (type)
             {
                 case "M":
                     var resM = _searchService.SearchModel(query);
-                    ModelSuggestions.Clear(); foreach (var i in resM) ModelSuggestions.Add(i);
+                    ModelSuggestions.Clear();
+                    foreach (var i in resM) ModelSuggestions.Add(i);
                     IsDropDownOpenM = ModelSuggestions.Any();
-                    SelectedModel = ModelSuggestions.FirstOrDefault();
+                    // BỎ DÒNG: SelectedModel = ModelSuggestions.FirstOrDefault();
                     break;
                 case "V":
                     var resV = _searchService.SearchVendor(query);
-                    VendorSuggestions.Clear(); foreach (var i in resV) VendorSuggestions.Add(i);
+                    VendorSuggestions.Clear();
+                    foreach (var i in resV) VendorSuggestions.Add(i);
                     IsDropDownOpenV = VendorSuggestions.Any();
-                    SelectedVendor = VendorSuggestions.FirstOrDefault();
+                    // BỎ DÒNG: SelectedVendor = VendorSuggestions.FirstOrDefault();
                     break;
                 case "E":
                     var resE = _searchService.SearchEquipment(query);
-                    EquipmentSuggestions.Clear(); foreach (var i in resE) EquipmentSuggestions.Add(i);
+                    EquipmentSuggestions.Clear();
+                    foreach (var i in resE) EquipmentSuggestions.Add(i);
                     IsDropDownOpenE = EquipmentSuggestions.Any();
-                    SelectedEquipment = EquipmentSuggestions.FirstOrDefault();
+                    // BỎ DÒNG: SelectedEquipment = EquipmentSuggestions.FirstOrDefault();
                     break;
             }
         }

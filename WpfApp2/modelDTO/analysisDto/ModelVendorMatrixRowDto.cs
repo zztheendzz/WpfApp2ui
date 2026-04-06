@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace WpfApp2.modelDTO.analysisDto
+{
+    public class ModelVendorMatrixRowDto
+    {
+        public string ModelName { get; set; }
+
+        // key = VendorName, value = latest price
+        public Dictionary<string, decimal?> VendorPrices { get; set; } = new();
+
+        public bool IsTotalRow { get; set; } // để phân biệt dòng TOTAL
+    }
+}

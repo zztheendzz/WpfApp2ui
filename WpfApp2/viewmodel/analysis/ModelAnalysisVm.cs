@@ -9,6 +9,7 @@ using WpfApp2.command;
 using WpfApp2.model;
 using WpfApp2.modelDto;
 using WpfApp2.modelDTO;
+using WpfApp2.modelDTO.analysisDto;
 using WpfApp2.modelDTO.analysysDto;
 using WpfApp2.Services;
 using WpfApp2.Services.analysisService;
@@ -20,7 +21,11 @@ namespace WpfApp2.viewmodel.analysis
     {
         private readonly SearchService _searchService = new SearchService();
         private readonly ModelAnalysisSv _service = new ModelAnalysisSv();
-
+        public ModelVendorMatrixDto MatrixData { get; set; } = new ModelVendorMatrixDto
+        {
+            Vendors = new List<string>(),
+            Rows = new List<ModelVendorMatrixRowDto>()
+        };
         // Cờ chặn vòng lặp phản hồi khi gán text từ kết quả chọn
         private bool _isInternalChange;
 
@@ -90,10 +95,88 @@ namespace WpfApp2.viewmodel.analysis
         public ModelAnalysisVm()
         {
             AnalyzeCommand = new RelayCommand(_ => LoadData());
+            var service = new ModelAnalysisSv();
+
+
         }
 
         #region ===================== Methods =====================
 
+        public void AddModelToMatrix(int modelId)
+        {
+            var sv = new ModelAnalysisSv();
+            var data = sv.GetMatrixByModel(modelId);
+
+            if (data == null || data.Count == 0) return;
+
+            var modelName = data.First().ModelName;
+
+            // ❌ tránh trùng
+            if (MatrixData.Rows.Any(x => x.ModelName == modelName))
+                return;
+
+            // ===== update vendor =====
+            var newVendors = data
+                .Select(x => x.VendorName)
+                .Where(x => !string.IsNullOrEmpty(x)) // 🔥 tránh lỗi null
+                .Distinct();
+
+            foreach (var v in newVendors)
+            {
+                if (!MatrixData.Vendors.Contains(v))
+                    MatrixData.Vendors.Add(v);
+            }
+
+            // ===== build row =====
+            var row = new ModelVendorMatrixRowDto
+            {
+                ModelName = modelName
+            };
+
+            foreach (var vendor in MatrixData.Vendors)
+            {
+                var latest = data
+                    .Where(x => x.VendorName == vendor)
+                    .OrderByDescending(x => x.PurchaseDate)
+                    .FirstOrDefault();
+
+                row.VendorPrices[vendor] = latest?.UnitPrice;
+            }
+
+            MatrixData.Rows.Add(row);
+
+            UpdateTotalRow();
+        }
+        private void UpdateTotalRow()
+        {
+            // 1. Xóa tất cả các dòng TOTAL đang có để tính lại từ đầu
+            MatrixData.Rows.RemoveAll(x => x.IsTotalRow || x.ModelName == "TOTAL");
+
+            // 2. Nếu không có dữ liệu model nào thì không thêm dòng Total
+            if (MatrixData.Rows.Count == 0) return;
+
+            var totalRow = new ModelVendorMatrixRowDto
+            {
+                ModelName = "TOTAL",
+                IsTotalRow = true
+            };
+
+            // 3. Tính tổng cho từng Vendor
+            foreach (var vendor in MatrixData.Vendors)
+            {
+                // Chỉ tính tổng trên các dòng KHÔNG PHẢI total
+                var sum = MatrixData.Rows
+                    .Sum(x => (x.VendorPrices.ContainsKey(vendor) ? x.VendorPrices[vendor] : 0) ?? 0);
+
+                totalRow.VendorPrices[vendor] = sum;
+            }
+
+            // 4. Thêm vào cuối danh sách
+            MatrixData.Rows.Add(totalRow);
+
+            // 5. QUAN TRỌNG: Phát tín hiệu để DataGrid vẽ lại cột và dòng
+            OnPropertyChanged(nameof(MatrixData));
+        }
         private void UpdateSuggestions()
         {
             if (string.IsNullOrWhiteSpace(GlobalSearchText) || GlobalSearchText.Length < 2)
@@ -166,6 +249,8 @@ namespace WpfApp2.viewmodel.analysis
             try
             {
                 Analysis = _service.GetModelAnalysis(SelectedModelId);
+                AddModelToMatrix(SelectedSearchResult.Id);
+
             }
             catch (DatabaseLockedException)
             {

@@ -8,6 +8,10 @@
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
       xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:fa="http://schemas.fontawesome.io/icons/"
+
+      
       mc:Ignorable="d" 
       d:DesignHeight="1200" d:DesignWidth="1100"
       Title="PurchaseAnalysis">
@@ -15,6 +19,71 @@
     <Page.DataContext>
         <vm:PurchaseAnalysisVm/>
     </Page.DataContext>
+
+    <Page.Resources>
+        <SolidColorBrush x:Key="MainNavy" Color="#162D46"/>
+        <SolidColorBrush x:Key="SubBlue" Color="#254D76"/>
+        <SolidColorBrush x:Key="AccentBlue" Color="#3A75B0"/>
+        <SolidColorBrush x:Key="SuccessGreen" Color="#27AE60"/>
+        <DropShadowEffect x:Key="CommonShadow" BlurRadius="12" ShadowDepth="2" Opacity="0.1"/>
+
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="Effect" Value="{StaticResource CommonShadow}"/>
+        </Style>
+
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#F3F4F6"/>
+            <Setter Property="RowHeight" Value="40"/>
+            <Setter Property="AlternatingRowBackground" Value="#F9FAFB"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#F3F4F6"/>
+            <Setter Property="Foreground" Value="{StaticResource MainNavy}"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+        </Style>
+
+        <Style x:Key="FooterButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#44FFFFFF"/>
+            <Setter Property="Margin" Value="6,4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#22FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="Tag" Value="Active">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource AccentBlue}"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
 
     <Grid Background="#F5F6F7">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -79,7 +148,7 @@
                                 </Grid>
                             </StackPanel>
 
-                            <Button Content="{DynamicResource btn_Analyze}" Command="{Binding SearchCommand}" Margin="10,20,5,0" Width="100" Height="38"/>
+                            <Button Content="{DynamicResource btn_Analyze}" Background="{StaticResource AccentBlue}" Command="{Binding SearchCommand}" Foreground="White" Width="120" Height="32" VerticalAlignment="Bottom" Margin="0,0,0,1" BorderThickness="0" FontWeight="SemiBold" />
                             <Button Content="{DynamicResource btn_Clear}" Command="{Binding ClearCommand}" Margin="5,20,0,0" Width="100" Height="38" Style="{StaticResource MaterialDesignOutlinedButton}"/>
                         </WrapPanel>
 
@@ -128,7 +197,7 @@
                     </materialDesign:Card>
                 </UniformGrid>
 
-                <Grid Margin="0,0,0,15">
+                <Grid Margin="0,0,0,15" Visibility="Collapsed">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -177,19 +246,81 @@
                             </StackPanel>
                         </Grid>
 
-                        <DataGrid ItemsSource="{Binding PurchaseDtos}" AutoGenerateColumns="False" IsReadOnly="True" 
+                        <DataGrid ItemsSource="{Binding Analysis.Items}" AutoGenerateColumns="False" IsReadOnly="True" 
                                   CanUserSortColumns="True" Background="White"
                                   MinHeight="300" MaxHeight="600" materialDesign:DataGridAssist.CellPadding="10">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}" Binding="{Binding PurchaseDate, StringFormat=dd/MM/yyyy}"/>
-                                <DataGridTextColumn Header="{DynamicResource dg_Model}" Binding="{Binding ModelName}"/>
-                                <DataGridTextColumn Header="{DynamicResource ph_Vendor}" Binding="{Binding VendorName}" Width="150"/>
-                                <DataGridTextColumn Header="{DynamicResource ph_Equipment}" Binding="{Binding EquipmentName}"/>
-                                <DataGridTextColumn Header="{DynamicResource dg_Quantity}" Binding="{Binding Quantity, StringFormat={}{0:N0}}"/>
-                                <DataGridTextColumn Header="{DynamicResource dg_UnitPrice}" Binding="{Binding UnitPrice, StringFormat={}{0:N0}}"/>
-                                <DataGridTextColumn Header="{DynamicResource dg_TotalPrice}" Binding="{Binding TotalPrice, StringFormat={}{0:N0}}" FontWeight="Bold"/>
-                                <DataGridTextColumn Header="{DynamicResource dg_Currency}" Binding="{Binding CurrencyName}"/>
-                                <DataGridTextColumn Header="{DynamicResource dg_Note}" Binding="{Binding Note}" Width="*"/>
+                                <DataGridTemplateColumn Header="{DynamicResource dg_PurchaseDate}">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding PurchaseDate, StringFormat=dd/MM/yyyy}" Padding="5" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="{DynamicResource dg_Model}" Width="180">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding ModelName}" TextWrapping="Wrap" Padding="5" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="{DynamicResource ph_Vendor}" Width="150">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding VendorName}" TextWrapping="Wrap" Padding="5" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="{DynamicResource ph_Equipment}" Width="120">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding EquipmentName}" TextWrapping="Wrap" Padding="5" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="{DynamicResource dg_Quantity}">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Quantity, StringFormat={}{0:N0}}" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="{DynamicResource dg_UnitPrice}">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding UnitPrice, StringFormat={}{0:N0}}" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="{DynamicResource dg_TotalPrice}">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding TotalPrice, StringFormat={}{0:N0}}" FontWeight="Bold" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="{DynamicResource dg_Currency}">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding CurrencyName}" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="{DynamicResource dg_Note}" Width="*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Note}" TextWrapping="Wrap" Padding="5" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
 

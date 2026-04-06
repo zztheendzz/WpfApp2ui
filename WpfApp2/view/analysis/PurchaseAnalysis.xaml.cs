@@ -99,6 +99,7 @@ namespace WpfApp2.view.analysis
             var vm = this.DataContext as PurchaseAnalysisVm;
             if (vm == null) return;
 
+            // Tìm ListBoxItem từ vị trí click
             DependencyObject dep = (DependencyObject)e.OriginalSource;
             while (dep != null && !(dep is ListBoxItem))
                 dep = VisualTreeHelper.GetParent(dep);
@@ -108,14 +109,22 @@ namespace WpfApp2.view.analysis
                 var listBox = ItemsControl.ItemsControlFromItemContainer(item) as ListBox;
                 if (listBox == null) return;
 
+                // QUAN TRỌNG: Ép ListBox chọn đúng item vừa click chuột vào
+                listBox.SelectedItem = item.DataContext;
+
                 string type = (listBox.Name == "lstModel") ? "M" :
                               (listBox.Name == "lstVendor") ? "V" : "E";
 
+                // Thực thi logic xác nhận lựa chọn trong ViewModel
                 vm.ConfirmSelection(type);
 
+                // Trả lại focus cho TextBox tương ứng để người dùng có thể gõ tiếp hoặc dùng phím mũi tên
                 if (type == "M") txtSearchModel.Focus();
                 else if (type == "V") txtSearchVendor.Focus();
                 else if (type == "E") txtSearchEquip.Focus();
+
+                // Đánh dấu là đã xử lý xong để tránh các sự kiện bubbling khác
+                e.Handled = true;
             }
         }
     }

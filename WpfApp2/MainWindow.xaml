@@ -96,6 +96,8 @@
                     <Expander Header="{DynamicResource menu_Inquiry}" Style="{StaticResource MyExpanderStyle}" IsExpanded="True">
                         <StackPanel Background="#2C3E50">
                             <Button Content="{DynamicResource sub_PurchaseAnalysis}" Command="{Binding ShowPurchaseAnalysisPageCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+                            <Button Content="{DynamicResource sub_ModelAnalysis}" Command="{Binding ShowModelAnalysisCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+
                             <Button Content="{DynamicResource sub_VendorAnalysis}" Command="{Binding ShowVendorAnalysisCommand}" Style="{StaticResource SidebarButtonStyle}"/>
                             <Button Content="{DynamicResource sub_BrandAnalysis}" Command="{Binding ShowBrandAnalysisCommand}" Style="{StaticResource SidebarButtonStyle}"/>
                             <Button Content="{DynamicResource sub_EquipmentAnalysis}" Command="{Binding ShowEquipmentAnalysisCommand}" Style="{StaticResource SidebarButtonStyle}"/>

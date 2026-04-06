@@ -1,23 +1,17 @@
-﻿
+﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WpfApp2.modelDTO;
+using WpfApp2.Services.improtExcel;
 using WpfApp2.viewmodel.analysis;
+
 namespace WpfApp2.view.analysis
 {
-    /// <summary>
-    /// Interaction logic for ModelAnalysis.xaml
-    /// </summary>
     public partial class ModelAnalysis : Page
     {
         public ModelAnalysis()
@@ -26,20 +20,28 @@ namespace WpfApp2.view.analysis
             DataContext = new ModelAnalysisVm();
         }
 
+        // ================= SEARCH =================
         private void SearchBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (DataContext is ModelAnalysisVm vm)
             {
-                // 1. Nhấn Enter để chốt chọn
                 if (e.Key == Key.Enter)
                 {
                     vm.ConfirmSelection();
+
+                    // 👉 ADD vào matrix
+                    if (vm.SelectedSearchResult != null)
+                    {
+                        vm.AddModelToMatrix(vm.SelectedSearchResult.Id);
+
+                        RefreshMatrixColumns(); // reload column
+                    }
+
                     txtSearchModel.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
                     e.Handled = true;
                     return;
                 }
 
-                // 2. Nhấn Down để xuống item dưới
                 if (e.Key == Key.Down)
                 {
                     if (vm.IsSearchDropDownOpen && lstModel.SelectedIndex < lstModel.Items.Count - 1)
@@ -49,7 +51,6 @@ namespace WpfApp2.view.analysis
                     }
                     e.Handled = true;
                 }
-                // 3. Nhấn Up để lên item trên
                 else if (e.Key == Key.Up)
                 {
                     if (vm.IsSearchDropDownOpen && lstModel.SelectedIndex > 0)
@@ -59,7 +60,6 @@ namespace WpfApp2.view.analysis
                     }
                     e.Handled = true;
                 }
-                // 4. Nhấn Escape để đóng nhanh popup
                 else if (e.Key == Key.Escape)
                 {
                     vm.IsSearchDropDownOpen = false;
@@ -70,52 +70,145 @@ namespace WpfApp2.view.analysis
 
         private void OnListBoxItemClick(object sender, MouseButtonEventArgs e)
         {
-            // Khi click chuột vào item
             if (sender is ListBoxItem item && DataContext is ModelAnalysisVm vm)
             {
                 vm.SelectedSearchResult = item.DataContext as SearchResultDto;
                 vm.ConfirmSelection();
+
+                // 👉 ADD vào matrix
+                if (vm.SelectedSearchResult != null)
+                {
+                    vm.AddModelToMatrix(vm.SelectedSearchResult.Id);
+                    RefreshMatrixColumns();
+                }
             }
         }
 
+        // ================= MATRIX =================
+
+
+        private void BtnExportExcel_Click(object sender, RoutedEventArgs e)
+        {
+            // Lấy dữ liệu từ ViewModel
+            if (!(DataContext is ModelAnalysisVm vm) || vm.MatrixData == null || vm.MatrixData.Rows.Count == 0)
+            {
+                MessageBox.Show("Không có dữ liệu để xuất!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Mở hộp thoại chọn nơi lưu file
+            SaveFileDialog sfd = new SaveFileDialog
+            {
+                Filter = "Excel Workbook (*.xlsx)|*.xlsx",
+                FileName = $"Matrix_Price_{DateTime.Now:yyyyMMdd_HHmm}.xlsx"
+            };
+
+            if (sfd.ShowDialog() == true)
+            {
+                try
+                {
+                    var exportService = new ExportSv();
+                    exportService.ExportModelMatrix(vm.MatrixData, sfd.FileName);
+
+                    MessageBox.Show("Xuất file Excel thành công!", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (IOException ex)
+                {
+                    MessageBox.Show("Không thể ghi file. Có thể file đang được mở bởi một ứng dụng khác.\n" + ex.Message, "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Có lỗi xảy ra trong quá trình xuất Excel: " + ex.Message, "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+        private void dgMatrix_Loaded(object sender, RoutedEventArgs e)
+        {
+            BuildMatrixColumns();
+        }
+
+        private void RefreshMatrixColumns()
+        {
+            dgMatrix.Columns.Clear();
+            BuildMatrixColumns();
+
+            // Ép DataGrid làm mới lại các dòng dữ liệu
+            dgMatrix.ItemsSource = null;
+            if (DataContext is ModelAnalysisVm vm)
+            {
+                dgMatrix.ItemsSource = vm.MatrixData.Rows;
+            }
+        }
+
+        private void BuildMatrixColumns()
+        {
+            if (!(DataContext is ModelAnalysisVm vm)) return;
+            if (vm.MatrixData == null) return;
+
+            // Cột Model
+            dgMatrix.Columns.Add(new DataGridTextColumn
+            {
+                Header = "Model",
+                Binding = new Binding("ModelName"),
+                Width = DataGridLength.Auto
+            });
+
+            // Dynamic vendor columns
+            foreach (var vendor in vm.MatrixData.Vendors)
+            {
+                dgMatrix.Columns.Add(new DataGridTextColumn
+                {
+                    Header = vendor,
+                    Binding = new Binding($"VendorPrices[{vendor}]")
+                    {
+                        StringFormat = "N0"
+                    },
+                    MinWidth = 120
+                });
+            }
+        }
+
+        // ================= COMBOBOX UX =================
+
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var cb = sender as ComboBox;
-            if (cb != null)
+            if (sender is ComboBox cb)
             {
                 cb.IsDropDownOpen = true;
             }
         }
+
         private void ComboBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            var cb = sender as ComboBox;
-            if (cb == null) return;
-
-            if (!cb.IsKeyboardFocusWithin)
+            if (sender is ComboBox cb)
             {
-                cb.Focus();
-                e.Handled = true; // chỉ handle khi chưa focus
-            }
+                if (!cb.IsKeyboardFocusWithin)
+                {
+                    cb.Focus();
+                    e.Handled = true;
+                }
 
-            cb.IsDropDownOpen = true;
+                cb.IsDropDownOpen = true;
+            }
         }
+
         private void ComboBox_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
         {
-            var comboBox = sender as ComboBox;
-            if (comboBox == null) return;
-
-            comboBox.Dispatcher.BeginInvoke(new Action(() =>
+            if (sender is ComboBox comboBox)
             {
-                comboBox.ApplyTemplate();
-
-                var textBox = comboBox.Template.FindName("PART_EditableTextBox", comboBox) as TextBox;
-                if (textBox != null)
+                comboBox.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    textBox.Focus(); // quan trọng
-                    textBox.SelectionLength = 0;
-                    textBox.CaretIndex = textBox.Text.Length;
-                }
-            }), System.Windows.Threading.DispatcherPriority.ContextIdle);
+                    comboBox.ApplyTemplate();
+
+                    var textBox = comboBox.Template.FindName("PART_EditableTextBox", comboBox) as TextBox;
+                    if (textBox != null)
+                    {
+                        textBox.Focus();
+                        textBox.SelectionLength = 0;
+                        textBox.CaretIndex = textBox.Text.Length;
+                    }
+                }), System.Windows.Threading.DispatcherPriority.ContextIdle);
+            }
         }
     }
 }

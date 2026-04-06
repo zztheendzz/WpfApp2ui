@@ -32,7 +32,7 @@ namespace WpfApp2.Services.analysisService
                     p.Id, m.ModelName, m.ModelCode, b.BrandName, v.VendorName, 
                     e.EquipmentName, p.Quantity, p.UnitPrice, 
                     (p.Quantity * p.UnitPrice) AS LineTotal,
-                    p.PurchaseDate, u.UserName AS FullName, p.Note
+                    p.PurchaseDate, u.FullName, p.Note
                 FROM PurchaseHistory p
                 INNER JOIN Model m ON p.ModelId = m.Id
                 INNER JOIN Brand b ON m.BrandId = b.Id

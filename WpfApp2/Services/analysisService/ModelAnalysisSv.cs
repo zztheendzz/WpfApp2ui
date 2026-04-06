@@ -111,5 +111,22 @@ ORDER BY p.PurchaseDate DESC;
 
             return summary;
         }
+public List<MatrixRawDto> GetMatrixByModel(int modelId)
+        {
+            using var conn = _db.GetConnection();
+
+            string sql = @"
+    SELECT 
+        m.ModelName,
+        v.VendorName,
+        p.UnitPrice,
+        p.PurchaseDate
+    FROM PurchaseHistory p
+    JOIN Model m ON p.ModelId = m.Id
+    JOIN Vendor v ON p.VendorId = v.Id
+    WHERE p.ModelId = @modelId
+    ";
+            return conn.Query<MatrixRawDto>(sql, new { modelId }).ToList();
+        }
     }
 }

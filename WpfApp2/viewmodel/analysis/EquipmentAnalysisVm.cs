@@ -5,11 +5,12 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using LiveCharts;
 using LiveCharts.Wpf;
 using WpfApp2.command;
-using WpfApp2.model; // Chứa class Equipment
-using WpfApp2.modelDto; // Chứa EquipmentDto
+using WpfApp2.model;
+using WpfApp2.modelDto;
 using WpfApp2.modelDTO;
 using WpfApp2.modelDTO.analysysDto;
 using WpfApp2.modelDTO.analysisDto.ShareDto;
@@ -31,47 +32,42 @@ namespace WpfApp2.viewmodel.analysis
         public EquipmentAnalysisDto Analysis
         {
             get => _analysis;
-            set { _analysis = value; OnPropertyChanged(); }
+            set { if (_analysis == value) return; _analysis = value; OnPropertyChanged(); }
         }
 
-        // --- CHART BINDING ---
-
-        // Biểu đồ tròn: Tỷ lệ chi tiêu theo Thương hiệu trong thiết bị
         private SeriesCollection _pieSeriesCollection = new SeriesCollection();
         public SeriesCollection PieSeriesCollection
         {
             get => _pieSeriesCollection;
-            set { _pieSeriesCollection = value; OnPropertyChanged(); }
+            set { if (_pieSeriesCollection == value) return; _pieSeriesCollection = value; OnPropertyChanged(); }
         }
 
-        // Biểu đồ cột ngang: Top 5 linh kiện giá trị cao nhất
         private ChartValues<decimal> _topItemsValues = new ChartValues<decimal>();
         public ChartValues<decimal> TopItemsValues
         {
             get => _topItemsValues;
-            set { _topItemsValues = value; OnPropertyChanged(); }
+            set { if (_topItemsValues == value) return; _topItemsValues = value; OnPropertyChanged(); }
         }
 
         private string[] _topItemsLabels;
         public string[] TopItemsLabels
         {
             get => _topItemsLabels;
-            set { _topItemsLabels = value; OnPropertyChanged(); }
+            set { if (_topItemsLabels == value) return; _topItemsLabels = value; OnPropertyChanged(); }
         }
 
-        // --- FILTER & SEARCH ---
         private DateTime? _fromDate = new DateTime(DateTime.Now.Year, 1, 1);
         public DateTime? FromDate
         {
             get => _fromDate;
-            set { _fromDate = value; OnPropertyChanged(); }
+            set { if (_fromDate == value) return; _fromDate = value; OnPropertyChanged(); }
         }
 
         private DateTime? _toDate = DateTime.Now;
         public DateTime? ToDate
         {
             get => _toDate;
-            set { _toDate = value; OnPropertyChanged(); }
+            set { if (_toDate == value) return; _toDate = value; OnPropertyChanged(); }
         }
 
         private string _globalSearchText;
@@ -83,7 +79,6 @@ namespace WpfApp2.viewmodel.analysis
                 if (_globalSearchText == value) return;
                 _globalSearchText = value;
                 OnPropertyChanged();
-
                 if (!_isInternalChange) UpdateSuggestions();
             }
         }
@@ -94,24 +89,24 @@ namespace WpfApp2.viewmodel.analysis
         public SearchResultDto SelectedSearchResult
         {
             get => _selectedSearchResult;
-            set { _selectedSearchResult = value; OnPropertyChanged(); }
+            set { if (_selectedSearchResult == value) return; _selectedSearchResult = value; OnPropertyChanged(); }
         }
 
         private bool _isSearchDropDownOpen;
         public bool IsSearchDropDownOpen
         {
             get => _isSearchDropDownOpen;
-            set { _isSearchDropDownOpen = value; OnPropertyChanged(); }
+            set { if (_isSearchDropDownOpen == value) return; _isSearchDropDownOpen = value; OnPropertyChanged(); }
         }
 
-        private int _selectedEquipmentId;
-        public int SelectedEquipmentId
+        // Thay đổi quan trọng: Dùng int? để phân biệt null (chưa chọn) và 0 (Id hợp lệ)
+        private int? _selectedEquipmentId = null;
+        public int? SelectedEquipmentId
         {
             get => _selectedEquipmentId;
-            set { _selectedEquipmentId = value; OnPropertyChanged(); }
+            set { if (_selectedEquipmentId == value) return; _selectedEquipmentId = value; OnPropertyChanged(); }
         }
 
-        // --- COMMANDS ---
         public ICommand AnalyzeCommand { get; }
         public ICommand NavModelAnalysis { get; }
         public ICommand NavVendorAnalysis { get; }
@@ -123,27 +118,31 @@ namespace WpfApp2.viewmodel.analysis
         public EquipmentAnalysisVm()
         {
             AnalyzeCommand = new RelayCommand(_ => LoadData());
-
-            // Điều hướng (Giả sử bạn dùng NavigationService hoặc gán MessageBox như Brand)
             NavModelAnalysis = new RelayCommand(_ => MessageBox.Show("Chuyển hướng Model..."));
             NavVendorAnalysis = new RelayCommand(_ => MessageBox.Show("Chuyển hướng Vendor..."));
             NavBrandAnalysis = new RelayCommand(_ => MessageBox.Show("Chuyển hướng Thương Hiệu..."));
-            NavEquipmentAnalysis = new RelayCommand(_ => { /* Đang ở đây rồi */ });
+            NavEquipmentAnalysis = new RelayCommand(_ => { /* Đang ở đây */ });
         }
 
         #region ===================== Methods =====================
 
         private void LoadData()
         {
-            if (SelectedEquipmentId <= 0)
+            // Tự động gán nếu người dùng nhấn Analyze khi chưa chọn từ danh sách dropdown
+            if (SelectedEquipmentId == null && SelectedSearchResult != null)
             {
-                if (SelectedSearchResult != null) ConfirmSelection(SelectedSearchResult);
-                else return;
+                InternalApplySelection(SelectedSearchResult);
+            }
+
+            if (SelectedEquipmentId == null)
+            {
+                MessageBox.Show("Vui lòng nhập và chọn một Thiết bị.", "Thông báo");
+                return;
             }
 
             try
             {
-                var data = _service.GetEquipmentAnalysis(SelectedEquipmentId, FromDate, ToDate);
+                var data = _service.GetEquipmentAnalysis(SelectedEquipmentId.Value, FromDate, ToDate);
                 if (data != null)
                 {
                     Analysis = data;
@@ -164,48 +163,40 @@ namespace WpfApp2.viewmodel.analysis
         {
             if (data == null) return;
 
-            // 1. Cập nhật Biểu đồ Tròn (Brand Shares) - Lấy Top 10 + Nhóm "Khác"
+            // 1. Cập nhật Biểu đồ Tròn
             var pieCollection = new SeriesCollection();
-
-            // Sắp xếp giảm dần theo số tiền
-            var sortedBrands = data.BrandShares.OrderByDescending(x => x.TotalAmount).ToList();
-
-            // Lấy 10 thằng đầu tiên
-            var top10Brands = sortedBrands.Take(10).ToList();
-
-            // Những thằng còn lại (từ vị trí thứ 11 trở đi)
-            var otherBrands = sortedBrands.Skip(10).ToList();
-
-            // Thêm Top 10 vào biểu đồ
-            foreach (var share in top10Brands)
+            if (data.BrandShares != null)
             {
-                pieCollection.Add(new PieSeries
-                {
-                    Title = share.CategoryName,
-                    Values = new ChartValues<decimal> { share.TotalAmount },
-                    DataLabels = true,
-                    LabelPoint = p => $"{p.SeriesView.Title}: {p.Participation:P1}"
-                });
-            }
+                var sortedBrands = data.BrandShares.OrderByDescending(x => x.TotalAmount).ToList();
+                var top10Brands = sortedBrands.Take(10).ToList();
+                var otherBrands = sortedBrands.Skip(10).ToList();
 
-            // Nếu có các thương hiệu ngoài Top 10, gộp chúng lại thành "Các loại khác"
-            if (otherBrands.Any())
-            {
-                decimal otherTotal = otherBrands.Sum(x => x.TotalAmount);
-                pieCollection.Add(new PieSeries
+                foreach (var share in top10Brands)
                 {
-                    Title = "Các loại khác",
-                    Values = new ChartValues<decimal> { otherTotal },
-                    DataLabels = true,
-                    Fill = System.Windows.Media.Brushes.Gray, // Đặt màu xám để phân biệt
-                    LabelPoint = p => $"Khác: {p.Participation:P1}"
-                });
-            }
+                    pieCollection.Add(new PieSeries
+                    {
+                        Title = share.CategoryName,
+                        Values = new ChartValues<decimal> { share.TotalAmount },
+                        DataLabels = true,
+                        LabelPoint = p => $"{p.SeriesView.Title}: {p.Participation:P1}"
+                    });
+                }
 
-            // Gán 1 lần duy nhất để cập nhật UI mượt mà
+                if (otherBrands.Any())
+                {
+                    pieCollection.Add(new PieSeries
+                    {
+                        Title = "Các loại khác",
+                        Values = new ChartValues<decimal> { otherBrands.Sum(x => x.TotalAmount) },
+                        DataLabels = true,
+                        Fill = Brushes.Gray,
+                        LabelPoint = p => $"Khác: {p.Participation:P1}"
+                    });
+                }
+            }
             PieSeriesCollection = pieCollection;
 
-            // 2. Cập nhật Biểu đồ Cột ngang (Top 5 Items) - Giữ nguyên logic cũ
+            // 2. Cập nhật Biểu đồ Cột ngang
             if (data.TopItems != null)
             {
                 TopItemsValues = new ChartValues<decimal>(data.TopItems.Select(x => x.TotalAmount).Reverse());
@@ -215,11 +206,11 @@ namespace WpfApp2.viewmodel.analysis
 
         private void UpdateSuggestions()
         {
-            if (string.IsNullOrWhiteSpace(GlobalSearchText) || GlobalSearchText.Length < 2)
+            if (string.IsNullOrWhiteSpace(GlobalSearchText) || GlobalSearchText.Length < 1)
             {
                 SearchSuggestions.Clear();
                 IsSearchDropDownOpen = false;
-                SelectedEquipmentId = 0;
+                SelectedEquipmentId = null;
                 return;
             }
 
@@ -235,29 +226,30 @@ namespace WpfApp2.viewmodel.analysis
             catch { IsSearchDropDownOpen = false; }
         }
 
+        private void InternalApplySelection(SearchResultDto target)
+        {
+            if (target == null) return;
+            _isInternalChange = true;
+
+            SelectedEquipmentId = target.Data switch
+            {
+                Equipment e => e.Id,
+                EquipmentDto d => d.Id,
+                _ => target.Id
+            };
+
+            GlobalSearchText = target.Text;
+            IsSearchDropDownOpen = false;
+            _isInternalChange = false;
+        }
+
         public void ConfirmSelection(SearchResultDto explicitItem = null)
         {
             var target = explicitItem ?? SelectedSearchResult;
             if (target == null) return;
 
-            _isInternalChange = true;
-            try
-            {
-                SelectedEquipmentId = target.Data switch
-                {
-                    Equipment e => e.Id,
-                    EquipmentDto d => d.Id,
-                    _ => target.Id
-                };
-
-                GlobalSearchText = target.Text;
-                IsSearchDropDownOpen = false;
-                LoadData();
-            }
-            finally
-            {
-                _isInternalChange = false;
-            }
+            InternalApplySelection(target);
+            LoadData(); // Gọi load data sau khi đã thoát khỏi logic check id của LoadData
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

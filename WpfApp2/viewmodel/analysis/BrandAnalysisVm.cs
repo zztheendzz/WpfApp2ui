@@ -10,7 +10,7 @@ using LiveCharts.Wpf;
 using WpfApp2.command;
 using WpfApp2.modelDTO;
 using WpfApp2.modelDTO.analysysDto;
-using WpfApp2.modelDTO.analysisDto.ShareDto; // Namespace chứa AnalysisShareDto
+using WpfApp2.modelDTO.analysisDto.ShareDto;
 using WpfApp2.Services;
 using WpfApp2.Services.analysisService;
 using WpfApp2.Services.exception;
@@ -21,7 +21,7 @@ namespace WpfApp2.viewmodel.analysis
     {
         private readonly SearchService _searchService = new SearchService();
         private readonly BrandAnalysisSv _service = new BrandAnalysisSv();
-        private bool _isInternalChange; // Cờ chặn vòng lặp khi cập nhật UI từ code
+        private bool _isInternalChange;
 
         #region ===================== Properties =====================
 
@@ -29,47 +29,46 @@ namespace WpfApp2.viewmodel.analysis
         public BrandAnalysisDto Analysis
         {
             get => _analysis;
-            set { _analysis = value; OnPropertyChanged(); }
+            set { if (_analysis == value) return; _analysis = value; OnPropertyChanged(); }
         }
 
-        // --- CHART BINDING ---
         private ChartValues<decimal> _monthlyValues = new ChartValues<decimal>();
         public ChartValues<decimal> MonthlyValues
         {
             get => _monthlyValues;
-            set { _monthlyValues = value; OnPropertyChanged(); }
+            set { if (_monthlyValues == value) return; _monthlyValues = value; OnPropertyChanged(); }
         }
 
         private string[] _monthlyLabels;
         public string[] MonthlyLabels
         {
             get => _monthlyLabels;
-            set { _monthlyLabels = value; OnPropertyChanged(); }
+            set { if (_monthlyLabels == value) return; _monthlyLabels = value; OnPropertyChanged(); }
         }
 
         private SeriesCollection _pieSeriesCollection = new SeriesCollection();
         public SeriesCollection PieSeriesCollection
         {
             get => _pieSeriesCollection;
-            set { _pieSeriesCollection = value; OnPropertyChanged(); }
+            set { if (_pieSeriesCollection == value) return; _pieSeriesCollection = value; OnPropertyChanged(); }
         }
 
         private string _topModelDisplay = "N/A";
         public string TopModelDisplay
         {
             get => _topModelDisplay;
-            set { _topModelDisplay = value; OnPropertyChanged(); }
+            set { if (_topModelDisplay == value) return; _topModelDisplay = value; OnPropertyChanged(); }
         }
 
-        // --- FILTER & SEARCH ---
         public DateTime? FromDate { get; set; } = new DateTime(DateTime.Now.Year, 1, 1);
         public DateTime? ToDate { get; set; } = DateTime.Now;
 
-        private int _selectedBrandId;
-        public int SelectedBrandId
+        // Dùng int? để phân biệt null (chưa chọn) và 0 (Id hợp lệ từ DB)
+        private int? _selectedBrandId = null;
+        public int? SelectedBrandId
         {
             get => _selectedBrandId;
-            set { _selectedBrandId = value; OnPropertyChanged(); }
+            set { if (_selectedBrandId == value) return; _selectedBrandId = value; OnPropertyChanged(); }
         }
 
         private string _globalSearchText;
@@ -82,11 +81,7 @@ namespace WpfApp2.viewmodel.analysis
                 _globalSearchText = value;
                 OnPropertyChanged();
 
-                // Chỉ tìm kiếm nếu sự thay đổi đến từ việc người dùng gõ phím
-                if (!_isInternalChange)
-                {
-                    UpdateSuggestions();
-                }
+                if (!_isInternalChange) UpdateSuggestions();
             }
         }
 
@@ -96,17 +91,16 @@ namespace WpfApp2.viewmodel.analysis
         public SearchResultDto SelectedSearchResult
         {
             get => _selectedSearchResult;
-            set { _selectedSearchResult = value; OnPropertyChanged(); }
+            set { if (_selectedSearchResult == value) return; _selectedSearchResult = value; OnPropertyChanged(); }
         }
 
         private bool _isSearchDropDownOpen;
         public bool IsSearchDropDownOpen
         {
             get => _isSearchDropDownOpen;
-            set { _isSearchDropDownOpen = value; OnPropertyChanged(); }
+            set { if (_isSearchDropDownOpen == value) return; _isSearchDropDownOpen = value; OnPropertyChanged(); }
         }
 
-        // --- COMMANDS ---
         public ICommand AnalyzeCommand { get; }
         public ICommand NavModelAnalysis { get; }
         public ICommand NavVendorAnalysis { get; }
@@ -118,7 +112,6 @@ namespace WpfApp2.viewmodel.analysis
         {
             AnalyzeCommand = new RelayCommand(_ => LoadData());
 
-            // Điều hướng giữa các trang phân tích
             NavModelAnalysis = new RelayCommand(_ => MessageBox.Show("Tính năng Phân tích Model đang được cập nhật."));
             NavVendorAnalysis = new RelayCommand(_ => MessageBox.Show("Tính năng Phân tích Vendor đang được cập nhật."));
             NavEquipmentAnalysis = new RelayCommand(_ => MessageBox.Show("Tính năng Phân tích Thiết bị đang được cập nhật."));
@@ -126,19 +119,15 @@ namespace WpfApp2.viewmodel.analysis
 
         #region ===================== Methods =====================
 
-        /// <summary>
-        /// Thực thi lấy dữ liệu từ Service dựa trên ID Thương hiệu và Ngày tháng
-        /// </summary>
         private void LoadData()
         {
-            // Nếu chưa chốt ID nhưng có gợi ý đang highlight, tự động xác nhận
-            if (SelectedBrandId == 0 && SelectedSearchResult != null)
+            // Tự động xác nhận gợi ý nếu nhấn Analyze mà chưa chọn từ danh sách
+            if (SelectedBrandId == null && SelectedSearchResult != null)
             {
-                ConfirmSelection(SelectedSearchResult);
-                return;
+                InternalApplySelection(SelectedSearchResult);
             }
 
-            if (SelectedBrandId == 0)
+            if (SelectedBrandId == null)
             {
                 MessageBox.Show("Vui lòng nhập và chọn một Thương hiệu để phân tích.", "Thông báo");
                 return;
@@ -146,7 +135,7 @@ namespace WpfApp2.viewmodel.analysis
 
             try
             {
-                var data = _service.GetBrandAnalysis(SelectedBrandId, FromDate, ToDate);
+                var data = _service.GetBrandAnalysis(SelectedBrandId.Value, FromDate, ToDate);
                 Analysis = data;
                 UpdateUIComponents(data);
             }
@@ -160,47 +149,49 @@ namespace WpfApp2.viewmodel.analysis
             }
         }
 
-        /// <summary>
-        /// Cập nhật các thành phần Biểu đồ và Thẻ thông tin
-        /// </summary>
         private void UpdateUIComponents(BrandAnalysisDto data)
         {
             if (data == null) return;
 
-            // 1. Biểu đồ cột: Chi tiêu theo tháng
+            // 1. Biểu đồ cột
             MonthlyValues.Clear();
-            MonthlyValues.AddRange(data.MonthlySpends.Select(x => x.Amount));
-            MonthlyLabels = data.MonthlySpends.Select(x => x.MonthYear).ToArray();
-
-            // 2. Biểu đồ tròn: Tỷ lệ theo Model (Dùng chung CategoryName từ AnalysisShareDto)
-            var pieCollection = new SeriesCollection();
-            foreach (var share in data.ModelShares)
+            if (data.MonthlySpends != null)
             {
-                pieCollection.Add(new PieSeries
+                MonthlyValues.AddRange(data.MonthlySpends.Select(x => x.Amount));
+                MonthlyLabels = data.MonthlySpends.Select(x => x.MonthYear).ToArray();
+            }
+
+            // 2. Biểu đồ tròn
+            var pieCollection = new SeriesCollection();
+            if (data.ModelShares != null)
+            {
+                foreach (var share in data.ModelShares)
                 {
-                    Title = share.CategoryName, // Chỗ này quan trọng: đồng bộ với Common Share DTO
-                    Values = new ChartValues<decimal> { share.TotalAmount },
-                    DataLabels = true,
-                    LabelPoint = p => $"{p.Participation:P1}"
-                });
+                    pieCollection.Add(new PieSeries
+                    {
+                        Title = share.CategoryName,
+                        Values = new ChartValues<decimal> { share.TotalAmount },
+                        DataLabels = true,
+                        LabelPoint = p => $"{p.Participation:P1}"
+                    });
+                }
             }
             PieSeriesCollection = pieCollection;
 
-            // 3. KPI Top Model (Lấy Model chiếm tỉ trọng tiền cao nhất)
-            var top = data.ModelShares.OrderByDescending(x => x.TotalAmount).FirstOrDefault();
+            // 3. KPI Top Model
+            var top = data.ModelShares?.OrderByDescending(x => x.TotalAmount).FirstOrDefault();
             TopModelDisplay = top != null ? $"{top.CategoryName} ({top.Percentage:F1}%)" : "N/A";
+
+            OnPropertyChanged(nameof(MonthlyLabels));
         }
 
-        /// <summary>
-        /// Cập nhật danh sách gợi ý khi gõ TextBox
-        /// </summary>
         private void UpdateSuggestions()
         {
-            if (string.IsNullOrWhiteSpace(GlobalSearchText) || GlobalSearchText.Length < 2)
+            if (string.IsNullOrWhiteSpace(GlobalSearchText) || GlobalSearchText.Length < 1)
             {
                 SearchSuggestions.Clear();
                 IsSearchDropDownOpen = false;
-                SelectedBrandId = 0;
+                SelectedBrandId = null;
                 return;
             }
 
@@ -217,27 +208,31 @@ namespace WpfApp2.viewmodel.analysis
         }
 
         /// <summary>
-        /// Xác nhận lựa chọn Thương hiệu từ gợi ý
+        /// Gán dữ liệu nội bộ để tránh gây ra vòng lặp đệ quy vô tận với LoadData
         /// </summary>
-        public void ConfirmSelection(SearchResultDto item = null)
+        private void InternalApplySelection(SearchResultDto target)
         {
-            var target = item ?? SelectedSearchResult;
             if (target == null) return;
-
             _isInternalChange = true;
             try
             {
                 SelectedBrandId = target.Id;
                 GlobalSearchText = target.Text;
                 IsSearchDropDownOpen = false;
-
-                // Tự động load dữ liệu ngay sau khi chọn xong
-                LoadData();
             }
             finally
             {
                 _isInternalChange = false;
             }
+        }
+
+        public void ConfirmSelection(SearchResultDto item = null)
+        {
+            var target = item ?? SelectedSearchResult;
+            if (target == null) return;
+
+            InternalApplySelection(target);
+            LoadData(); // Gọi LoadData từ hành động người dùng là an toàn
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

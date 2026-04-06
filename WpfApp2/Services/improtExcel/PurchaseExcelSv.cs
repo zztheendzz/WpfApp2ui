@@ -129,9 +129,9 @@ namespace WpfApp2.Services.improtExcel
                         // 4. Insert vào PurchaseHistory (Thêm cột EquipmentId)
                         conn.Execute(@"
                     INSERT INTO PurchaseHistory 
-                    (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, TotalPrice, PurchaseDate, CreateAt, UserId,CurrencyName,CurrencyId)
+                    (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, TotalPrice, PurchaseDate, CreateAt, UserId,CurrencyId)
                     VALUES 
-                    (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @TotalPrice, @PurchaseDate, @CreateAt, @UserId,@CurrencyName,@CurrencyId)",
+                    (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @TotalPrice, @PurchaseDate, @CreateAt, @UserId,@CurrencyId)",
                         new
                         {
                             ModelId = modelId,
@@ -256,6 +256,7 @@ namespace WpfApp2.Services.improtExcel
 
         private int GetOrCreateVendor(IDbConnection conn, Dictionary<string, int> dict, string name)
         {
+            
             var key = Normalize(name);
             if (string.IsNullOrEmpty(key)) return 0;
             if (dict.TryGetValue(key, out int id)) return id;

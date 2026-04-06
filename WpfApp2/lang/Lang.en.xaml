@@ -23,7 +23,7 @@
     <sys:String x:Key="btn_Next">▶</sys:String>
 
     <sys:String x:Key="dg_Id">No.</sys:String>
-    <sys:String x:Key="dg_Model">Part / Model</sys:String>
+    <sys:String x:Key="dg_Model">Model</sys:String>
     <sys:String x:Key="dg_Vendor">Vendor</sys:String>
     <sys:String x:Key="dg_Equipment">Equipment</sys:String>
     <sys:String x:Key="dg_Quantity">Quantity</sys:String>
