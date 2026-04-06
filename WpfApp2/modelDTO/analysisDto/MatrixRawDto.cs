@@ -7,6 +7,7 @@ namespace WpfApp2.modelDTO.analysisDto
     public class MatrixRawDto
     {
         public string ModelName { get; set; }
+        public string ModelCode { get; set; }
         public string VendorName { get; set; }
         public decimal UnitPrice { get; set; }
         public DateTime PurchaseDate { get; set; }

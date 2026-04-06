@@ -19,6 +19,7 @@ namespace WpfApp2.Services.analysisService
 SELECT 
     m.Id AS ModelId,
     m.ModelName,
+    m.ModelCode,
 
     (
         SELECT ph.UnitPrice
@@ -111,22 +112,26 @@ ORDER BY p.PurchaseDate DESC;
 
             return summary;
         }
-public List<MatrixRawDto> GetMatrixByModel(int modelId)
+        public List<MatrixRawDto> GetMatrixByModel(int modelId)
         {
             using var conn = _db.GetConnection();
 
+            // Câu SQL của bạn đã chọn model.ModelName và m.ModelCode, rất chính xác.
             string sql = @"
-    SELECT 
-        m.ModelName,
-        v.VendorName,
-        p.UnitPrice,
-        p.PurchaseDate
-    FROM PurchaseHistory p
-    JOIN Model m ON p.ModelId = m.Id
-    JOIN Vendor v ON p.VendorId = v.Id
-    WHERE p.ModelId = @modelId
-    ";
+        SELECT 
+            m.ModelName,
+            m.ModelCode,
+            v.VendorName,
+            p.UnitPrice,
+            p.PurchaseDate
+        FROM PurchaseHistory p
+        JOIN Model m ON p.ModelId = m.Id
+        JOIN Vendor v ON p.VendorId = v.Id
+        WHERE p.ModelId = @modelId";
+
+            // Dapper sẽ tự động map ModelName -> MatrixRawDto.ModelName 
+            // và ModelCode -> MatrixRawDto.ModelCode
             return conn.Query<MatrixRawDto>(sql, new { modelId }).ToList();
         }
     }
-}
+    }

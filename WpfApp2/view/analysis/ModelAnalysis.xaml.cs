@@ -148,8 +148,15 @@ namespace WpfApp2.view.analysis
             // Cột Model
             dgMatrix.Columns.Add(new DataGridTextColumn
             {
-                Header = "Model",
+                Header = "Model Name",
                 Binding = new Binding("ModelName"),
+                
+                Width = DataGridLength.Auto
+            });
+            dgMatrix.Columns.Add(new DataGridTextColumn
+            {
+                Header = "Model Code",
+                Binding = new Binding("ModelCode"),
                 Width = DataGridLength.Auto
             });
 

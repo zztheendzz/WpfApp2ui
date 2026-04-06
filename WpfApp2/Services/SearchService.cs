@@ -204,14 +204,14 @@ namespace WpfApp2.Services
             string pattern = "%" + keyword + "%";
 
             var models = conn.Query<Model>(
-                "SELECT * FROM Model WHERE ModelName LIKE @pattern LIMIT 20",
+                "SELECT * FROM Model WHERE ModelCode LIKE @pattern LIMIT 20",
                 new { pattern });
 
             return models.Select(m => new SearchResultDto
             {
                 Id = m.Id,
                 Source = "Model",
-                Text = m.ModelName,
+                Text = m.ModelCode,
                 Data = m
             });
         }

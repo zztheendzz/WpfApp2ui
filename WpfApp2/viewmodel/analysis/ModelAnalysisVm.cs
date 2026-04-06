@@ -110,7 +110,7 @@ namespace WpfApp2.viewmodel.analysis
             if (data == null || data.Count == 0) return;
 
             var modelName = data.First().ModelName;
-
+            var modelCode = data.First().ModelCode;
             // ❌ tránh trùng
             if (MatrixData.Rows.Any(x => x.ModelName == modelName))
                 return;
@@ -130,7 +130,8 @@ namespace WpfApp2.viewmodel.analysis
             // ===== build row =====
             var row = new ModelVendorMatrixRowDto
             {
-                ModelName = modelName
+                ModelName = modelName,
+                ModelCode = modelCode
             };
 
             foreach (var vendor in MatrixData.Vendors)

@@ -19,7 +19,8 @@ namespace WpfApp2.modelDTO.analysysDto
         public List<MonthlySpendDto> PriceTrend { get; set; } = new();
         public int ModelId { get; set; }
         public string ModelName { get; set; }
-
+        public string ModelCode{ get; set; }
+        public int CategoryId { get; set; }
         public int CurrentcyId { get; set; }
         public string CurrencyCode { get; set; }
 

@@ -97,7 +97,7 @@
                                 <TextBlock Text="{DynamicResource dg_ModelCode}" Margin="0,0,0,5" FontWeight="SemiBold" Foreground="#666"/>
                                 <Grid>
                                     <TextBox x:Name="txtSearchModel" Tag="M" Text="{Binding SearchModelText, UpdateSourceTrigger=PropertyChanged}" 
-                                             PreviewKeyDown="SearchBox_PreviewKeyDown" materialDesign:HintAssist.Hint="..."/>
+                                             PreviewKeyDown="SearchBox_PreviewKeyDown" materialDesign:HintAssist.Hint=""/>
                                     <Popup IsOpen="{Binding IsDropDownOpenM}" PlacementTarget="{Binding ElementName=txtSearchModel}" StaysOpen="False" AllowsTransparency="True">
                                         <Border Background="White" BorderBrush="#DDD" BorderThickness="1" Width="{Binding ElementName=txtSearchModel, Path=ActualWidth}">
                                             <ListBox x:Name="lstModel" DisplayMemberPath="Text" ItemsSource="{Binding ModelSuggestions}" SelectedItem="{Binding SelectedModel}">
@@ -254,6 +254,14 @@
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding PurchaseDate, StringFormat=dd/MM/yyyy}" Padding="5" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="{DynamicResource dg_Model}" Width="180">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding ModelCode}" TextWrapping="Wrap" Padding="5" VerticalAlignment="Center"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
