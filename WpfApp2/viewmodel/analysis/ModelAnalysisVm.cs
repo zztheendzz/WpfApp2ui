@@ -112,7 +112,7 @@ namespace WpfApp2.viewmodel.analysis
             var modelName = data.First().ModelName;
             var modelCode = data.First().ModelCode;
             // ❌ tránh trùng
-            if (MatrixData.Rows.Any(x => x.ModelName == modelName))
+            if (MatrixData.Rows.Any(x => x.ModelCode == modelCode))
                 return;
 
             // ===== update vendor =====
