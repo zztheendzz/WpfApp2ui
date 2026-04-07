@@ -7,6 +7,7 @@
     <sys:String x:Key="ph_ModelName">부품명</sys:String>
     <sys:String x:Key="ph_Vendor">공급사</sys:String>
     <sys:String x:Key="ph_Equipment">설비</sys:String>
+    <sys:String x:Key="ph_Brand">브랜드</sys:String>
     <sys:String x:Key="ph_DateFrom">시작일</sys:String>
     <sys:String x:Key="ph_DateTo">종료일</sys:String>
     <sys:String x:Key="ph_MinPrice">최저가</sys:String>

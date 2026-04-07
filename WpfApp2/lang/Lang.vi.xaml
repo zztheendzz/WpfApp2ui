@@ -7,6 +7,7 @@
     <sys:String x:Key="ph_ModelName">Tên linh kiện</sys:String>
     <sys:String x:Key="ph_Vendor">Nhà cung cấp</sys:String>
     <sys:String x:Key="ph_Equipment">Thiết bị</sys:String>
+    <sys:String x:Key="ph_Brand">Thương hiệu</sys:String>
     <sys:String x:Key="ph_DateFrom">Ngày bắt đầu</sys:String>
     <sys:String x:Key="ph_DateTo">Ngày kết thúc</sys:String>
     <sys:String x:Key="ph_MinPrice">Giá thấp nhất</sys:String>

@@ -50,11 +50,11 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Border Background="#2C3E50" Margin="5" Padding="15" CornerRadius="5">
+                <!--<Border Background="#2C3E50" Margin="5" Padding="15" CornerRadius="5">
                     <StackPanel>
                         <TextBlock Text="{DynamicResource lbl_LatestPrice}" Foreground="#BDC3C7" FontSize="12"/>
                         <TextBlock FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,5,0,0">
-                            <Run Text="{Binding Analysis.LatestPrice, StringFormat={}{0:N0}}" />
+                            <Run Text="{Binding AnalysisList.LatestPrice, StringFormat={}{0:N0}}" />
                             <Run Text=" " />
                             <Run Text="{Binding Analysis.CurrencyName}" FontSize="14" Foreground="#95A5A6" />
                         </TextBlock>
@@ -73,15 +73,15 @@
                         <TextBlock Text="{DynamicResource lbl_MaxPrice}" Foreground="#BDC3C7" FontSize="12"/>
                         <TextBlock Text="{Binding Analysis.MaxPrice , StringFormat={}{0:N0}}" FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,5,0,0"/>
                     </StackPanel>
-                </Border>
+                </Border>-->
             </Grid>
             <DockPanel LastChildFill="False" Margin="0,20,0,5">
-                <TextBlock Text="Model - Vendor Matrix Comparison" 
+                <TextBlock Text="Model - Vendor Comparison" 
                            FontWeight="Bold" 
                            FontSize="14" 
                            VerticalAlignment="Center" 
                            DockPanel.Dock="Left"/>
-                <Button Click="BtnExportExcel_Click"
+                <Button Command="{Binding ExportExcelCommand}"
                         Background="#27AE60" 
                         Foreground="White"
                         Height="30"
@@ -111,15 +111,21 @@
                       HorizontalScrollBarVisibility="Auto"/>
 
             <TextBlock Text="{DynamicResource lbl_PurchaseHistory}" FontWeight="Bold" FontSize="14" Margin="0,20,0,5"/>
-            <DataGrid ItemsSource="{Binding Analysis.Items}"
-                      AutoGenerateColumns="False" IsReadOnly="True" 
-                      MaxHeight="300" ColumnHeaderHeight="40"
-                      GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#EEE">
+            <DataGrid ItemsSource="{Binding AnalysisItems}" 
+          AutoGenerateColumns="False" 
+          IsReadOnly="True" 
+          MaxHeight="300" 
+          ColumnHeaderHeight="40"
+          GridLinesVisibility="Horizontal" 
+          HorizontalGridLinesBrush="#EEE">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="{DynamicResource dg_Id}" Binding="{Binding Id}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_Vendor}" Width="Auto" MinWidth="100" Binding="{Binding VendorName}"/>
+                    <DataGridTextColumn Header="{DynamicResource dg_Model}" Width="Auto" MinWidth="100" Binding="{Binding ModelName}"/>
+                    <DataGridTextColumn Header="{DynamicResource dg_ModelCode}" Width="Auto" MinWidth="100" Binding="{Binding ModelCode}"/>
+
                     <DataGridTextColumn Header="{DynamicResource dg_Equipment}" Width="Auto" MinWidth="100" Binding="{Binding EquipmentName}"/>
-                    <DataGridTextColumn Header="{DynamicResource dg_UnitPrice}" Binding="{Binding UnitPrice , StringFormat={}{0:N0}}"/>
+
+                    <DataGridTextColumn Header="{DynamicResource dg_UnitPrice}" Binding="{Binding UnitPrice, StringFormat='N0'}"/>
                     <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}" Binding="{Binding PurchaseDate, StringFormat='dd/MM/yyyy'}"/>
                     <DataGridTextColumn Header="{DynamicResource dg_Note}" Width="*" Binding="{Binding Note}"/>
                 </DataGrid.Columns>

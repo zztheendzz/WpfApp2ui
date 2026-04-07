@@ -147,9 +147,26 @@
                                     </Popup>
                                 </Grid>
                             </StackPanel>
+                            <StackPanel Width="220" Margin="5">
+                                <TextBlock Text="{DynamicResource ph_Brand}" Margin="0,0,0,5" FontWeight="SemiBold" Foreground="#666"/>
+                                <Grid>
+                                    <TextBox x:Name="txtSearchBrand" Tag="B" Text="{Binding SearchBrandText, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="SearchBox_PreviewKeyDown"/>
+                                    <Popup IsOpen="{Binding IsDropDownOpenB}" PlacementTarget="{Binding ElementName=txtSearchBrand}" StaysOpen="False" AllowsTransparency="True">
+                                        <Border Background="White" BorderBrush="#DDD" BorderThickness="1" Width="{Binding ElementName=txtSearchBrand, Path=ActualWidth}">
+                                            <ListBox x:Name="lstBrand" DisplayMemberPath="Text" ItemsSource="{Binding BrandSuggestions}" SelectedItem="{Binding SelectedBrand}">
+                                                <ListBox.ItemContainerStyle>
+                                                    <Style TargetType="ListBoxItem">
+                                                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/>
+                                                    </Style>
+                                                </ListBox.ItemContainerStyle>
+                                            </ListBox>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+                            </StackPanel>
 
                             <Button Content="{DynamicResource btn_Analyze}" Background="{StaticResource AccentBlue}" Command="{Binding SearchCommand}" Foreground="White" Width="120" Height="32" VerticalAlignment="Bottom" Margin="0,0,0,1" BorderThickness="0" FontWeight="SemiBold" />
-                            <Button Content="{DynamicResource btn_Clear}" Command="{Binding ClearCommand}" Margin="5,20,0,0" Width="100" Height="38" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                            <Button Content="{DynamicResource btn_Clear}" Command="{Binding ClearCommand}" Margin="5,20,0,0" Width="Auto" Height="38" Style="{StaticResource MaterialDesignOutlinedButton}"/>
                         </WrapPanel>
 
                         <StackPanel Orientation="Horizontal" Margin="5,15,0,0">

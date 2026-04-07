@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows; // Thêm để sử dụng MessageBox
+using System.Windows;
 using System.Windows.Input;
 using WpfApp2.command;
 using WpfApp2.model;
@@ -14,22 +16,31 @@ using WpfApp2.modelDTO.analysysDto;
 using WpfApp2.Services;
 using WpfApp2.Services.analysisService;
 using WpfApp2.Services.exception;
+using WpfApp2.Services.exportExcel;
 
 namespace WpfApp2.viewmodel.analysis
 {
     public class ModelAnalysisVm : INotifyPropertyChanged
     {
+        // Khai báo Service ở cấp Class để dùng chung (tránh tạo mới liên tục tốn tài nguyên)
         private readonly SearchService _searchService = new SearchService();
         private readonly ModelAnalysisSv _service = new ModelAnalysisSv();
-        public ModelVendorMatrixDto MatrixData { get; set; } = new ModelVendorMatrixDto
+        private readonly ExportSv _exportService = new ExportSv();
+
+        private bool _isInternalChange;
+
+        #region ===================== Properties =====================
+
+        private ModelVendorMatrixDto _matrixData = new ModelVendorMatrixDto
         {
             Vendors = new List<string>(),
             Rows = new List<ModelVendorMatrixRowDto>()
         };
-        // Cờ chặn vòng lặp phản hồi khi gán text từ kết quả chọn
-        private bool _isInternalChange;
-
-        #region ===================== Properties =====================
+        public ModelVendorMatrixDto MatrixData
+        {
+            get => _matrixData;
+            set { _matrixData = value; OnPropertyChanged(); }
+        }
 
         private string _globalSearchText;
         public string GlobalSearchText
@@ -40,37 +51,30 @@ namespace WpfApp2.viewmodel.analysis
                 if (_globalSearchText == value) return;
                 _globalSearchText = value;
                 OnPropertyChanged();
-
-                if (!_isInternalChange)
-                {
-                    if (string.IsNullOrWhiteSpace(value)) SelectedModelId = 0;
-                    UpdateSuggestions();
-                }
+                if (!_isInternalChange) UpdateSuggestions();
             }
         }
+        private ObservableCollection<PurchaseDto> _analysisItems = new ObservableCollection<PurchaseDto>();
+        public ObservableCollection<PurchaseDto> AnalysisItems
+        {
+            get => _analysisItems;
+            set { _analysisItems = value; OnPropertyChanged(); }
+        }
+        public ObservableCollection<SearchResultDto> SearchSuggestions { get; } = new ObservableCollection<SearchResultDto>();
+        public ObservableCollection<ModelAnalysisDto> AnalysisList { get; set; } = new ObservableCollection<ModelAnalysisDto>();
 
         private SearchResultDto _selectedSearchResult;
         public SearchResultDto SelectedSearchResult
         {
             get => _selectedSearchResult;
-            set
-            {
-                if (_selectedSearchResult == value) return;
-                _selectedSearchResult = value;
-                OnPropertyChanged();
-            }
+            set { _selectedSearchResult = value; OnPropertyChanged(); }
         }
 
         private bool _isSearchDropDownOpen;
         public bool IsSearchDropDownOpen
         {
             get => _isSearchDropDownOpen;
-            set
-            {
-                if (_isSearchDropDownOpen == value) return;
-                _isSearchDropDownOpen = value;
-                OnPropertyChanged();
-            }
+            set { _isSearchDropDownOpen = value; OnPropertyChanged(); }
         }
 
         private int _selectedModelId;
@@ -80,104 +84,126 @@ namespace WpfApp2.viewmodel.analysis
             set { _selectedModelId = value; OnPropertyChanged(); }
         }
 
-        private ModelAnalysisDto _analysis;
-        public ModelAnalysisDto Analysis
-        {
-            get => _analysis;
-            set { _analysis = value; OnPropertyChanged(); }
-        }
-
-        public ICommand AnalyzeCommand { get; set; }
-        public ObservableCollection<SearchResultDto> SearchSuggestions { get; } = new ObservableCollection<SearchResultDto>();
+        public ICommand AnalyzeCommand { get; }
+        public ICommand ExportExcelCommand { get; }
 
         #endregion
 
         public ModelAnalysisVm()
         {
             AnalyzeCommand = new RelayCommand(_ => LoadData());
-            var service = new ModelAnalysisSv();
-
-
+            ExportExcelCommand = new RelayCommand(_ => ExecuteExportExcel());
         }
 
         #region ===================== Methods =====================
 
+        private void LoadData()
+        {
+            if (SelectedModelId == 0) return;
+
+            try
+            {
+                // 1. Thêm vào bảng so sánh Vendor (Matrix)
+                AddModelToMatrix(SelectedModelId);
+
+                // 2. Lấy dữ liệu Analysis (đối tượng chứa List bên trong)
+                var analysisResult = _service.GetModelAnalysis(SelectedModelId);
+
+                if (analysisResult != null && analysisResult.Items != null)
+                {
+                    AnalysisList.Add(analysisResult);
+                    // TÁCH: Lấy từng item trong list con của Analysis rồi đẩy ra list riêng
+                    foreach (var item in analysisResult.Items)
+                    {
+                        // Kiểm tra tránh trùng nếu cần, hoặc cứ add để hiện lịch sử
+                        // Nếu muốn mỗi lần tìm là xóa bảng cũ thì dùng AnalysisItems.Clear() ở đầu hàm
+                        AnalysisItems.Add(item);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi tách dữ liệu: {ex.Message}");
+            }
+        }
         public void AddModelToMatrix(int modelId)
         {
-            var sv = new ModelAnalysisSv();
-            var data = sv.GetMatrixByModel(modelId);
-
+            var data = _service.GetMatrixByModel(modelId);
             if (data == null || data.Count == 0) return;
 
-            var modelName = data.First().ModelName;
-            var modelCode = data.First().ModelCode;
-            // ❌ tránh trùng
-            if (MatrixData.Rows.Any(x => x.ModelCode == modelCode))
-                return;
+            var firstItem = data.First();
+            if (MatrixData.Rows.Any(x => x.ModelCode == firstItem.ModelCode && !x.IsTotalRow)) return;
 
-            // ===== update vendor =====
-            var newVendors = data
-                .Select(x => x.VendorName)
-                .Where(x => !string.IsNullOrEmpty(x)) // 🔥 tránh lỗi null
-                .Distinct();
-
+            // Cập nhật danh sách Vendor
+            var newVendors = data.Select(x => x.VendorName).Where(v => !string.IsNullOrEmpty(v)).Distinct();
             foreach (var v in newVendors)
             {
-                if (!MatrixData.Vendors.Contains(v))
-                    MatrixData.Vendors.Add(v);
+                if (!MatrixData.Vendors.Contains(v)) MatrixData.Vendors.Add(v);
             }
 
-            // ===== build row =====
+            // Xây dựng dòng dữ liệu mới
             var row = new ModelVendorMatrixRowDto
             {
-                ModelName = modelName,
-                ModelCode = modelCode
+                ModelName = firstItem.ModelName,
+                ModelCode = firstItem.ModelCode
             };
 
             foreach (var vendor in MatrixData.Vendors)
             {
-                var latest = data
+                row.VendorPrices[vendor] = data
                     .Where(x => x.VendorName == vendor)
                     .OrderByDescending(x => x.PurchaseDate)
-                    .FirstOrDefault();
-
-                row.VendorPrices[vendor] = latest?.UnitPrice;
+                    .FirstOrDefault()?.UnitPrice;
             }
 
             MatrixData.Rows.Add(row);
-
             UpdateTotalRow();
         }
+
         private void UpdateTotalRow()
         {
-            // 1. Xóa tất cả các dòng TOTAL đang có để tính lại từ đầu
             MatrixData.Rows.RemoveAll(x => x.IsTotalRow || x.ModelName == "TOTAL");
-
-            // 2. Nếu không có dữ liệu model nào thì không thêm dòng Total
             if (MatrixData.Rows.Count == 0) return;
 
-            var totalRow = new ModelVendorMatrixRowDto
-            {
-                ModelName = "TOTAL",
-                IsTotalRow = true
-            };
-
-            // 3. Tính tổng cho từng Vendor
+            var totalRow = new ModelVendorMatrixRowDto { ModelName = "TOTAL", IsTotalRow = true };
             foreach (var vendor in MatrixData.Vendors)
             {
-                // Chỉ tính tổng trên các dòng KHÔNG PHẢI total
-                var sum = MatrixData.Rows
-                    .Sum(x => (x.VendorPrices.ContainsKey(vendor) ? x.VendorPrices[vendor] : 0) ?? 0);
-
+                var sum = MatrixData.Rows.Sum(x => (x.VendorPrices.ContainsKey(vendor) ? x.VendorPrices[vendor] : 0) ?? 0);
                 totalRow.VendorPrices[vendor] = sum;
             }
-
-            // 4. Thêm vào cuối danh sách
             MatrixData.Rows.Add(totalRow);
-
-            // 5. QUAN TRỌNG: Phát tín hiệu để DataGrid vẽ lại cột và dòng
             OnPropertyChanged(nameof(MatrixData));
         }
+
+        private void ExecuteExportExcel()
+        {
+            if (MatrixData.Rows.Count <= 1) // Chỉ có mỗi dòng TOTAL hoặc trống
+            {
+                MessageBox.Show("Không có dữ liệu để xuất!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            SaveFileDialog sfd = new SaveFileDialog
+            {
+                Filter = "Excel Workbook (*.xlsx)|*.xlsx",
+                FileName = $"BOM_Analysis_{DateTime.Now:yyyyMMdd_HHmm}.xlsx"
+            };
+
+            if (sfd.ShowDialog() == true)
+            {
+                try
+                {
+                    _exportService.ExportModelMatrix(MatrixData, sfd.FileName);
+                    MessageBox.Show("Xuất file Excel thành công!", "Thành công");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi xuất file: {ex.Message}", "Lỗi");
+                }
+            }
+        }
+
+        // Các hàm UpdateSuggestions, ConfirmSelection giữ nguyên logic search của bạn...
         private void UpdateSuggestions()
         {
             if (string.IsNullOrWhiteSpace(GlobalSearchText) || GlobalSearchText.Length < 2)
@@ -186,88 +212,34 @@ namespace WpfApp2.viewmodel.analysis
                 IsSearchDropDownOpen = false;
                 return;
             }
-
             try
             {
                 var results = _searchService.SearchModel(GlobalSearchText);
-
                 SearchSuggestions.Clear();
-                foreach (var item in results)
-                {
-                    SearchSuggestions.Add(item);
-                }
-
+                foreach (var item in results) SearchSuggestions.Add(item);
                 IsSearchDropDownOpen = SearchSuggestions.Any();
                 SelectedSearchResult = SearchSuggestions.FirstOrDefault();
             }
-            catch (DatabaseLockedException)
-            {
-                // Khi đang gõ phím, nếu DB bị khóa thì tạm thời ẩn gợi ý để tránh làm phiền người dùng
-                IsSearchDropDownOpen = false;
-            }
+            catch (DatabaseLockedException) { IsSearchDropDownOpen = false; }
         }
 
         public void ConfirmSelection()
         {
             if (SelectedSearchResult == null) return;
-
             _isInternalChange = true;
             try
             {
-                if (SelectedSearchResult.Data is Model model)
-                {
-                    SelectedModelId = model.Id;
-                    GlobalSearchText = model.ModelCode;
-                }
-                else if (SelectedSearchResult.Data is ModelDto modelDto)
-                {
-                    SelectedModelId = modelDto.Id;
-                    GlobalSearchText = modelDto.ModelCode;
-                }
-                else
-                {
-                    SelectedModelId = SelectedSearchResult.Id;
-                    GlobalSearchText = SelectedSearchResult.Text;
-                }
-
+                SelectedModelId = SelectedSearchResult.Id;
+                GlobalSearchText = SelectedSearchResult.Text;
                 IsSearchDropDownOpen = false;
                 LoadData();
             }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error confirming selection: {ex.Message}");
-            }
-            finally
-            {
-                _isInternalChange = false;
-            }
-        }
-
-        private void LoadData()
-        {
-            if (SelectedModelId == 0) return;
-
-            try
-            {
-                Analysis = _service.GetModelAnalysis(SelectedModelId);
-                AddModelToMatrix(SelectedSearchResult.Id);
-
-            }
-            catch (DatabaseLockedException)
-            {
-                MessageBox.Show("Dữ liệu phân tích Model đang bị khóa bởi tiến trình khác. Vui lòng thử lại sau giây lát.", "SQLite Locked");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi tải dữ liệu: {ex.Message}");
-            }
+            finally { _isInternalChange = false; }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
-        {
+        protected void OnPropertyChanged([CallerMemberName] string name = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
 
         #endregion
     }

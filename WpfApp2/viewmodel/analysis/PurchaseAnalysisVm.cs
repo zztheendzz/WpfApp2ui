@@ -52,6 +52,7 @@ namespace WpfApp2.viewmodel.analysis
         public ObservableCollection<SearchResultDto> VendorSuggestions { get; } = new ObservableCollection<SearchResultDto>();
         public ObservableCollection<SearchResultDto> EquipmentSuggestions { get; } = new ObservableCollection<SearchResultDto>();
 
+        public ObservableCollection<SearchResultDto> BrandSuggestions { get; } = new ObservableCollection<SearchResultDto>();
         // Selected Items for UI Highlight
         private SearchResultDto _selectedModel;
         public SearchResultDto SelectedModel { get => _selectedModel; set { _selectedModel = value; OnPropertyChanged(); } }
@@ -61,6 +62,9 @@ namespace WpfApp2.viewmodel.analysis
 
         private SearchResultDto _selectedEquipment;
         public SearchResultDto SelectedEquipment { get => _selectedEquipment; set { _selectedEquipment = value; OnPropertyChanged(); } }
+
+        private SearchResultDto _selectedBrand;
+        public SearchResultDto SelectedBrand { get => _selectedBrand; set { _selectedBrand = value; OnPropertyChanged(); } }
 
         // Search Texts
         private string _searchModelText;
@@ -102,6 +106,19 @@ namespace WpfApp2.viewmodel.analysis
             }
         }
 
+        private string _searchBrandText;
+        public string SearchBrandText
+        {
+            get => _searchBrandText;
+            set
+            {
+                if (_searchBrandText == value) return;
+                _searchBrandText = value;
+                OnPropertyChanged();
+                if (!_isInternalChange) UpdateSuggestions("B", value);
+            }
+        }
+
         // Popup States
         private bool _isDropDownOpenM;
         public bool IsDropDownOpenM { get => _isDropDownOpenM; set { _isDropDownOpenM = value; OnPropertyChanged(); } }
@@ -112,10 +129,14 @@ namespace WpfApp2.viewmodel.analysis
         private bool _isDropDownOpenE;
         public bool IsDropDownOpenE { get => _isDropDownOpenE; set { _isDropDownOpenE = value; OnPropertyChanged(); } }
 
+        private bool _isDropDownOpenB;
+        public bool IsDropDownOpenB { get => _isDropDownOpenB; set { _isDropDownOpenB = value; OnPropertyChanged(); } }
+
         // Filters
         public int SelectedModelId { get; set; }
         public int SelectedVendorId { get; set; }
         public int SelectedEquipmentId { get; set; }
+        public int SelectedBrandId { get; set; }
         public DateTime? SelectedDateFrom { get; set; } = new DateTime(DateTime.Now.Year, 1, 1);
         public DateTime? SelectedDateTo { get; set; } = DateTime.Now;
         public decimal? PriceMin { get; set; }
@@ -143,6 +164,7 @@ namespace WpfApp2.viewmodel.analysis
                     SelectedModelId == 0 ? null : (int?)SelectedModelId,
                     SelectedVendorId == 0 ? null : (int?)SelectedVendorId,
                     SelectedEquipmentId == 0 ? null : (int?)SelectedEquipmentId,
+                    SelectedBrandId == 0 ? null : (int?)SelectedBrandId,
                     SelectedDateFrom,
                     SelectedDateTo,
                     PriceMin,
@@ -220,6 +242,12 @@ namespace WpfApp2.viewmodel.analysis
                     SelectedEquipmentId = SelectedEquipment.Id;
                     IsDropDownOpenE = false;
                 }
+                else if (type == "B" && SelectedBrand != null)
+                {
+                    SearchBrandText = SelectedBrand.Text;
+                    SelectedBrandId = SelectedBrand.Id;
+                    IsDropDownOpenB = false;
+                }
                 LoadData(); // Tự động load dữ liệu sau khi chọn
             }
             finally { _isInternalChange = false; }
@@ -232,6 +260,7 @@ namespace WpfApp2.viewmodel.analysis
                 if (type == "M") { ModelSuggestions.Clear(); IsDropDownOpenM = false; SelectedModelId = 0; }
                 if (type == "V") { VendorSuggestions.Clear(); IsDropDownOpenV = false; SelectedVendorId = 0; }
                 if (type == "E") { EquipmentSuggestions.Clear(); IsDropDownOpenE = false; SelectedEquipmentId = 0; }
+                if (type == "B") { BrandSuggestions.Clear(); IsDropDownOpenB = false; SelectedBrandId = 0; }
                 return;
             }
             switch (type)
@@ -241,21 +270,25 @@ namespace WpfApp2.viewmodel.analysis
                     ModelSuggestions.Clear();
                     foreach (var i in resM) ModelSuggestions.Add(i);
                     IsDropDownOpenM = ModelSuggestions.Any();
-                    // BỎ DÒNG: SelectedModel = ModelSuggestions.FirstOrDefault();
                     break;
                 case "V":
                     var resV = _searchService.SearchVendor(query);
                     VendorSuggestions.Clear();
                     foreach (var i in resV) VendorSuggestions.Add(i);
                     IsDropDownOpenV = VendorSuggestions.Any();
-                    // BỎ DÒNG: SelectedVendor = VendorSuggestions.FirstOrDefault();
                     break;
                 case "E":
                     var resE = _searchService.SearchEquipment(query);
                     EquipmentSuggestions.Clear();
                     foreach (var i in resE) EquipmentSuggestions.Add(i);
                     IsDropDownOpenE = EquipmentSuggestions.Any();
-                    // BỎ DÒNG: SelectedEquipment = EquipmentSuggestions.FirstOrDefault();
+                    break;
+                case "B":
+                    var resB = _searchService.SearchBrand(query);
+                    BrandSuggestions.Clear();
+                    foreach (var i in resB) BrandSuggestions.Add(i);
+                    IsDropDownOpenB = BrandSuggestions.Any();
+
                     break;
             }
         }
@@ -264,8 +297,8 @@ namespace WpfApp2.viewmodel.analysis
         {
             _isInternalChange = true;
             Analysis = new ModelAnalysisDto();
-            SearchModelText = SearchVendorText = SearchEquipmentText = string.Empty;
-            SelectedModelId = SelectedVendorId = SelectedEquipmentId = 0;
+            SearchModelText = SearchVendorText = SearchEquipmentText = SearchBrandText = string.Empty;
+            SelectedModelId = SelectedVendorId = SelectedEquipmentId = SelectedBrandId=0;
             PriceMin = PriceMax = null;
             SelectedDateFrom = new DateTime(DateTime.Now.Year, 1, 1);
             SelectedDateTo = DateTime.Now;

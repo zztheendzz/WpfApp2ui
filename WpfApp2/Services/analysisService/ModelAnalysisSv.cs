@@ -21,6 +21,7 @@ SELECT
     m.ModelName,
     m.ModelCode,
 
+
     (
         SELECT ph.UnitPrice
         FROM PurchaseHistory ph
@@ -73,6 +74,7 @@ ORDER BY AvgPrice;
 SELECT
     p.Id,
     m.ModelName,
+    m.ModelCode,
     e.EquipmentName,
     b.BrandName,
     v.VendorName,

@@ -52,6 +52,7 @@ namespace WpfApp2.view.analysis
                 "M" => lstModel,
                 "V" => lstVendor,
                 "E" => lstEquip,
+                "B" => lstBrand,
                 _ => null
             };
 
@@ -89,6 +90,7 @@ namespace WpfApp2.view.analysis
                     if (type == "M") vm.IsDropDownOpenM = false;
                     else if (type == "V") vm.IsDropDownOpenV = false;
                     else if (type == "E") vm.IsDropDownOpenE = false;
+                    else if (type == "B") vm.IsDropDownOpenB = false;
                     e.Handled = true;
                     break;
             }
@@ -113,8 +115,8 @@ namespace WpfApp2.view.analysis
                 listBox.SelectedItem = item.DataContext;
 
                 string type = (listBox.Name == "lstModel") ? "M" :
-                              (listBox.Name == "lstVendor") ? "V" : "E";
-
+                              (listBox.Name == "lstVendor") ? "V" :
+                                (listBox.Name == "lstEquip") ? "E" : "B";
                 // Thực thi logic xác nhận lựa chọn trong ViewModel
                 vm.ConfirmSelection(type);
 
@@ -122,7 +124,7 @@ namespace WpfApp2.view.analysis
                 if (type == "M") txtSearchModel.Focus();
                 else if (type == "V") txtSearchVendor.Focus();
                 else if (type == "E") txtSearchEquip.Focus();
-
+                else if (type == "B") txtSearchBrand.Focus();
                 // Đánh dấu là đã xử lý xong để tránh các sự kiện bubbling khác
                 e.Handled = true;
             }

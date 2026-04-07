@@ -18,6 +18,7 @@ namespace WpfApp2.Services.analysisService
             int? modelId,
             int? vendorId,
             int? equipmentId,
+            int? brandId,
             DateTime? from,
             DateTime? to,
             decimal? minPrice,
@@ -29,9 +30,10 @@ namespace WpfApp2.Services.analysisService
                     m.ModelName, m.ModelCode,
                     v.VendorName, 
                     e.EquipmentName, 
+                    b.BrandName,
                     p.Quantity, 
                     p.UnitPrice, 
-                    (p.Quantity * p.UnitPrice) AS LineTotal, -- Tính thành tiền
+                    (p.Quantity * p.UnitPrice) AS LineTotal,
                     c.CurrencyName,
                     p.PurchaseDate, 
                     u.UserName AS FullName,
@@ -40,9 +42,14 @@ namespace WpfApp2.Services.analysisService
                 LEFT JOIN Model m ON p.ModelId = m.Id
                 LEFT JOIN Vendor v ON p.VendorId = v.Id
                 LEFT JOIN Equipment e ON p.EquipmentId = e.Id
+
+                -- FIX CHỖ NÀY
+                LEFT JOIN Brand b ON m.BrandId = b.Id
+
                 LEFT JOIN Currency c ON p.CurrencyId = c.Id
                 LEFT JOIN [User] u ON p.UserId = u.Id
-                WHERE 1=1
+
+    WHERE 1=1
             ");
 
             var param = new DynamicParameters();
@@ -70,6 +77,12 @@ namespace WpfApp2.Services.analysisService
                 sql.Append(" AND p.EquipmentId = @equipmentId");
                 param.Add("equipmentId", equipmentId);
             }
+            if (brandId.HasValue)
+            {
+                sql.Append(" AND m.BrandId = @brandId");
+                param.Add("brandId", brandId);
+            }
+
 
             // Lọc theo khoảng thời gian
             if (from.HasValue)
