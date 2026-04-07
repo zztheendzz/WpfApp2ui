@@ -86,7 +86,7 @@
 
 
     <Grid Background="#F5F6F7">
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseDown="PopupChild_MouseDown">
             <StackPanel Margin="15">
 
                 <materialDesign:Card Padding="15" Margin="0,0,0,15" materialDesign:ElevationAssist.Elevation="Dp2">
@@ -94,21 +94,92 @@
                         <TextBlock Text="{DynamicResource menu_Inquiry}" FontSize="16" FontWeight="Bold" Margin="0,0,0,15" Foreground="#2C3E50"/>
                         <WrapPanel Orientation="Horizontal">
                             <StackPanel Width="220" Margin="5">
-                                <TextBlock Text="{DynamicResource dg_ModelCode}" Margin="0,0,0,5" FontWeight="SemiBold" Foreground="#666"/>
+
+                                <!-- Label -->
+                                <TextBlock 
+        Text="{DynamicResource dg_ModelCode}" 
+        Margin="0,0,0,5" 
+        FontWeight="SemiBold" 
+        Foreground="#666"/>
+
                                 <Grid>
-                                    <TextBox x:Name="txtSearchModel" Tag="M" Text="{Binding SearchModelText, UpdateSourceTrigger=PropertyChanged}" 
-                                             PreviewKeyDown="SearchBox_PreviewKeyDown" materialDesign:HintAssist.Hint=""/>
-                                    <Popup IsOpen="{Binding IsDropDownOpenM}" PlacementTarget="{Binding ElementName=txtSearchModel}" StaysOpen="False" AllowsTransparency="True">
-                                        <Border Background="White" BorderBrush="#DDD" BorderThickness="1" Width="{Binding ElementName=txtSearchModel, Path=ActualWidth}">
-                                            <ListBox x:Name="lstModel" DisplayMemberPath="Text" ItemsSource="{Binding ModelSuggestions}" SelectedItem="{Binding SelectedModel}">
-                                                <ListBox.ItemContainerStyle>
-                                                    <Style TargetType="ListBoxItem">
-                                                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/>
-                                                    </Style>
-                                                </ListBox.ItemContainerStyle>
-                                            </ListBox>
+
+                                    <!-- TEXTBOX -->
+                                    <TextBox 
+            x:Name="txtSearchModel"
+            Tag="M"
+            Text="{Binding SearchModelText, UpdateSourceTrigger=PropertyChanged}"
+            PreviewKeyDown="SearchBox_PreviewKeyDown"
+            GotKeyboardFocus="TextBox_GotFocus"/>
+
+                                    <!-- POPUP -->
+                                    <Popup 
+            x:Name="popupModel"
+            PreviewMouseDown="Popup_PreviewMouseDown"
+            IsOpen="{Binding IsDropDownOpenM}"
+            PlacementTarget="{Binding ElementName=txtSearchModel}"
+            Placement="Bottom"
+            StaysOpen="True"
+            AllowsTransparency="True"
+            PopupAnimation="Fade"
+            Focusable="False">
+
+                                        <Border 
+                Background="White"
+                BorderBrush="#DDD"
+                BorderThickness="1"
+                CornerRadius="4"
+                Width="{Binding ElementName=txtSearchModel, Path=ActualWidth}"
+                                            PreviewMouseDown="PopupChild_MouseDown"
+                SnapsToDevicePixels="True">
+
+                                            <ScrollViewer 
+                    VerticalScrollBarVisibility="Auto"
+                    MaxHeight="250">
+
+                                                <ListBox 
+                        x:Name="lstModel"
+                        ItemsSource="{Binding ModelSuggestions}"
+                        SelectedItem="{Binding SelectedModel}"
+                        BorderThickness="0">
+
+                                                    <!-- Hiển thị text -->
+                                                    <ListBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding Text}" Padding="4"/>
+                                                        </DataTemplate>
+                                                    </ListBox.ItemTemplate>
+
+                                                    <!-- Style item -->
+                                                    <ListBox.ItemContainerStyle>
+                                                        <Style TargetType="ListBoxItem">
+                                                            <Setter Property="Padding" Value="6,4"/>
+                                                            <Setter Property="Cursor" Value="Hand"/>
+                                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+
+                                                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/>
+
+                                                            <Style.Triggers>
+                                                                <!-- Hover -->
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Background" Value="#EEEEEE"/>
+                                                                </Trigger>
+
+                                                                <!-- Selected -->
+                                                                <Trigger Property="IsSelected" Value="True">
+                                                                    <Setter Property="Background" Value="#D6E4FF"/>
+                                                                </Trigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ListBox.ItemContainerStyle>
+
+                                                </ListBox>
+
+                                            </ScrollViewer>
+
                                         </Border>
                                     </Popup>
+
                                 </Grid>
                             </StackPanel>
 

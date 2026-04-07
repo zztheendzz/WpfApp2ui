@@ -252,43 +252,76 @@ namespace WpfApp2.viewmodel.analysis
             }
             finally { _isInternalChange = false; }
         }
-
-        private void UpdateSuggestions(string type, string query)
+        public void LoadAllSuggestions(string type)
         {
-            if (string.IsNullOrWhiteSpace(query) || query.Length < 1)
-            {
-                if (type == "M") { ModelSuggestions.Clear(); IsDropDownOpenM = false; SelectedModelId = 0; }
-                if (type == "V") { VendorSuggestions.Clear(); IsDropDownOpenV = false; SelectedVendorId = 0; }
-                if (type == "E") { EquipmentSuggestions.Clear(); IsDropDownOpenE = false; SelectedEquipmentId = 0; }
-                if (type == "B") { BrandSuggestions.Clear(); IsDropDownOpenB = false; SelectedBrandId = 0; }
-                return;
-            }
             switch (type)
             {
                 case "M":
-                    var resM = _searchService.SearchModel(query);
-                    ModelSuggestions.Clear();
-                    foreach (var i in resM) ModelSuggestions.Add(i);
-                    IsDropDownOpenM = ModelSuggestions.Any();
+                    UpdateSuggestions("M", "__ALL__");
                     break;
                 case "V":
-                    var resV = _searchService.SearchVendor(query);
-                    VendorSuggestions.Clear();
-                    foreach (var i in resV) VendorSuggestions.Add(i);
-                    IsDropDownOpenV = VendorSuggestions.Any();
+                    UpdateSuggestions("V", "__ALL__");
                     break;
                 case "E":
-                    var resE = _searchService.SearchEquipment(query);
-                    EquipmentSuggestions.Clear();
-                    foreach (var i in resE) EquipmentSuggestions.Add(i);
-                    IsDropDownOpenE = EquipmentSuggestions.Any();
+                    UpdateSuggestions("E", "__ALL__");
                     break;
                 case "B":
-                    var resB = _searchService.SearchBrand(query);
+                    UpdateSuggestions("B", "__ALL__");
+                    break;
+            }
+        }
+        private void UpdateSuggestions(string type, string query)
+        {
+            bool isAll = query == "__ALL__";
+
+            switch (type)
+            {
+                case "M":
+                    var resM = isAll
+                        ? _searchService.SearchModel("")
+                        : _searchService.SearchModel(query);
+
+                    ModelSuggestions.Clear();
+                    foreach (var i in resM) ModelSuggestions.Add(i);
+
+                    IsDropDownOpenM = true; // 🔥 luôn mở
+                    SelectedModelId = 0;
+                    break;
+
+                case "V":
+                    var resV = isAll
+                        ? _searchService.SearchVendor("")
+                        : _searchService.SearchVendor(query);
+
+                    VendorSuggestions.Clear();
+                    foreach (var i in resV) VendorSuggestions.Add(i);
+
+                    IsDropDownOpenV = true;
+                    SelectedVendorId = 0;
+                    break;
+
+                case "E":
+                    var resE = isAll
+                        ? _searchService.SearchEquipment("")
+                        : _searchService.SearchEquipment(query);
+
+                    EquipmentSuggestions.Clear();
+                    foreach (var i in resE) EquipmentSuggestions.Add(i);
+
+                    IsDropDownOpenE = true;
+                    SelectedEquipmentId = 0;
+                    break;
+
+                case "B":
+                    var resB = isAll
+                        ? _searchService.SearchBrand("")
+                        : _searchService.SearchBrand(query);
+
                     BrandSuggestions.Clear();
                     foreach (var i in resB) BrandSuggestions.Add(i);
-                    IsDropDownOpenB = BrandSuggestions.Any();
 
+                    IsDropDownOpenB = true;
+                    SelectedBrandId = 0;
                     break;
             }
         }

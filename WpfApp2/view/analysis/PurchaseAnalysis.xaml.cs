@@ -12,7 +12,7 @@ namespace WpfApp2.view.analysis
         public PurchaseAnalysis()
         {
             InitializeComponent();
-
+            this.PreviewMouseDown += OnGlobalMouseDown;
             // Định dạng hiển thị cho trục Y của CẢ 2 BIỂU ĐỒ
             // Logic: Chia cho 1.000.000 và thêm hậu tố "Tr"
             Func<double, string> trieuFormatter = value => (value / 1000000).ToString("N1") + " Tr";
@@ -37,6 +37,66 @@ namespace WpfApp2.view.analysis
 
         // --- GIỮ NGUYÊN CÁC HÀM XỬ LÝ SEARCH BOX BÊN DƯỚI ---
 
+
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is PurchaseAnalysisVm vm && sender is TextBox tb)
+            {
+                string type = tb.Tag?.ToString();
+
+                // reset popup trước (QUAN TRỌNG)
+                if (type == "M") vm.IsDropDownOpenM = false;
+
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    vm.LoadAllSuggestions(type);
+                }), System.Windows.Threading.DispatcherPriority.Background);
+            }
+        }
+        private bool _isClickInsidePopup = false;
+
+        private void Popup_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // 🔥 đánh dấu là đang click trong popup (kể cả scrollbar)
+            _isClickInsidePopup = true;
+        }
+
+        private void OnGlobalMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (DataContext is not PurchaseAnalysisVm vm) return;
+
+            // 🔥 nếu click trong popup → bỏ qua
+            if (_clickInsidePopup)
+            {
+                _clickInsidePopup = false;
+                return;
+            }
+
+            DependencyObject clicked = e.OriginalSource as DependencyObject;
+
+            if (IsInside(clicked, txtSearchModel))
+                return;
+
+            vm.IsDropDownOpenM = false;
+        }
+        private bool IsInside(DependencyObject source, DependencyObject parent)
+        {
+            while (source != null)
+            {
+                if (source == parent)
+                    return true;
+
+                source = VisualTreeHelper.GetParent(source);
+            }
+            return false;
+        }
+        private bool _clickInsidePopup = false;
+
+        private void PopupChild_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // 🔥 bất kỳ click nào trong popup (kể cả scrollbar)
+            _clickInsidePopup = true;
+        }
         private void SearchBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             var textBox = sender as TextBox;
