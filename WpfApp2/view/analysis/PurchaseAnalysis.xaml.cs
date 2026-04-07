@@ -189,5 +189,11 @@ namespace WpfApp2.view.analysis
                 e.Handled = true;
             }
         }
+
+        private void txtSearchModel_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            popupModel.IsOpen = true;
+
+        }
     }
 }

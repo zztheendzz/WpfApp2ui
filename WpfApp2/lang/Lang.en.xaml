@@ -22,6 +22,7 @@
     <sys:String x:Key="btn_Analyze">Analyze</sys:String>
     <sys:String x:Key="btn_Prev">◀</sys:String>
     <sys:String x:Key="btn_Next">▶</sys:String>
+    <sys:String x:Key="btn_Save">Save</sys:String>
 
     <sys:String x:Key="dg_Id">No.</sys:String>
     <sys:String x:Key="dg_Model">Model</sys:String>
@@ -57,6 +58,13 @@
     <sys:String x:Key="lbl_VendorComparison">Price Comparison by Vendor</sys:String>
     <sys:String x:Key="lbl_TotalRecords">Total Records:</sys:String>
 
+    <sys:String x:Key="lbl_Account">Account:</sys:String>
+    <sys:String x:Key="lbl_FullName">FullName:</sys:String>
+    <sys:String x:Key="lbl_Role">Role:</sys:String>
+    <sys:String x:Key="lbl_Password">PassWord:</sys:String>
+    <sys:String x:Key="lbl_Status">Status:</sys:String>
+    
+    
     <sys:String x:Key="msg_ConfirmDelete">Are you sure you want to delete this record?</sys:String>
     <sys:String x:Key="msg_DeleteSuccess">Deleted successfully!</sys:String>
 

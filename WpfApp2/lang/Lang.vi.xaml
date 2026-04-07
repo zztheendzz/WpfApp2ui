@@ -22,6 +22,7 @@
     <sys:String x:Key="btn_Analyze">Phân tích</sys:String>
     <sys:String x:Key="btn_Prev">◀</sys:String>
     <sys:String x:Key="btn_Next">▶</sys:String>
+    <sys:String x:Key="btn_Save">Lưu</sys:String>
 
     <sys:String x:Key="dg_Id">STT</sys:String>
     <sys:String x:Key="dg_Model">Linh kiện / Model</sys:String>
@@ -56,6 +57,12 @@
     <sys:String x:Key="lbl_AvgPrice">Giá trung bình</sys:String>
     <sys:String x:Key="lbl_VendorComparison">So sánh giá theo nhà cung cấp</sys:String>
     <sys:String x:Key="lbl_TotalRecords">Tổng số bản ghi:</sys:String>
+
+    <sys:String x:Key="lbl_Account">Tài khoản:</sys:String>
+    <sys:String x:Key="lbl_FullName">Họ và tên:</sys:String>
+    <sys:String x:Key="lbl_Role">Vai trò:</sys:String>
+    <sys:String x:Key="lbl_Password">Mật khẩu:</sys:String>
+    <sys:String x:Key="lbl_Status">Trạng thái:</sys:String>
 
     <sys:String x:Key="msg_ConfirmDelete">Bạn có chắc chắn muốn xóa không?</sys:String>
     <sys:String x:Key="msg_DeleteSuccess">Đã xóa thành công!</sys:String>

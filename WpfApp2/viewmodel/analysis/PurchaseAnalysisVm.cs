@@ -331,7 +331,7 @@ namespace WpfApp2.viewmodel.analysis
             _isInternalChange = true;
             Analysis = new ModelAnalysisDto();
             SearchModelText = SearchVendorText = SearchEquipmentText = SearchBrandText = string.Empty;
-            SelectedModelId = SelectedVendorId = SelectedEquipmentId = SelectedBrandId=0;
+            SelectedModelId = SelectedVendorId = SelectedEquipmentId = SelectedBrandId = 0;
             PriceMin = PriceMax = null;
             SelectedDateFrom = new DateTime(DateTime.Now.Year, 1, 1);
             SelectedDateTo = DateTime.Now;

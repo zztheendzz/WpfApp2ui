@@ -22,6 +22,7 @@
     <sys:String x:Key="btn_Analyze">분석</sys:String>
     <sys:String x:Key="btn_Prev">◀</sys:String>
     <sys:String x:Key="btn_Next">▶</sys:String>
+    <sys:String x:Key="btn_Save">저장</sys:String>
 
     <sys:String x:Key="dg_Id">번호</sys:String>
     <sys:String x:Key="dg_Model">부품/모델</sys:String>
@@ -56,6 +57,12 @@
     <sys:String x:Key="lbl_AvgPrice">평균가</sys:String>
     <sys:String x:Key="lbl_VendorComparison">공급사별 가격 비교</sys:String>
     <sys:String x:Key="lbl_TotalRecords">총 기록 수:</sys:String>
+
+    <sys:String x:Key="lbl_Account">계정:</sys:String>
+    <sys:String x:Key="lbl_FullName">성함:</sys:String>
+    <sys:String x:Key="lbl_Role">역할:</sys:String>
+    <sys:String x:Key="lbl_Password">비밀번호:</sys:String>
+    <sys:String x:Key="lbl_Status">상태:</sys:String>
 
     <sys:String x:Key="msg_ConfirmDelete">이 기록을 삭제하시겠습니까?</sys:String>
     <sys:String x:Key="msg_DeleteSuccess">삭제되었습니다!</sys:String>

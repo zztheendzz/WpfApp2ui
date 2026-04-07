@@ -110,16 +110,14 @@
             Tag="M"
             Text="{Binding SearchModelText, UpdateSourceTrigger=PropertyChanged}"
             PreviewKeyDown="SearchBox_PreviewKeyDown"
-            GotKeyboardFocus="TextBox_GotFocus"/>
+            GotKeyboardFocus="TextBox_GotFocus" TextChanged="txtSearchModel_TextChanged"/>
 
                                     <!-- POPUP -->
                                     <Popup 
-            x:Name="popupModel"
+            x:Name="popupModel" StaysOpen="False"
             PreviewMouseDown="Popup_PreviewMouseDown"
-            IsOpen="{Binding IsDropDownOpenM}"
             PlacementTarget="{Binding ElementName=txtSearchModel}"
             Placement="Bottom"
-            StaysOpen="True"
             AllowsTransparency="True"
             PopupAnimation="Fade"
             Focusable="False">
@@ -346,7 +344,7 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
 
-                                <DataGridTemplateColumn Header="{DynamicResource dg_Model}" Width="180">
+                                <DataGridTemplateColumn Header="{DynamicResource dg_ModelCode}" Width="180">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding ModelCode}" TextWrapping="Wrap" Padding="5" VerticalAlignment="Center"/>
@@ -378,13 +376,13 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
 
-                                <DataGridTemplateColumn Header="{DynamicResource dg_Quantity}">
+                                <!--<DataGridTemplateColumn Header="{DynamicResource dg_Quantity}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Quantity, StringFormat={}{0:N0}}" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
+                                </DataGridTemplateColumn>-->
 
                                 <DataGridTemplateColumn Header="{DynamicResource dg_UnitPrice}">
                                     <DataGridTemplateColumn.CellTemplate>
@@ -394,13 +392,13 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
 
-                                <DataGridTemplateColumn Header="{DynamicResource dg_TotalPrice}">
+                                <!--<DataGridTemplateColumn Header="{DynamicResource dg_TotalPrice}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding TotalPrice, StringFormat={}{0:N0}}" FontWeight="Bold" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
+                                </DataGridTemplateColumn>-->
 
                                 <DataGridTemplateColumn Header="{DynamicResource dg_Currency}">
                                     <DataGridTemplateColumn.CellTemplate>
