@@ -111,7 +111,7 @@
                             <Button Content="{DynamicResource sub_Vendor}" Command="{Binding ShowVendorPageCommand}" Style="{StaticResource SidebarButtonStyle}" />
                             <Button Content="{DynamicResource sub_Equipment}" Command="{Binding ShowEquipmentPageCommand}" Style="{StaticResource SidebarButtonStyle}" />
                             <Button Content="{DynamicResource sub_PurchaseHistory}" Command="{Binding ShowPurchaseHistoryPageCommand}" Style="{StaticResource SidebarButtonStyle}" />
-                            <Button Content="{DynamicResource sub_Currency}" Command="{Binding ShowCurrencyPageCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+                            <!--<Button Content="{DynamicResource sub_Currency}" Command="{Binding ShowCurrencyPageCommand}" Style="{StaticResource SidebarButtonStyle}"/>-->
                         </StackPanel>
                     </Expander>
 

@@ -18,7 +18,11 @@ namespace WpfApp2.Services.exportExcel
             if (matrixData == null || matrixData.Rows == null || matrixData.Vendors == null)
                 throw new Exception("Dữ liệu không hợp lệ hoặc bị trống.");
 
-            string templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "templateExcel", "template.xlsx");
+            string templatePath = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "excelTemplate",
+                "template.xlsx"
+            );
 
             if (!File.Exists(templatePath))
                 throw new Exception("Không tìm thấy file template.xlsx");
