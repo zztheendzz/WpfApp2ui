@@ -33,10 +33,10 @@ namespace WpfApp2.Services.analysisService
                     b.BrandName,
                     p.Quantity, 
                     p.UnitPrice, 
-                    (p.Quantity * p.UnitPrice) AS LineTotal,
+                    (p.Quantity * p.UnitPrice) AS TotalPrice,
                     c.CurrencyName,
                     p.PurchaseDate, 
-                    u.UserName AS FullName,
+                    u.FullName,
                     p.Note
                 FROM PurchaseHistory p
                 LEFT JOIN Model m ON p.ModelId = m.Id
@@ -114,7 +114,7 @@ namespace WpfApp2.Services.analysisService
             var items = conn.Query<PurchaseDto>(sql.ToString(), param).ToList();
 
             // Khởi tạo kết quả trả về
-            var result = new ModelAnalysisDto { Items = items };
+            var result = new ModelAnalysisDto { Items = items, TotalRecord = items.Count };
 
             if (items.Any())
             {

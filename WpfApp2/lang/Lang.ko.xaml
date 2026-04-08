@@ -67,6 +67,13 @@
     <sys:String x:Key="msg_ConfirmDelete">이 기록을 삭제하시겠습니까?</sys:String>
     <sys:String x:Key="msg_DeleteSuccess">삭제되었습니다!</sys:String>
 
+
+    <sys:String x:Key="menu_Inquiry_Purchase">구매 조회 / 분석</sys:String>
+    <sys:String x:Key="menu_Inquiry_Brand">브랜드 조회 / 분석</sys:String>
+    <sys:String x:Key="menu_Inquiry_Vendor">공급업체 조회 / 분석</sys:String>
+    <sys:String x:Key="menu_Inquiry_Equipment">장비 조회 / 분석</sys:String>
+    <sys:String x:Key="menu_Inquiry_Category">카테고리 조회 / 분석</sys:String>
+
     <sys:String x:Key="menu_Inquiry">조회 / 분석</sys:String>
     <sys:String x:Key="menu_DataManagement">데이터 관리</sys:String>
     <sys:String x:Key="menu_PriceManagement">가격 관리</sys:String>

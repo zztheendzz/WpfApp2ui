@@ -67,6 +67,13 @@
     <sys:String x:Key="msg_ConfirmDelete">Bạn có chắc chắn muốn xóa không?</sys:String>
     <sys:String x:Key="msg_DeleteSuccess">Đã xóa thành công!</sys:String>
 
+
+    <sys:String x:Key="menu_Inquiry_Purchase">Truy vấn / Phân tích mua hàng</sys:String>
+    <sys:String x:Key="menu_Inquiry_Brand">Truy vấn / Phân tích thương hiệu</sys:String>
+    <sys:String x:Key="menu_Inquiry_Vendor">Truy vấn / Phân tích nhà cung cấp</sys:String>
+    <sys:String x:Key="menu_Inquiry_Equipment">Truy vấn / Phân tích thiết bị</sys:String>
+    <sys:String x:Key="menu_Inquiry_Category">Truy vấn / Phân tích danh mục</sys:String>
+
     <sys:String x:Key="menu_Inquiry">Tra cứu / Phân tích</sys:String>
     <sys:String x:Key="menu_DataManagement">Quản lý dữ liệu</sys:String>
     <sys:String x:Key="menu_PriceManagement">Quản lý giá</sys:String>

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using WpfApp2.modelDTO;
-using WpfApp2.modelDTO.analysisDto.ShareDto; // Thư mục chứa AnalysisShareDto
+using WpfApp2.modelDTO.analysisDto.ShareDto;
 using WpfApp2.modelDTO.analysysDto;
 
 namespace WpfApp2.Services.analysisService
@@ -56,27 +56,46 @@ namespace WpfApp2.Services.analysisService
             var items = multi.Read<PurchaseDto>().ToList();
             result.Items = items;
 
-            // --- BẮT ĐẦU TÍNH TOÁN LINQ CHO CHART ---
-
+            // ===================== CHART =====================
             if (items.Any())
             {
-                // 1. Tính toán cho Biểu đồ Tròn (Dùng AnalysisShareDto thay cho ModelShareDto)
-                result.ModelShares = items
+                // ===== 1. GROUP FULL DATA =====
+                var grouped = items
                     .GroupBy(x => x.ModelCode)
-                    .Select(g => new AnalysisShareDto // Sử dụng Class dùng chung
+                    .Select(g => new AnalysisShareDto
                     {
-                        // Gán mã Model vào thuộc tính CategoryName chuẩn
                         CategoryName = g.Key,
-                        TotalAmount = g.Sum(x => x.LineTotal),
-                        Percentage = result.TotalPrice > 0
-                            ? (double)(g.Sum(x => x.LineTotal) / result.TotalPrice * 100)
-                            : 0
+                        TotalAmount = g.Sum(x => x.LineTotal)
                     })
                     .OrderByDescending(x => x.TotalAmount)
-                    .Take(10) // Lấy Top 10 để biểu đồ sạch đẹp
                     .ToList();
 
-                // 2. Tính toán cho Biểu đồ Cột (Giữ nguyên MonthlySpendDto)
+                // ===== 2. TOP 9 =====
+                var top9 = grouped.Take(9).ToList();
+
+                // ===== 3. OTHERS =====
+                var othersAmount = grouped.Skip(9).Sum(x => x.TotalAmount);
+
+                if (othersAmount > 0)
+                {
+                    top9.Add(new AnalysisShareDto
+                    {
+                        CategoryName = "Others",
+                        TotalAmount = othersAmount
+                    });
+                }
+
+                // ===== 4. TÍNH LẠI % (QUAN TRỌNG) =====
+                foreach (var item in top9)
+                {
+                    item.Percentage = result.TotalPrice > 0
+                        ? (double)item.TotalAmount / (double)result.TotalPrice * 100
+                        : 0;
+                }
+
+                result.ModelShares = top9;
+
+                // ===== 5. MONTHLY CHART =====
                 result.MonthlySpends = items
                     .GroupBy(x => new { x.PurchaseDate.Year, x.PurchaseDate.Month })
                     .Select(g => new MonthlySpendDto

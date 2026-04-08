@@ -61,7 +61,7 @@
 
                 <materialDesign:Card Padding="15" Margin="0,0,0,15" materialDesign:ElevationAssist.Elevation="Dp2">
                     <StackPanel>
-                        <TextBlock Text="{DynamicResource menu_Inquiry}" FontSize="16" FontWeight="Bold" Margin="0,0,0,15" Foreground="#2C3E50"/>
+                        <TextBlock Text="{DynamicResource menu_Inquiry_Purchase}" FontSize="16" FontWeight="Bold" Margin="0,0,0,15" Foreground="#2C3E50"/>
 
                         <WrapPanel Orientation="Horizontal">
                             <StackPanel Width="220" Margin="5">
@@ -164,7 +164,7 @@
                         <StackPanel>
                             <TextBlock Text="{DynamicResource lbl_LatestPrice}" FontSize="11" Opacity="0.7"/>
                             <TextBlock Margin="0,5,0,0" FontWeight="Bold" FontSize="20">
-                                <Run Text="{Binding Analysis.LastPrice, StringFormat={}{0:N0}}"/>
+                                <Run Text="{Binding Analysis.LastPrice, StringFormat={}{0:N0} VND}"/>
                                 <Run Text=" " FontSize="12"/><Run Text="{Binding Analysis.CurrencyName}" FontSize="12"/>
                             </TextBlock>
                             <TextBlock Text="{Binding Analysis.LastVendorName}" FontSize="10" Opacity="0.6" TextTrimming="CharacterEllipsis"/>
@@ -173,19 +173,19 @@
                     <materialDesign:Card Background="#27AE60" Foreground="White" Margin="5" Padding="15">
                         <StackPanel>
                             <TextBlock Text="{DynamicResource lbl_MinPrice}" FontSize="11" Opacity="0.7"/>
-                            <TextBlock Text="{Binding Analysis.MinPrice, StringFormat={}{0:N0}}" Margin="0,5,0,0" FontWeight="Bold" FontSize="20"/>
+                            <TextBlock Text="{Binding Analysis.MinPrice, StringFormat={}{0:N0} VND}" Margin="0,5,0,0" FontWeight="Bold" FontSize="20"/>
                         </StackPanel>
                     </materialDesign:Card>
                     <materialDesign:Card Background="#E67E22" Foreground="White" Margin="5" Padding="15">
                         <StackPanel>
                             <TextBlock Text="{DynamicResource lbl_AvgPrice}" FontSize="11" Opacity="0.7"/>
-                            <TextBlock Text="{Binding Analysis.AvgPrice, StringFormat={}{0:N0}}" Margin="0,5,0,0" FontWeight="Bold" FontSize="20"/>
+                            <TextBlock Text="{Binding Analysis.AvgPrice, StringFormat={}{0:N0} VND}" Margin="0,5,0,0" FontWeight="Bold" FontSize="20"/>
                         </StackPanel>
                     </materialDesign:Card>
                     <materialDesign:Card Background="#E74C3C" Foreground="White" Margin="5" Padding="15">
                         <StackPanel>
                             <TextBlock Text="{DynamicResource lbl_MaxPrice}" FontSize="11" Opacity="0.7"/>
-                            <TextBlock Text="{Binding Analysis.MaxPrice, StringFormat={}{0:N0}}" Margin="0,5,0,0" FontWeight="Bold" FontSize="20"/>
+                            <TextBlock Text="{Binding Analysis.MaxPrice, StringFormat={}{0:N0} VND}" Margin="0,5,0,0" FontWeight="Bold" FontSize="20"/>
                         </StackPanel>
                     </materialDesign:Card>
                 </UniformGrid>
@@ -196,7 +196,7 @@
                             <TextBlock Text="{DynamicResource lbl_PurchasedPartsList}" FontWeight="Bold" VerticalAlignment="Center" Foreground="#2C3E50"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <TextBlock Text="{DynamicResource lbl_TotalRecords}" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding SelectedCount}" FontWeight="Bold" Foreground="#1976D2" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding Analysis.TotalRecord}" FontWeight="Bold" Foreground="#1976D2" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Grid>
 
@@ -225,6 +225,15 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="{DynamicResource ph_Brand}" Width="150">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding BrandName}" TextWrapping="Wrap" Padding="5" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
                                 <DataGridTemplateColumn Header="{DynamicResource dg_Quantity}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
@@ -246,6 +255,7 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+                                
                                 <DataGridTemplateColumn Header="{DynamicResource dg_Currency}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
@@ -253,6 +263,16 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="{DynamicResource dg_User}">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding FullName}" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+
                                 <DataGridTemplateColumn Header="{DynamicResource dg_Note}" Width="*">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
@@ -260,6 +280,8 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+                                
+                                
                             </DataGrid.Columns>
                         </DataGrid>
 

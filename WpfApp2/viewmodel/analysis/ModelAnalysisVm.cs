@@ -96,10 +96,16 @@ namespace WpfApp2.viewmodel.analysis
         }
 
         #region ===================== Methods =====================
-
+        private int _lastSelectedModelId = -1;
         private void LoadData()
         {
             if (SelectedModelId == 0) return;
+            if (SelectedModelId == _lastSelectedModelId)
+                return;
+
+            // ✅ Cập nhật lại cache
+            _lastSelectedModelId = SelectedModelId;
+
 
             try
             {
@@ -108,6 +114,7 @@ namespace WpfApp2.viewmodel.analysis
 
                 // 2. Lấy dữ liệu Analysis (đối tượng chứa List bên trong)
                 var analysisResult = _service.GetModelAnalysis(SelectedModelId);
+
 
                 if (analysisResult != null && analysisResult.Items != null)
                 {

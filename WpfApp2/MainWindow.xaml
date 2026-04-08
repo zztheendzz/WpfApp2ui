@@ -6,7 +6,10 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:WpfApp2"
         mc:Ignorable="d"
-        Title="{DynamicResource lbl_PriceManagementSystem}" Height="750" Width="1200">
+        Title="{DynamicResource lbl_PriceManagementSystem}" Height="750" Width="1200"
+        WindowState="Maximized"
+        WindowStyle="SingleBorderWindow"
+        ResizeMode="CanResize">
 
     <Window.Resources>
         <Style x:Key="SidebarButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">

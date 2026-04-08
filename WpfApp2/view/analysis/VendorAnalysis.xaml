@@ -80,7 +80,6 @@
             <RowDefinition Height="65"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="65"/>
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0" Background="{StaticResource MainNavy}">
@@ -226,34 +225,5 @@
                 </DockPanel>
             </Border>
         </Grid>
-
-        <Border Grid.Row="4" Background="{StaticResource MainNavy}" Padding="10,5">
-            <UniformGrid Columns="4">
-                <Button Style="{StaticResource FooterButtonStyle}" Command="{Binding NavModelAnalysis}">
-                    <StackPanel>
-                        <fa:ImageAwesome Icon="Cube" Foreground="White" Width="16" Margin="0,0,0,3"/>
-                        <TextBlock Text="Model" FontSize="10"/>
-                    </StackPanel>
-                </Button>
-                <Button Style="{StaticResource FooterButtonStyle}" Tag="Active">
-                    <StackPanel>
-                        <fa:ImageAwesome Icon="Industry" Foreground="White" Width="16" Margin="0,0,0,3"/>
-                        <TextBlock Text="{DynamicResource ph_Vendor}" FontSize="10" FontWeight="Bold"/>
-                    </StackPanel>
-                </Button>
-                <Button Style="{StaticResource FooterButtonStyle}" Command="{Binding NavBrandAnalysis}">
-                    <StackPanel>
-                        <fa:ImageAwesome Icon="Flash" Foreground="White" Width="16" Margin="0,0,0,3"/>
-                        <TextBlock Text="{DynamicResource lbl_Brand}" FontSize="10"/>
-                    </StackPanel>
-                </Button>
-                <Button Style="{StaticResource FooterButtonStyle}" Command="{Binding NavEquipmentAnalysis}">
-                    <StackPanel>
-                        <fa:ImageAwesome Icon="Wrench" Foreground="White" Width="16" Margin="0,0,0,3"/>
-                        <TextBlock Text="{DynamicResource ph_Equipment}" FontSize="10"/>
-                    </StackPanel>
-                </Button>
-            </UniformGrid>
-        </Border>
     </Grid>
 </Page>

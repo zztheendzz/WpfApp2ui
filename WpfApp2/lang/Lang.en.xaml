@@ -68,17 +68,25 @@
     <sys:String x:Key="msg_ConfirmDelete">Are you sure you want to delete this record?</sys:String>
     <sys:String x:Key="msg_DeleteSuccess">Deleted successfully!</sys:String>
 
+
+    <sys:String x:Key="menu_Inquiry_Purchase">Purchase Inquiry / Analysis</sys:String>
+    <sys:String x:Key="menu_Inquiry_Brand">Brand Inquiry / Analysis</sys:String>
+    <sys:String x:Key="menu_Inquiry_Vendor">Vendor Inquiry / Analysis</sys:String>
+    <sys:String x:Key="menu_Inquiry_Equipment">Equipment Inquiry / Analysis</sys:String>
+    <sys:String x:Key="menu_Inquiry_Category">Category Inquiry / Analysis</sys:String>
+
+
     <sys:String x:Key="menu_Inquiry">Inquiry / Analysis</sys:String>
     <sys:String x:Key="menu_DataManagement">Data Management</sys:String>
     <sys:String x:Key="menu_PriceManagement">Price Management</sys:String>
     <sys:String x:Key="menu_Excel">Excel</sys:String>
     <sys:String x:Key="menu_Settings">Settings</sys:String>
 
-    <sys:String x:Key="sub_PurchaseAnalysis">Purchase Analysis</sys:String>
-    <sys:String x:Key="sub_ModelAnalysis">Model Price Analysis</sys:String>
-    <sys:String x:Key="sub_VendorAnalysis">Vendor Analysis</sys:String>
-    <sys:String x:Key="sub_BrandAnalysis">Brand Analysis</sys:String>
-    <sys:String x:Key="sub_EquipmentAnalysis">Equipment Analysis</sys:String>
+    <sys:String x:Key="sub_PurchaseAnalysis">Purchase Inquiry / Analysis</sys:String>
+    <sys:String x:Key="sub_ModelAnalysis">Model Price Inquiry / Analysis</sys:String>
+    <sys:String x:Key="sub_VendorAnalysis">Vendor Inquiry / Analysis</sys:String>
+    <sys:String x:Key="sub_BrandAnalysis">Brand Inquiry / Analysis</sys:String>
+    <sys:String x:Key="sub_EquipmentAnalysis">Equipment Inquiry / Analysis</sys:String>
     <sys:String x:Key="sub_Model">Model Management</sys:String>
     <sys:String x:Key="sub_Brand">Brand Management</sys:String>
     <sys:String x:Key="sub_Vendor">Vendor Management</sys:String>

@@ -186,11 +186,12 @@ namespace WpfApp2.viewmodel.analysis
                 {
                     pieCollection.Add(new PieSeries
                     {
-                        Title = "Các loại khác",
+                        Title = "Other",
                         Values = new ChartValues<decimal> { otherBrands.Sum(x => x.TotalAmount) },
-                        DataLabels = true,
+                        DataLabels = false,
                         Fill = Brushes.Gray,
                         LabelPoint = p => $"Khác: {p.Participation:P1}"
+
                     });
                 }
             }

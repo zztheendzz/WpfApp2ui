@@ -79,14 +79,14 @@
             <RowDefinition Height="50"/>
             <RowDefinition Height="65"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="65"/>
+
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0" Background="{StaticResource MainNavy}">
             <DockPanel Margin="20,0">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <fa:ImageAwesome Icon="BarChart" Foreground="White" Width="18" Margin="0,0,12,0"/>
-                    <TextBlock Text="{DynamicResource menu_Inquiry}" Foreground="White" FontSize="15" FontWeight="Medium"/>
+                    <TextBlock Text="{DynamicResource menu_Inquiry_Brand}" Foreground="White" FontSize="15" FontWeight="Medium"/>
                 </StackPanel>
             </DockPanel>
         </Border>
@@ -163,7 +163,7 @@
                     </Border>
                     <Border Background="{StaticResource SubBlue}" CornerRadius="5" Margin="6">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
-                            <fa:ImageAwesome Icon="Exchange" Foreground="White" Width="30"/>
+                            <fa:ImageAwesome Icon="Truck" Foreground="White" Width="25"/>
                             <StackPanel Margin="20,0,0,0">
                                 <TextBlock Text="{DynamicResource lbl_SupplyCount}" Foreground="White" Opacity="0.8" FontSize="11"/>
                                 <TextBlock Text="{Binding Analysis.TotalTransactions}" Foreground="White" FontSize="18" FontWeight="Bold"/>
@@ -172,7 +172,7 @@
                     </Border>
                     <Border Background="{StaticResource SubBlue}" CornerRadius="5" Margin="6">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
-                            <fa:ImageAwesome Icon="PieChart" Foreground="#90EE90" Width="30"/>
+                            <fa:ImageAwesome Icon="Star" Foreground="#90EE90" Width="25"/>
                             <StackPanel Margin="20,0,0,0">
                                 <TextBlock Text="{DynamicResource dg_Model}" Foreground="White" Opacity="0.8" FontSize="11"/>
                                 <TextBlock Text="{Binding TopModelDisplay}" Foreground="White" FontSize="16" FontWeight="Bold"/>
@@ -238,34 +238,5 @@
                 </Border>
             </Grid>
         </ScrollViewer>
-
-        <Border Grid.Row="3" Background="{StaticResource MainNavy}" Padding="10,5">
-            <UniformGrid Columns="4">
-                <Button Style="{StaticResource FooterButtonStyle}" Command="{Binding NavModelAnalysis}">
-                    <StackPanel>
-                        <fa:ImageAwesome Icon="Cube" Foreground="White" Width="16" Margin="0,0,0,3"/>
-                        <TextBlock Text="Model" FontSize="10"/>
-                    </StackPanel>
-                </Button>
-                <Button Style="{StaticResource FooterButtonStyle}" Command="{Binding NavVendorAnalysis}">
-                    <StackPanel>
-                        <fa:ImageAwesome Icon="Industry" Foreground="White" Width="16" Margin="0,0,0,3"/>
-                        <TextBlock Text="{DynamicResource ph_Vendor}" FontSize="10"/>
-                    </StackPanel>
-                </Button>
-                <Button Style="{StaticResource FooterButtonStyle}" Tag="Active">
-                    <StackPanel>
-                        <fa:ImageAwesome Icon="Flash" Foreground="White" Width="16" Margin="0,0,0,3"/>
-                        <TextBlock Text="{DynamicResource lbl_Brand}" FontSize="10" FontWeight="Bold"/>
-                    </StackPanel>
-                </Button>
-                <Button Style="{StaticResource FooterButtonStyle}" Command="{Binding NavEquipmentAnalysis}">
-                    <StackPanel>
-                        <fa:ImageAwesome Icon="Wrench" Foreground="White" Width="16" Margin="0,0,0,3"/>
-                        <TextBlock Text="{DynamicResource ph_Equipment}" FontSize="10"/>
-                    </StackPanel>
-                </Button>
-            </UniformGrid>
-        </Border>
     </Grid>
 </Page>

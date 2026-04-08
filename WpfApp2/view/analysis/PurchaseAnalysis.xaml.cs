@@ -84,11 +84,18 @@ namespace WpfApp2.view.analysis
             while (source != null)
             {
                 if (source == parent) return true;
-                source = VisualTreeHelper.GetParent(source);
+
+                if (source is Visual || source is System.Windows.Media.Media3D.Visual3D)
+                {
+                    source = VisualTreeHelper.GetParent(source);
+                }
+                else
+                {
+                    source = LogicalTreeHelper.GetParent(source);
+                }
             }
             return false;
         }
-
         #endregion
 
         #region ĐIỀU KHIỂN BÀN PHÍM VÀ CLICK ITEM

@@ -89,14 +89,13 @@
             <RowDefinition Height="65"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="65"/>
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0" Background="{StaticResource MainNavy}">
             <DockPanel Margin="20,0">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <fa:ImageAwesome Icon="Wrench" Foreground="White" Width="18" Margin="0,0,12,0"/>
-                    <TextBlock Text="{DynamicResource menu_Inquiry}" Foreground="White" FontSize="15" FontWeight="Medium"/>
+                    <TextBlock Text="{DynamicResource menu_Inquiry_Equipment}" Foreground="White" FontSize="15" FontWeight="Medium"/>
                 </StackPanel>
             </DockPanel>
         </Border>
@@ -187,8 +186,15 @@
                     <Border Style="{StaticResource CardStyle}" Height="280" Padding="12">
                         <DockPanel>
                             <TextBlock DockPanel.Dock="Top" Text="{DynamicResource lbl_VendorComparison}" FontWeight="Bold" FontSize="12" Margin="0,0,0,10"/>
-                            <lvc:PieChart Series="{Binding PieSeriesCollection}" LegendLocation="Bottom" InnerRadius="20" 
-                                          DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}"/>
+                            <lvc:PieChart Series="{Binding PieSeriesCollection}" 
+                                          LegendLocation="None" 
+                                          InnerRadius="20" 
+                                          DisableAnimations="True" 
+                                          Hoverable="True">
+                                <lvc:PieChart.DataTooltip>
+                                    <lvc:DefaultTooltip BulletSize="10" Background="#2B2B2B" Foreground="White"/>
+                                </lvc:PieChart.DataTooltip>
+                            </lvc:PieChart>
                         </DockPanel>
                     </Border>
 
@@ -326,7 +332,7 @@
             </Border>
         </Grid>
 
-        <Border Grid.Row="4" Background="{StaticResource MainNavy}" Padding="10,5">
+        <!--<Border Grid.Row="4" Background="{StaticResource MainNavy}" Padding="10,5">
             <UniformGrid Columns="4">
                 <Button Style="{StaticResource FooterButtonStyle}" Command="{Binding NavModelAnalysis}">
                     <StackPanel>
@@ -353,6 +359,6 @@
                     </StackPanel>
                 </Button>
             </UniformGrid>
-        </Border>
+        </Border>-->
     </Grid>
 </Page>

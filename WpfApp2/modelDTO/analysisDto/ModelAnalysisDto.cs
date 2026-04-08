@@ -13,6 +13,7 @@ namespace WpfApp2.modelDTO.analysysDto
         public decimal MinPrice { get; set; }
         public decimal MaxPrice { get; set; }
         public decimal AvgPrice { get; set; }
+        public int TotalRecord { get; set; }
         public string LastVendorName { get; set; }
         public List<PurchaseDto> Items { get; set; } = new();
         public List<AnalysisShareDto> VendorComparison { get; set; } = new();
@@ -23,7 +24,7 @@ namespace WpfApp2.modelDTO.analysysDto
         public int CategoryId { get; set; }
         public int CurrentcyId { get; set; }
         public string CurrencyCode { get; set; }
-
+        public string FullName { get; set; }
         public string CurrencyName { get; set; }
         // Giá
         public double LatestPrice { get; set; }
