@@ -73,7 +73,8 @@
     <sys:String x:Key="menu_Inquiry_Vendor">Truy vấn / Phân tích nhà cung cấp</sys:String>
     <sys:String x:Key="menu_Inquiry_Equipment">Truy vấn / Phân tích thiết bị</sys:String>
     <sys:String x:Key="menu_Inquiry_Category">Truy vấn / Phân tích danh mục</sys:String>
-
+    <sys:String x:Key="menu_Inquiry_Model">Phân tích / Tra cứu Model</sys:String>
+    
     <sys:String x:Key="menu_Inquiry">Tra cứu / Phân tích</sys:String>
     <sys:String x:Key="menu_DataManagement">Quản lý dữ liệu</sys:String>
     <sys:String x:Key="menu_PriceManagement">Quản lý giá</sys:String>

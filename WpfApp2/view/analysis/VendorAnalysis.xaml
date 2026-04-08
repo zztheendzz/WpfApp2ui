@@ -86,7 +86,7 @@
             <DockPanel Margin="20,0">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <fa:ImageAwesome Icon="Industry" Foreground="White" Width="18" Margin="0,0,12,0"/>
-                    <TextBlock Text="{DynamicResource menu_Inquiry}" Foreground="White" FontSize="15" FontWeight="Medium"/>
+                    <TextBlock Text="{DynamicResource menu_Inquiry_Vendor}" Foreground="White" FontSize="15" FontWeight="Medium"/>
                 </StackPanel>
             </DockPanel>
         </Border>

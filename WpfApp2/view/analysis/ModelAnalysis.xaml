@@ -59,7 +59,7 @@
             <DockPanel Margin="20,0">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <fa:ImageAwesome Icon="Cube" Foreground="White" Width="18" Margin="0,0,12,0"/>
-                    <TextBlock Text="{DynamicResource dg_Model}" Foreground="White" FontSize="15" FontWeight="Medium"/>
+                    <TextBlock Text="{DynamicResource menu_Inquiry_Model}" Foreground="White" FontSize="15" FontWeight="Medium"/>
                     <TextBlock Text=" - Analysis &amp; Comparison" Foreground="#88FFFFFF" FontSize="14" Margin="5,0,0,0" VerticalAlignment="Center"/>
                 </StackPanel>
             </DockPanel>

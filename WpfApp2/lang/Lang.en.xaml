@@ -74,7 +74,7 @@
     <sys:String x:Key="menu_Inquiry_Vendor">Vendor Inquiry / Analysis</sys:String>
     <sys:String x:Key="menu_Inquiry_Equipment">Equipment Inquiry / Analysis</sys:String>
     <sys:String x:Key="menu_Inquiry_Category">Category Inquiry / Analysis</sys:String>
-
+    <sys:String x:Key="menu_Inquiry_Model">Model Inquiry / Analysis</sys:String>
 
     <sys:String x:Key="menu_Inquiry">Inquiry / Analysis</sys:String>
     <sys:String x:Key="menu_DataManagement">Data Management</sys:String>
