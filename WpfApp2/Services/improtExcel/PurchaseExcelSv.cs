@@ -59,8 +59,11 @@ namespace WpfApp2.Services.improtExcel
                     // Lấy phần tên sau dấu ":"
                     return cellValue.Replace("Project name:", "").Trim();
                 }
+
             }
-            return "Unknown Project";
+            var dateTime = DateTime.Now.ToString("HH:mm:ss");
+            string rs = "Unknown Project" + dateTime;
+            return rs;
         }
         private int GetOrCreateEquipment(IDbConnection conn, string projectName)
         {
