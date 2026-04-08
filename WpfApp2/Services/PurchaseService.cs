@@ -174,9 +174,9 @@ namespace WpfApp2.Services
 
             string sql = @"
                 INSERT INTO PurchaseHistory
-                (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, CurrencyName, PurchaseDate, Note,CreateAt)
+                (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, CurrencyId, PurchaseDate, Note,CreateAt)
                 VALUES
-                (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @CurrencyName, @PurchaseDate, @Note,@currentTime);
+                (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @CurrencyId, @PurchaseDate, @Note,@currentTime);
                 SELECT last_insert_rowid();
 ";
 
