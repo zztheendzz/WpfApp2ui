@@ -9,63 +9,44 @@ namespace WpfApp2.view.analysis
 {
     public partial class PurchaseAnalysis : Page
     {
+        private bool _clickInsidePopup = false;
+
         public PurchaseAnalysis()
         {
             InitializeComponent();
             this.PreviewMouseDown += OnGlobalMouseDown;
-            // Định dạng hiển thị cho trục Y của CẢ 2 BIỂU ĐỒ
-            // Logic: Chia cho 1.000.000 và thêm hậu tố "Tr"
+
+            // Định dạng hiển thị cho trục Y của BIỂU ĐỒ (VNĐ -> Triệu)
             Func<double, string> trieuFormatter = value => (value / 1000000).ToString("N1") + " Tr";
 
-            // Áp dụng cho biểu đồ Vendor (Bên trái)
-            if (ChartVendor != null && ChartVendor.AxisY.Count > 0)
-            {
-                ChartVendor.AxisY[0].LabelFormatter = trieuFormatter;
-            }
 
-            if (ChartVendor != null && ChartVendor.AxisY.Count > 0)
-            {
-                ChartVendor.AxisY[0].LabelFormatter = trieuFormatter;
-            }
-
-            // Áp dụng cho biểu đồ 2 (Trend)
-            if (ChartTrend != null && ChartTrend.AxisY.Count > 0)
-            {
-                ChartTrend.AxisY[0].LabelFormatter = trieuFormatter;
-            }
         }
 
-        // --- GIỮ NGUYÊN CÁC HÀM XỬ LÝ SEARCH BOX BÊN DƯỚI ---
-
+        #region XỬ LÝ ĐÓNG/MỞ POPUP VÀ LOAD GỢI Ý
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
             if (DataContext is PurchaseAnalysisVm vm && sender is TextBox tb)
             {
                 string type = tb.Tag?.ToString();
+                if (string.IsNullOrEmpty(type)) return;
 
-                // reset popup trước (QUAN TRỌNG)
-                if (type == "M") vm.IsDropDownOpenM = false;
+                // Reset trạng thái popup hiện tại để tránh xung đột
+                CloseAllPopups(vm);
 
+                // Load dữ liệu gợi ý dựa trên Tag (M, V, E, B)
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
                     vm.LoadAllSuggestions(type);
                 }), System.Windows.Threading.DispatcherPriority.Background);
             }
         }
-        private bool _isClickInsidePopup = false;
-
-        private void Popup_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            // 🔥 đánh dấu là đang click trong popup (kể cả scrollbar)
-            _isClickInsidePopup = true;
-        }
 
         private void OnGlobalMouseDown(object sender, MouseButtonEventArgs e)
         {
             if (DataContext is not PurchaseAnalysisVm vm) return;
 
-            // 🔥 nếu click trong popup → bỏ qua
+            // Nếu click vào bên trong Popup (scrollbar, item) thì không đóng
             if (_clickInsidePopup)
             {
                 _clickInsidePopup = false;
@@ -74,39 +55,63 @@ namespace WpfApp2.view.analysis
 
             DependencyObject clicked = e.OriginalSource as DependencyObject;
 
-            if (IsInside(clicked, txtSearchModel))
+            // Nếu click vào chính các TextBox thì không đóng (để GotFocus xử lý)
+            if (IsInside(clicked, txtSearchModel) ||
+                IsInside(clicked, txtSearchVendor) ||
+                IsInside(clicked, txtSearchEquip) ||
+                IsInside(clicked, txtSearchBrand))
                 return;
 
-            vm.IsDropDownOpenM = false;
+            // Click ra ngoài hoàn toàn -> Đóng tất cả popup
+            CloseAllPopups(vm);
         }
+
+        private void PopupChild_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _clickInsidePopup = true;
+        }
+
+        private void CloseAllPopups(PurchaseAnalysisVm vm)
+        {
+            vm.IsDropDownOpenM = false;
+            vm.IsDropDownOpenV = false;
+            vm.IsDropDownOpenE = false;
+            vm.IsDropDownOpenB = false;
+        }
+
         private bool IsInside(DependencyObject source, DependencyObject parent)
         {
             while (source != null)
             {
-                if (source == parent)
-                    return true;
-
+                if (source == parent) return true;
                 source = VisualTreeHelper.GetParent(source);
             }
             return false;
         }
-        private bool _clickInsidePopup = false;
 
-        private void PopupChild_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            // 🔥 bất kỳ click nào trong popup (kể cả scrollbar)
-            _clickInsidePopup = true;
-        }
+        #endregion
+
+        #region ĐIỀU KHIỂN BÀN PHÍM VÀ CLICK ITEM
+
         private void SearchBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             var textBox = sender as TextBox;
-            if (textBox == null || textBox.Tag == null) return;
+            if (textBox == null) return;
 
             var vm = this.DataContext as PurchaseAnalysisVm;
             if (vm == null) return;
 
-            string type = textBox.Tag.ToString();
+            // Lấy Type từ Tag, nếu Tag null (do mình vừa sửa XAML) thì mặc định check theo tên Name
+            string type = textBox.Tag?.ToString();
+            if (string.IsNullOrEmpty(type))
+            {
+                if (textBox.Name == "txtSearchModel") type = "M";
+                else if (textBox.Name == "txtSearchVendor") type = "V";
+                else if (textBox.Name == "txtSearchEquip") type = "E";
+                else if (textBox.Name == "txtSearchBrand") type = "B";
+            }
 
+            // Xác định ListBox tương ứng để điều khiển
             ListBox activeList = type switch
             {
                 "M" => lstModel,
@@ -123,12 +128,19 @@ namespace WpfApp2.view.analysis
                 case Key.Down:
                     if (activeList.Items.Count > 0)
                     {
+                        // Mở popup nếu nó đang đóng khi nhấn phím xuống
+                        if (type == "M") vm.IsDropDownOpenM = true;
+                        else if (type == "V") vm.IsDropDownOpenV = true;
+                        else if (type == "E") vm.IsDropDownOpenE = true;
+                        else if (type == "B") vm.IsDropDownOpenB = true;
+
                         int nextIndex = activeList.SelectedIndex + 1;
                         activeList.SelectedIndex = (nextIndex >= activeList.Items.Count) ? 0 : nextIndex;
                         activeList.ScrollIntoView(activeList.SelectedItem);
                     }
                     e.Handled = true;
                     break;
+
                 case Key.Up:
                     if (activeList.Items.Count > 0)
                     {
@@ -138,19 +150,19 @@ namespace WpfApp2.view.analysis
                     }
                     e.Handled = true;
                     break;
+
                 case Key.Enter:
                     if (activeList.SelectedItem != null)
                     {
                         vm.ConfirmSelection(type);
+                        // Chuyển focus sang control tiếp theo
                         textBox.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
                         e.Handled = true;
                     }
                     break;
+
                 case Key.Escape:
-                    if (type == "M") vm.IsDropDownOpenM = false;
-                    else if (type == "V") vm.IsDropDownOpenV = false;
-                    else if (type == "E") vm.IsDropDownOpenE = false;
-                    else if (type == "B") vm.IsDropDownOpenB = false;
+                    CloseAllPopups(vm);
                     e.Handled = true;
                     break;
             }
@@ -158,10 +170,9 @@ namespace WpfApp2.view.analysis
 
         private void OnListBoxItemClick(object sender, MouseButtonEventArgs e)
         {
-            var vm = this.DataContext as PurchaseAnalysisVm;
+            var vm = DataContext as PurchaseAnalysisVm;
             if (vm == null) return;
 
-            // Tìm ListBoxItem từ vị trí click
             DependencyObject dep = (DependencyObject)e.OriginalSource;
             while (dep != null && !(dep is ListBoxItem))
                 dep = VisualTreeHelper.GetParent(dep);
@@ -171,29 +182,34 @@ namespace WpfApp2.view.analysis
                 var listBox = ItemsControl.ItemsControlFromItemContainer(item) as ListBox;
                 if (listBox == null) return;
 
-                // QUAN TRỌNG: Ép ListBox chọn đúng item vừa click chuột vào
                 listBox.SelectedItem = item.DataContext;
 
-                string type = (listBox.Name == "lstModel") ? "M" :
-                              (listBox.Name == "lstVendor") ? "V" :
-                                (listBox.Name == "lstEquip") ? "E" : "B";
-                // Thực thi logic xác nhận lựa chọn trong ViewModel
+                string type = listBox.Name switch
+                {
+                    "lstModel" => "M",
+                    "lstVendor" => "V",
+                    "lstEquip" => "E",
+                    "lstBrand" => "B",
+                    _ => ""
+                };
+
                 vm.ConfirmSelection(type);
 
-                // Trả lại focus cho TextBox tương ứng để người dùng có thể gõ tiếp hoặc dùng phím mũi tên
-                if (type == "M") txtSearchModel.Focus();
-                else if (type == "V") txtSearchVendor.Focus();
-                else if (type == "E") txtSearchEquip.Focus();
-                else if (type == "B") txtSearchBrand.Focus();
-                // Đánh dấu là đã xử lý xong để tránh các sự kiện bubbling khác
+                // Trả focus về TextBox tương ứng
+                Control targetBox = type switch
+                {
+                    "M" => txtSearchModel,
+                    "V" => txtSearchVendor,
+                    "E" => txtSearchEquip,
+                    "B" => txtSearchBrand,
+                    _ => null
+                };
+                targetBox?.Focus();
+
                 e.Handled = true;
             }
         }
 
-        private void txtSearchModel_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            popupModel.IsOpen = true;
-
-        }
+        #endregion
     }
 }
