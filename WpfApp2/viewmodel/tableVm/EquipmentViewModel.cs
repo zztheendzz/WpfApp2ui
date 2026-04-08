@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq; // Thêm Linq để dùng FirstOrDefault
+using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows; // Để dùng MessageBox
+using System.Windows;
 using System.Windows.Input;
 using WpfApp2.command;
 using WpfApp2.modelDTO;
@@ -16,7 +15,6 @@ namespace WpfApp2.viewmodel.tableVm
 {
     public class EquipmentViewModel : INotifyPropertyChanged
     {
-        // Khởi tạo service dùng chung cho cả class
         private readonly EquipmentService _equipmentService = new EquipmentService();
 
         public ICommand EditCommand { get; set; }
@@ -30,8 +28,21 @@ namespace WpfApp2.viewmodel.tableVm
             set { _equipments = value; OnPropertyChanged(); }
         }
 
+        private string _searchText;
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                _searchText = value;
+                OnPropertyChanged();
+                ApplySearch(); // lọc lại dữ liệu mỗi khi thay đổi
+            }
+        }
+
         public EquipmentViewModel()
         {
+            Equipments = new ObservableCollection<EquipmentDto>();
             LoadData();
 
             EditCommand = new RelayCommand(x => Edit((EquipmentDto)x));
@@ -49,7 +60,29 @@ namespace WpfApp2.viewmodel.tableVm
             catch (DatabaseLockedException)
             {
                 MessageBox.Show("Không thể tải danh sách thiết bị do cơ sở dữ liệu đang bận.", "Thông báo");
-                Equipments = new ObservableCollection<EquipmentDto>(); // Tránh null
+                Equipments = new ObservableCollection<EquipmentDto>();
+            }
+        }
+
+        private void ApplySearch()
+        {
+            try
+            {
+                var data = _equipmentService.GetEquipmentDto();
+
+                if (!string.IsNullOrWhiteSpace(SearchText))
+                {
+                    data = data
+                        .Where(e => e.EquipmentName != null &&
+                                    e.EquipmentName.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                        .ToList();
+                }
+
+                Equipments = new ObservableCollection<EquipmentDto>(data);
+            }
+            catch (DatabaseLockedException)
+            {
+                MessageBox.Show("Không thể tải dữ liệu do DB bị khóa.", "Thông báo");
             }
         }
 
@@ -57,7 +90,7 @@ namespace WpfApp2.viewmodel.tableVm
         {
             if (equipment == null) return;
 
-            var result = MessageBox.Show("Bạn có chắc chắn muốn xóa?", "Xác nhận", MessageBoxButton.YesNo);
+            var result = MessageBox.Show("Bạn có chắc chắn muốn xóa thiết bị này?", "Xác nhận", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
                 try
@@ -67,7 +100,7 @@ namespace WpfApp2.viewmodel.tableVm
                 }
                 catch (DatabaseLockedException)
                 {
-                    MessageBox.Show("Hệ thống đang bận xử lý tác vụ khác, chưa thể xóa ngay lúc này.", "Lỗi SQLite");
+                    MessageBox.Show("Hệ thống đang bận xử lý tác vụ khác, chưa thể xóa ngay lúc này.", "Lỗi");
                 }
             }
         }
@@ -82,12 +115,11 @@ namespace WpfApp2.viewmodel.tableVm
                 try
                 {
                     _equipmentService.Edit(equipment);
-                    // Dữ liệu trong List tự cập nhật nhờ Binding, nhưng có thể load lại nếu cần đồng bộ chuẩn 100%
                 }
                 catch (DatabaseLockedException)
                 {
                     MessageBox.Show("Không thể lưu thay đổi. Cơ sở dữ liệu đang bị khóa.", "Lỗi");
-                    LoadData(); // Quay lại dữ liệu cũ từ DB để tránh sai lệch UI
+                    LoadData();
                 }
             }
         }
@@ -101,12 +133,9 @@ namespace WpfApp2.viewmodel.tableVm
             {
                 try
                 {
-                    // Thực hiện thêm mới
                     int newId = _equipmentService.Add(equipment);
-
-                    // Lấy lại object đầy đủ (có kèm thông tin từ các bảng Join nếu có)
                     var newItem = _equipmentService.GetEquipmentDto()
-                                                 .FirstOrDefault(x => x.Id == newId);
+                                                   .FirstOrDefault(x => x.Id == newId);
 
                     if (newItem != null)
                     {

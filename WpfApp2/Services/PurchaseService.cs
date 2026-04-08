@@ -24,14 +24,14 @@ namespace WpfApp2.Services
             var sql = new StringBuilder(@"
                 SELECT 
                     p.Id,
-                    m.ModelCode,
+                    m.ModelName AS ModelName,
                     v.VendorName,
                     e.EquipmentName,
                     c.CategoryName,
                     p.Quantity,
                     p.UnitPrice,
                     p.Quantity * p.UnitPrice AS TotalPrice,
-                    p.CurrencyName,
+                    p.CurrencyId,
                     p.PurchaseDate,
                     p.Note
                 FROM PurchaseHistory p
@@ -91,9 +91,12 @@ namespace WpfApp2.Services
                         p.Note,
                         p.CreateAt,
 
+                        
+
+
                         p.ModelId,
                         m.ModelName,
-
+                        m.ModelCode,
                         p.VendorId,
                         v.VendorName,
 
@@ -151,7 +154,7 @@ namespace WpfApp2.Services
                     EquipmentId = @EquipmentId,
                     Quantity = @Quantity,
                     UnitPrice = @UnitPrice,
-                    CurrencyName = @CurrencyName,
+
                     PurchaseDate = @PurchaseDate,
                     Note = @Note
                 WHERE Id = @Id

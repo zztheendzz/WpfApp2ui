@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq; // Cần thiết để dùng FirstOrDefault
+using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows; // Để dùng MessageBox
+using System.Windows;
 using System.Windows.Input;
 using WpfApp2.command;
 using WpfApp2.modelDTO;
@@ -16,7 +15,6 @@ namespace WpfApp2.viewmodel.tableVm
 {
     public class ModelViewModel : INotifyPropertyChanged
     {
-        // Khai báo Service dùng chung để tránh khởi tạo nhiều lần
         private readonly ModelService _modelService = new ModelService();
 
         public ICommand EditCommand { get; set; }
@@ -30,8 +28,21 @@ namespace WpfApp2.viewmodel.tableVm
             set { _models = value; OnPropertyChanged(); }
         }
 
+        private string _searchText;
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                _searchText = value;
+                OnPropertyChanged();
+                ApplySearch(); // lọc lại dữ liệu mỗi khi thay đổi
+            }
+        }
+
         public ModelViewModel()
         {
+            Models = new ObservableCollection<ModelDto>();
             LoadData();
 
             EditCommand = new RelayCommand(x => Edit((ModelDto)x));
@@ -49,7 +60,29 @@ namespace WpfApp2.viewmodel.tableVm
             catch (DatabaseLockedException)
             {
                 MessageBox.Show("Dữ liệu Models hiện đang bị khóa bởi tiến trình khác. Vui lòng thử lại sau.", "Thông báo");
-                Models = new ObservableCollection<ModelDto>(); // Tránh lỗi null cho UI
+                Models = new ObservableCollection<ModelDto>();
+            }
+        }
+
+        private void ApplySearch()
+        {
+            try
+            {
+                var data = _modelService.GetModelDTO();
+
+                if (!string.IsNullOrWhiteSpace(SearchText))
+                {
+                    data = data
+                        .Where(m => m.ModelCode != null &&
+                                    m.ModelCode.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                        .ToList();
+                }
+
+                Models = new ObservableCollection<ModelDto>(data);
+            }
+            catch (DatabaseLockedException)
+            {
+                MessageBox.Show("Không thể tải dữ liệu do DB bị khóa.", "Thông báo");
             }
         }
 
@@ -57,7 +90,7 @@ namespace WpfApp2.viewmodel.tableVm
         {
             if (model == null) return;
 
-            var confirm = MessageBox.Show($"Bạn có chắc chắn muốn xóa Model này?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var confirm = MessageBox.Show("Bạn có chắc chắn muốn xóa Model này?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (confirm == MessageBoxResult.Yes)
             {
                 try
@@ -82,13 +115,11 @@ namespace WpfApp2.viewmodel.tableVm
                 try
                 {
                     _modelService.Edit(model);
-                    // Thông thường không cần OnPropertyChanged(nameof(Models)) ở đây 
-                    // vì object model trong danh sách đã được cập nhật tham chiếu
                 }
                 catch (DatabaseLockedException)
                 {
                     MessageBox.Show("Không thể lưu thay đổi cho Model vì Database bị khóa.", "Lỗi");
-                    LoadData(); // Reload để đồng bộ lại dữ liệu gốc từ DB
+                    LoadData();
                 }
             }
         }
@@ -104,9 +135,8 @@ namespace WpfApp2.viewmodel.tableVm
                 {
                     int newId = _modelService.Add(model);
 
-                    // Lấy lại data đã JOIN hoàn chỉnh (quan trọng đối với Model thường có BrandName, v.v.)
                     var newItem = _modelService.GetModelDTO()
-                                             .FirstOrDefault(x => x.Id == newId);
+                                               .FirstOrDefault(x => x.Id == newId);
 
                     if (newItem != null)
                     {

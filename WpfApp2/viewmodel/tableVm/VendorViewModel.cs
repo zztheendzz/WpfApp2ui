@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -14,7 +15,6 @@ namespace WpfApp2.viewmodel.tableVm
 {
     public class VendorViewModel : INotifyPropertyChanged
     {
-        // Sử dụng một instance service duy nhất
         private readonly VendorService _vendorService = new VendorService();
 
         public ICommand EditCommand { get; set; }
@@ -28,8 +28,21 @@ namespace WpfApp2.viewmodel.tableVm
             set { _vendors = value; OnPropertyChanged(); }
         }
 
+        private string _searchText;
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                _searchText = value;
+                OnPropertyChanged();
+                ApplySearch(); // lọc lại dữ liệu mỗi khi thay đổi
+            }
+        }
+
         public VendorViewModel()
         {
+            Vendors = new ObservableCollection<VendorDto>();
             LoadData();
 
             EditCommand = new RelayCommand(x => Edit((VendorDto)x));
@@ -48,6 +61,28 @@ namespace WpfApp2.viewmodel.tableVm
             {
                 MessageBox.Show("Cơ sở dữ liệu đang bận, không thể tải danh sách nhà cung cấp.", "Thông báo");
                 Vendors = new ObservableCollection<VendorDto>();
+            }
+        }
+
+        private void ApplySearch()
+        {
+            try
+            {
+                var data = _vendorService.GetVendorDTO();
+
+                if (!string.IsNullOrWhiteSpace(SearchText))
+                {
+                    data = data
+                        .Where(v => v.VendorName != null &&
+                                    v.VendorName.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                        .ToList();
+                }
+
+                Vendors = new ObservableCollection<VendorDto>(data);
+            }
+            catch (DatabaseLockedException)
+            {
+                MessageBox.Show("Không thể tải dữ liệu do DB bị khóa.", "Thông báo");
             }
         }
 
@@ -82,12 +117,11 @@ namespace WpfApp2.viewmodel.tableVm
                 try
                 {
                     _vendorService.Edit(vendor);
-                    // Dữ liệu tự cập nhật trên UI thông qua Binding vì cùng tham chiếu object
                 }
                 catch (DatabaseLockedException)
                 {
                     MessageBox.Show("Lỗi: Cơ sở dữ liệu bị khóa, không thể lưu thay đổi.", "Thông báo");
-                    LoadData(); // Tải lại để đảm bảo dữ liệu trên UI khớp với DB
+                    LoadData();
                 }
             }
         }

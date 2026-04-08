@@ -28,11 +28,11 @@
                     Command="{Binding AddCommand}"
                     Margin="0,0,10,5"/>
 
-            <!--<TextBox Width="200"
+            <TextBox Width="200"
                      Margin="10,0,10,5"
                      VerticalContentAlignment="Center"
                      materialDesign:HintAssist.Hint="{DynamicResource ph_SearchHint}"
-                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>-->
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
 
             <ListBox Width="150"
                      MaxHeight="100"
@@ -69,7 +69,7 @@
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Width="*" Binding="{Binding EquipmentName}">
+                    <DataGridTextColumn Width="Auto" Binding="{Binding EquipmentName}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource dg_Equipment}"/>
                         </DataGridTextColumn.Header>

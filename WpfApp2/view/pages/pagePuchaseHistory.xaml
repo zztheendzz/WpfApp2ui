@@ -75,9 +75,15 @@
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Width="Auto" MinWidth="110" Binding="{Binding ModelName}">
+                    <DataGridTextColumn Width="Auto" MinWidth="50" Binding="{Binding ModelName}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource dg_Model}"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="Auto" Binding="{Binding ModelCode}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource dg_ModelCode}"/>
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
 
@@ -87,7 +93,7 @@
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Width="Auto" MinWidth="110" Binding="{Binding EquipmentName}">
+                    <DataGridTextColumn Width="Auto"  Binding="{Binding EquipmentName}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource dg_Equipment}"/>
                         </DataGridTextColumn.Header>
@@ -123,7 +129,7 @@
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Width="*" Binding="{Binding Note}">
+                    <DataGridTextColumn Width="Auto" Binding="{Binding Note}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource dg_Note}"/>
                         </DataGridTextColumn.Header>

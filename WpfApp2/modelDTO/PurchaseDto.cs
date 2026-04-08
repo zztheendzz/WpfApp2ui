@@ -18,7 +18,7 @@ namespace WpfApp2.modelDTO
         public string BrandName { get; set; }
         public int EquipmentId { get; set; }
         public string EquipmentName { get; set; }
-
+        public int CategoryId { get; set; }
         public bool IsActive { get; set; }
 
         public int Quantity { get; set; }

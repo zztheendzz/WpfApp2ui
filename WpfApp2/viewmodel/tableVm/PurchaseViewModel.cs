@@ -93,7 +93,7 @@ namespace WpfApp2.viewmodel.tableVm
             if (obj is not PurchaseDto item) return false;
 
             if (!string.IsNullOrWhiteSpace(SearchText))
-                if (item.ModelName == null || !item.ModelName.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
+                if (item.ModelCode == null || !item.ModelCode.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
                     return false;
 
             return true;
@@ -151,7 +151,7 @@ namespace WpfApp2.viewmodel.tableVm
                 try
                 {
                     _purchaseService.Edit(purchase);
-                    LoadData(); // Load lại để đảm bảo các thông tin Join (ModelName, VendorName) chính xác
+                    LoadInitialData(); // Load lại để đảm bảo các thông tin Join (ModelName, VendorName) chính xác
                 }
                 catch (DatabaseLockedException)
                 {

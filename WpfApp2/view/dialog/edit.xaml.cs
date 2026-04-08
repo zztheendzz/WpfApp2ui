@@ -20,7 +20,7 @@ namespace WpfApp2.view.dialog
             { "VendorId", "VendorName" },
             { "EquipmentId", "EquipmentName" },
             { "UserId", "UserName" },
-            { "CurrencyCode", "Name" }
+            { "CurrencyId", "CurrencyName" }
         };
 
         public edit(object model)
@@ -40,9 +40,10 @@ namespace WpfApp2.view.dialog
                 // ❌ bỏ field không cần
                 if (prop.PropertyType == typeof(bool)) continue;
                 if (prop.Name == "Id") continue;
-                //if (prop.Name == "UserName") continue;
+                if (prop.Name == "UserName") continue;
+                if (prop.Name == "FullName") continue;
                 if (prop.Name == "CreateAt") continue;
-
+                if (prop.Name == "CurrencyCode") continue;
 
                 // ❌ bỏ Name nếu có Id tương ứng
                 if (prop.Name.EndsWith("Id"))

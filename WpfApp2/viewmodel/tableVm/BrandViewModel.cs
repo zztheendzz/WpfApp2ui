@@ -1,5 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using WpfApp2.command;
@@ -8,12 +10,12 @@ using WpfApp2.Services;
 using WpfApp2.Services.exception;
 using WpfApp2.view.dialog;
 
-
 namespace WpfApp2.viewmodel.tableVm
 {
     public class BrandViewModel : INotifyPropertyChanged
     {
-        private readonly BrandService _brandService = new BrandService(); // Khởi tạo một lần để dùng chung
+        private readonly BrandService _brandService = new BrandService();
+
         public ICommand EditCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
         public ICommand AddCommand { get; set; }
@@ -25,12 +27,21 @@ namespace WpfApp2.viewmodel.tableVm
             set { _brands = value; OnPropertyChanged(); }
         }
 
+        private string _searchText;
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                _searchText = value;
+                OnPropertyChanged();
+                ApplySearch(); // mỗi lần thay đổi search text thì lọc lại dữ liệu
+            }
+        }
+
         public BrandViewModel()
         {
-            // Khởi tạo collection trống trước
             Brands = new ObservableCollection<BrandDto>();
-
-            // Gọi hàm load dữ liệu
             LoadData();
 
             EditCommand = new RelayCommand(x => Edit((BrandDto)x));
@@ -48,6 +59,28 @@ namespace WpfApp2.viewmodel.tableVm
             catch (DatabaseLockedException)
             {
                 System.Windows.MessageBox.Show("Dữ liệu đang bận xử lý, vui lòng mở lại cửa sổ sau giây lát.", "Thông báo");
+            }
+        }
+
+        private void ApplySearch()
+        {
+            try
+            {
+                var data = _brandService.GetBrandDTO();
+
+                if (!string.IsNullOrWhiteSpace(SearchText))
+                {
+                    data = data
+                        .Where(b => b.BrandName != null &&
+                                    b.BrandName.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                        .ToList();
+                }
+
+                Brands = new ObservableCollection<BrandDto>(data);
+            }
+            catch (DatabaseLockedException)
+            {
+                System.Windows.MessageBox.Show("Không thể tải dữ liệu do DB bị khóa.", "Thông báo");
             }
         }
 
@@ -74,12 +107,11 @@ namespace WpfApp2.viewmodel.tableVm
                 try
                 {
                     _brandService.Edit(brand);
-                    // OnPropertyChanged(nameof(Brands)); // Thường không cần vì BrandDto đã được update ref
                 }
                 catch (DatabaseLockedException)
                 {
                     System.Windows.MessageBox.Show("Lưu thay đổi thất bại do DB bị khóa.", "Lỗi");
-                    LoadData(); // Load lại để tránh sai lệch dữ liệu trên giao diện
+                    LoadData();
                 }
             }
         }
@@ -103,6 +135,7 @@ namespace WpfApp2.viewmodel.tableVm
                 }
             }
         }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
