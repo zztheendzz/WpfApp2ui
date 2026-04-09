@@ -112,4 +112,7 @@
     <sys:String x:Key="lang_EN">영어</sys:String>
     <sys:String x:Key="lang_KR">한국어</sys:String>
 
+    <sys:String x:Key="title_MatrixComparison">모델 - 업체별 가격 비교 매트릭스</sys:String>
+    <sys:String x:Key="btn_ExportExcel">엑셀 내보내기</sys:String>
+
 </ResourceDictionary>

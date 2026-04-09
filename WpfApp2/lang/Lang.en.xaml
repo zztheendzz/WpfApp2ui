@@ -91,11 +91,11 @@
     <sys:String x:Key="menu_Excel">Excel</sys:String>
     <sys:String x:Key="menu_Settings">Settings</sys:String>
 
-    <sys:String x:Key="sub_PurchaseAnalysis">Purchase Inquiry / Analysis</sys:String>
-    <sys:String x:Key="sub_ModelAnalysis">Model Price Inquiry / Analysis</sys:String>
-    <sys:String x:Key="sub_VendorAnalysis">Vendor Inquiry / Analysis</sys:String>
-    <sys:String x:Key="sub_BrandAnalysis">Brand Inquiry / Analysis</sys:String>
-    <sys:String x:Key="sub_EquipmentAnalysis">Equipment Inquiry / Analysis</sys:String>
+    <sys:String x:Key="sub_PurchaseAnalysis">Purchase Analysis</sys:String>
+    <sys:String x:Key="sub_ModelAnalysis">Model Price Analysis</sys:String>
+    <sys:String x:Key="sub_VendorAnalysis">Vendor Analysis</sys:String>
+    <sys:String x:Key="sub_BrandAnalysis">Brand Analysis</sys:String>
+    <sys:String x:Key="sub_EquipmentAnalysis">Equipment Analysis</sys:String>
     <sys:String x:Key="sub_Model">Model Management</sys:String>
     <sys:String x:Key="sub_Brand">Brand Management</sys:String>
     <sys:String x:Key="sub_Vendor">Vendor Management</sys:String>
@@ -113,5 +113,11 @@
     <sys:String x:Key="lang_VN">Vietnamese</sys:String>
     <sys:String x:Key="lang_EN">English</sys:String>
     <sys:String x:Key="lang_KR">Korean</sys:String>
+
+
+
+    <sys:String x:Key="title_MatrixComparison">Model - Vendor Price Comparison Matrix</sys:String>
+    <sys:String x:Key="btn_ExportExcel">Export Excel</sys:String>
+
 
 </ResourceDictionary>

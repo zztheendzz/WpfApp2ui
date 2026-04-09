@@ -113,4 +113,6 @@
     <sys:String x:Key="lang_EN">Tiếng Anh</sys:String>
     <sys:String x:Key="lang_KR">Tiếng Hàn</sys:String>
 
+    <sys:String x:Key="btn_ExportExcel">Xuất Excel</sys:String>
+    <sys:String x:Key="title_MatrixComparison">Ma trận so sánh giá Model - Nhà cung cấp</sys:String>
 </ResourceDictionary>
