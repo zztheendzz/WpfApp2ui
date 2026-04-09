@@ -6,24 +6,29 @@
       xmlns:local="clr-namespace:WpfApp2.view.analysis"
       xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
       xmlns:fa="http://schemas.fontawesome.io/icons/"
-      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       mc:Ignorable="d" 
-      d:DesignHeight="700" d:DesignWidth="1100"
+      d:DesignHeight="800" d:DesignWidth="1200"
       Title="BrandAnalysis"
       TextOptions.TextFormattingMode="Display"
-      RenderOptions.EdgeMode="Aliased">
+      RenderOptions.EdgeMode="Aliased"
+      RenderOptions.BitmapScalingMode="LowQuality">
 
     <Page.Resources>
         <SolidColorBrush x:Key="MainNavy" Color="#162D46"/>
         <SolidColorBrush x:Key="SubBlue" Color="#254D76"/>
         <SolidColorBrush x:Key="AccentBlue" Color="#3A75B0"/>
-        <DropShadowEffect x:Key="CommonShadow" BlurRadius="10" ShadowDepth="1" Opacity="0.1"/>
 
         <Style x:Key="CardStyle" TargetType="Border">
             <Setter Property="Background" Value="White"/>
             <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Margin" Value="8"/>
-            <Setter Property="Effect" Value="{StaticResource CommonShadow}"/>
+            <Setter Property="Margin" Value="6"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.1"/>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style TargetType="DataGrid">
@@ -35,6 +40,9 @@
             <Setter Property="CanUserAddRows" Value="False"/>
             <Setter Property="AutoGenerateColumns" Value="False"/>
             <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
+            <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
+            <Setter Property="EnableRowVirtualization" Value="True"/>
         </Style>
 
         <Style TargetType="DataGridColumnHeader">
@@ -45,41 +53,14 @@
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
             <Setter Property="BorderBrush" Value="#E5E7EB"/>
         </Style>
-
-        <Style x:Key="FooterButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#44FFFFFF"/>
-            <Setter Property="Margin" Value="6,4"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#22FFFFFF"/>
-                            </Trigger>
-                            <Trigger Property="Tag" Value="Active">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource AccentBlue}"/>
-                                <Setter TargetName="border" Property="BorderThickness" Value="0"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Page.Resources>
 
     <Grid Background="#F0F2F5">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="65"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0" Background="{StaticResource MainNavy}">
@@ -93,23 +74,17 @@
 
         <Border Grid.Row="1" Background="White" BorderBrush="#DDD" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
-
                 <StackPanel Margin="0,0,15,0">
                     <TextBlock Text="{DynamicResource lbl_Brand}" FontSize="10" Foreground="Gray"/>
                     <Grid>
-                        <TextBox x:Name="TxtSearch" Width="220" Height="30" VerticalContentAlignment="Center" Padding="5,0,25,0"
+                        <TextBox x:Name="TxtSearch" Width="250" Height="30" VerticalContentAlignment="Center" Padding="5,0,25,0"
                                  Text="{Binding GlobalSearchText, UpdateSourceTrigger=PropertyChanged}"
                                  PreviewKeyDown="SearchBox_PreviewKeyDown"/>
-
                         <fa:ImageAwesome Icon="Search" Foreground="#CCC" Width="12" HorizontalAlignment="Right" Margin="0,0,8,0" IsHitTestVisible="False"/>
-
                         <Popup IsOpen="{Binding IsSearchDropDownOpen}" PlacementTarget="{Binding ElementName=TxtSearch}" StaysOpen="False" AllowsTransparency="True">
-                            <Border Background="White" BorderBrush="#DDD" BorderThickness="1" Width="220" MaxHeight="300">
-                                <ListBox x:Name="LstSuggestions" 
-                                         ItemsSource="{Binding SearchSuggestions}" 
-                                         SelectedItem="{Binding SelectedSearchResult}"
-                                         DisplayMemberPath="Text" BorderThickness="0"
-                                         PreviewMouseLeftButtonDown="OnListBoxItemClick">
+                            <Border Background="White" BorderBrush="#DDD" BorderThickness="1" Width="250" MaxHeight="300">
+                                <ListBox x:Name="LstSuggestions" ItemsSource="{Binding SearchSuggestions}" SelectedItem="{Binding SelectedSearchResult}"
+                                         DisplayMemberPath="Text" BorderThickness="0" PreviewMouseLeftButtonDown="OnListBoxItemClick">
                                     <ListBox.ItemContainerStyle>
                                         <Style TargetType="ListBoxItem">
                                             <Setter Property="Padding" Value="8,5"/>
@@ -138,63 +113,63 @@
                 </StackPanel>
 
                 <Button Content="{DynamicResource btn_Analyze}" VerticalAlignment="Bottom" Height="30" Margin="10,0,0,2"
-                        Command="{Binding AnalyzeCommand}"
-                        Background="{StaticResource AccentBlue}" Foreground="White" Padding="25,0" BorderThickness="0"/>
+                        Command="{Binding AnalyzeCommand}" Background="{StaticResource AccentBlue}" Foreground="White" Padding="25,0" BorderThickness="0"/>
             </StackPanel>
         </Border>
 
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
-            <Grid Margin="10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="100"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+        <UniformGrid Grid.Row="2" Columns="3" Margin="10,5">
+            <Border Background="{StaticResource SubBlue}" Style="{StaticResource CardStyle}" BorderThickness="0" Padding="15">
+                <StackPanel Orientation="Horizontal">
+                    <fa:ImageAwesome Icon="Money" Foreground="#FFD700" Width="25"/>
+                    <StackPanel Margin="15,0">
+                        <TextBlock Text="{DynamicResource lbl_TotalPurchaseValue}" Foreground="White" Opacity="0.8" FontSize="11"/>
+                        <TextBlock Text="{Binding Analysis.TotalPrice, StringFormat={}{0:N0} VND}" Foreground="White" FontSize="16" FontWeight="Bold"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border Background="{StaticResource SubBlue}" Style="{StaticResource CardStyle}" BorderThickness="0" Padding="15">
+                <StackPanel Orientation="Horizontal">
+                    <fa:ImageAwesome Icon="Truck" Foreground="White" Width="25"/>
+                    <StackPanel Margin="15,0">
+                        <TextBlock Text="{DynamicResource lbl_SupplyCount}" Foreground="White" Opacity="0.8" FontSize="11"/>
+                        <TextBlock Text="{Binding Analysis.TotalTransactions}" Foreground="White" FontSize="16" FontWeight="Bold"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border Background="{StaticResource SubBlue}" Style="{StaticResource CardStyle}" BorderThickness="0" Padding="15">
+                <StackPanel Orientation="Horizontal">
+                    <fa:ImageAwesome Icon="Star" Foreground="#90EE90" Width="25"/>
+                    <StackPanel Margin="15,0">
+                        <TextBlock Text="{DynamicResource dg_Model}" Foreground="White" Opacity="0.8" FontSize="11"/>
+                        <TextBlock Text="{Binding TopModelDisplay}" Foreground="White" FontSize="14" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
 
-                <UniformGrid Grid.Row="0" Columns="3">
-                    <Border Background="{StaticResource SubBlue}" CornerRadius="5" Margin="6">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
-                            <fa:ImageAwesome Icon="Money" Foreground="#FFD700" Width="30"/>
-                            <StackPanel Margin="20,0,0,0">
-                                <TextBlock Text="{DynamicResource lbl_TotalPurchaseValue}" Foreground="White" Opacity="0.8" FontSize="11"/>
-                                <TextBlock Text="{Binding Analysis.TotalPrice, StringFormat={}{0:N0} VND}" Foreground="White" FontSize="18" FontWeight="Bold"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                    <Border Background="{StaticResource SubBlue}" CornerRadius="5" Margin="6">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
-                            <fa:ImageAwesome Icon="Truck" Foreground="White" Width="25"/>
-                            <StackPanel Margin="20,0,0,0">
-                                <TextBlock Text="{DynamicResource lbl_SupplyCount}" Foreground="White" Opacity="0.8" FontSize="11"/>
-                                <TextBlock Text="{Binding Analysis.TotalTransactions}" Foreground="White" FontSize="18" FontWeight="Bold"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                    <Border Background="{StaticResource SubBlue}" CornerRadius="5" Margin="6">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
-                            <fa:ImageAwesome Icon="Star" Foreground="#90EE90" Width="25"/>
-                            <StackPanel Margin="20,0,0,0">
-                                <TextBlock Text="{DynamicResource dg_Model}" Foreground="White" Opacity="0.8" FontSize="11"/>
-                                <TextBlock Text="{Binding TopModelDisplay}" Foreground="White" FontSize="16" FontWeight="Bold"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </UniformGrid>
+        <Grid Grid.Row="3" Margin="10,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="320"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-                <Grid Grid.Row="1" Margin="0,5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1.2*"/>
-                        <ColumnDefinition Width="1*"/>
-                    </Grid.ColumnDefinitions>
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <Border Style="{StaticResource CardStyle}" Height="280" Padding="12">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Top" Text="{DynamicResource lbl_UsageRate}" FontWeight="Bold" FontSize="12" Margin="0,0,0,10"/>
+                            <lvc:PieChart Series="{Binding PieSeriesCollection}" LegendLocation="None" InnerRadius="20" DisableAnimations="True" Hoverable="True">
+                                <lvc:PieChart.DataTooltip>
+                                    <lvc:DefaultTooltip BulletSize="10" Background="#2B2B2B" Foreground="White"/>
+                                </lvc:PieChart.DataTooltip>
+                            </lvc:PieChart>
+                        </DockPanel>
+                    </Border>
 
-                    <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="20">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Text="{DynamicResource lbl_TotalPurchaseValue}" FontWeight="Bold" FontSize="14" Margin="0,0,0,10"/>
-                            <lvc:CartesianChart x:Name="ChartBrandMonthly" Grid.Row="1" Height="220" LegendLocation="None">
+                    <Border Style="{StaticResource CardStyle}" Height="300" Padding="12">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Top" Text="{DynamicResource lbl_TotalPurchaseValue}" FontWeight="Bold" FontSize="12" Margin="0,0,0,10"/>
+                            <lvc:CartesianChart x:Name="ChartBrandMonthly" DisableAnimations="True">
                                 <lvc:CartesianChart.AxisY>
                                     <lvc:Axis Title="VND" MinValue="0"/>
                                 </lvc:CartesianChart.AxisY>
@@ -205,38 +180,73 @@
                                     <lvc:Axis Labels="{Binding MonthlyLabels}"/>
                                 </lvc:CartesianChart.AxisX>
                             </lvc:CartesianChart>
-                        </Grid>
+                        </DockPanel>
                     </Border>
+                </StackPanel>
+            </ScrollViewer>
 
-                    <Border Grid.Column="1" Style="{StaticResource CardStyle}" Padding="20">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Text="{DynamicResource lbl_UsageRate}" FontWeight="Bold" FontSize="14" Margin="0,0,0,10"/>
-                            <lvc:PieChart Grid.Row="1" Series="{Binding PieSeriesCollection}" LegendLocation="Right" InnerRadius="40"/>
-                        </Grid>
-                    </Border>
-                </Grid>
+            <Border Grid.Column="1" Style="{StaticResource CardStyle}" Padding="5">
+                <DataGrid ItemsSource="{Binding Analysis.Items}" SelectionMode="Single" ScrollViewer.CanContentScroll="True" RowHeight="50">
+                    <DataGrid.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="TextWrapping" Value="Wrap"/>
+                        </Style>
+                    </DataGrid.Resources>
 
-                <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="15">
-                    <DockPanel>
-                        <TextBlock DockPanel.Dock="Top" Text="{DynamicResource lbl_PurchasedPartsList}" FontWeight="Bold" FontSize="14" Margin="0,0,0,10"/>
-                        <DataGrid ItemsSource="{Binding Analysis.Items}">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}" Width="auto" Binding="{Binding PurchaseDate, StringFormat='dd/MM/yyyy'}"/>
-                                <DataGridTextColumn Header="{DynamicResource ph_ModelName}" Width="auto" Binding="{Binding ModelName}"/>
-                                <DataGridTextColumn Header="{DynamicResource dg_ModelCode}" Width="auto" Binding="{Binding ModelCode}"/>
-                                <DataGridTextColumn Header="{DynamicResource ph_Equipment}" Width="auto" Binding="{Binding EquipmentName}"/>
-                                <DataGridTextColumn Header="{DynamicResource dg_Quantity}" Width="auto" Binding="{Binding Quantity}"/>
-                                <DataGridTextColumn Header="{DynamicResource dg_UnitPrice}" Width="auto" Binding="{Binding UnitPrice, StringFormat={}{0:N0}}"/>
-                                <DataGridTextColumn Header="{DynamicResource dg_TotalPrice}" Width="auto" Binding="{Binding LineTotal, StringFormat={}{0:N0}}"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </DockPanel>
-                </Border>
-            </Grid>
-        </ScrollViewer>
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}" Width="110" Binding="{Binding PurchaseDate, StringFormat='dd/MM/yyyy'}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="{DynamicResource ph_ModelName}" MinWidth="150" Width="Auto" Binding="{Binding ModelName}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Left"/>
+                                    <Setter Property="Padding" Value="5,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="{DynamicResource ph_Equipment}" Width="Auto" Binding="{Binding EquipmentName}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="{DynamicResource dg_Quantity}" Width="80" Binding="{Binding Quantity}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="{DynamicResource dg_TotalPrice}" Width="130" Binding="{Binding LineTotal, StringFormat={}{0:N0}}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Right"/>
+                                    <Setter Property="Padding" Value="0,0,10,0"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="Foreground" Value="{StaticResource SubBlue}"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </Grid>
     </Grid>
 </Page>
