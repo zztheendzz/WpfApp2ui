@@ -225,6 +225,7 @@ namespace WpfApp2.viewmodel.analysis
             _isInternalChange = false;
         }
 
+
         public void ConfirmSelection(SearchResultDto item = null)
         {
             var target = item ?? SelectedSearchResult;
