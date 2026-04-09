@@ -39,6 +39,8 @@
     <sys:String x:Key="dg_CreateAt">생성일</sys:String>
     <sys:String x:Key="dg_User">작성자</sys:String>
     <sys:String x:Key="dg_ModelCode">모델 코드</sys:String>
+    <sys:String x:Key="dg_Brand">브랜드</sys:String>
+    
 
     <sys:String x:Key="lbl_PriceManagementSystem">단가 관리 시스템</sys:String>
     <sys:String x:Key="lbl_Equipment">설비</sys:String>
@@ -63,6 +65,12 @@
     <sys:String x:Key="lbl_Role">역할:</sys:String>
     <sys:String x:Key="lbl_Password">비밀번호:</sys:String>
     <sys:String x:Key="lbl_Status">상태:</sys:String>
+
+    <sys:String x:Key="title_OrderInfo">주문 정보</sys:String>
+    <sys:String x:Key="lbl_Currency">통화</sys:String>
+    <sys:String x:Key="lbl_Quantity">수량</sys:String>
+    <sys:String x:Key="btn_Cancel">취소</sys:String>
+    <sys:String x:Key="btn_SaveInfo">정보 저장</sys:String>
 
     <sys:String x:Key="msg_ConfirmDelete">이 기록을 삭제하시겠습니까?</sys:String>
     <sys:String x:Key="msg_DeleteSuccess">삭제되었습니다!</sys:String>

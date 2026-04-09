@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp2.view.dialog"
         mc:Ignorable="d"
-        Title="edit" Height="450" Width="800">
+        Title="Edit" Height="450" Width="800">
     <Grid>
         <Grid Margin="20">
 
@@ -21,9 +21,10 @@
             <StackPanel Grid.Row="1"
                 Orientation="Horizontal"
                 HorizontalAlignment="Right">
+                <Button  Content="{StaticResource btn_Save}" Width="80" Margin="5" Click="Save_Click"/>
+                <Button  Content="{StaticResource btn_Cancel}" Width="80" Margin="5" Click="Cancel_Click" IsCancel="True"/>
 
-                <Button Content="Save" Width="80" Margin="5" Click="Save_Click"/>
-                <Button Content="Cancel" Width="80" Margin="5" Click="Cancel_Click"/>
+
 
             </StackPanel>
 

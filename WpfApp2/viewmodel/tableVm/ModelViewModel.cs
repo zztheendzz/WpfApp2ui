@@ -109,12 +109,30 @@ namespace WpfApp2.viewmodel.tableVm
         {
             if (model == null) return;
 
-            var dialog = new edit(model);
+            // 🔥 clone dữ liệu
+            var temp = new ModelDto
+            {
+                Id = model.Id,
+                ModelName = model.ModelName,
+                ModelCode = model.ModelCode,
+                BrandName = model.BrandName
+            };
+
+            var dialog = new edit(temp);
+
             if (dialog.ShowDialog() == true)
             {
                 try
                 {
+                    // 🔥 copy lại khi OK
+                    model.ModelName = temp.ModelName;
+                    model.ModelCode = temp.ModelCode;
+                    model.BrandName = temp.BrandName;
+
                     _modelService.Edit(model);
+
+                    // 🔥 refresh UI
+                    LoadData();
                 }
                 catch (DatabaseLockedException)
                 {

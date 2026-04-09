@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace WpfApp2.view.dialog
 {
@@ -31,6 +32,19 @@ namespace WpfApp2.view.dialog
             GenerateForm(model);
         }
 
+        public ICommand SaveCommand { get; }
+
+        private void OnSave(object obj)
+        {
+            // 🔥 chỉ đóng dialog
+            DialogResult = true;
+        }
+
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true; // 🔥 đây là trigger cho ViewModel
+        }
+
         void GenerateForm(object model)
         {
             var props = model.GetType().GetProperties();
@@ -45,6 +59,7 @@ namespace WpfApp2.view.dialog
                 if (prop.Name == "CreateAt") continue;
                 if (prop.Name == "CurrencyCode") continue;
 
+                string displayName = prop.Name == "LineTotal" ? "Total Price" : SplitName(prop.Name);
                 // ❌ bỏ Name nếu có Id tương ứng
                 if (prop.Name.EndsWith("Id"))
                 {
@@ -121,12 +136,6 @@ namespace WpfApp2.view.dialog
                 });
 
             return textbox;
-        }
-
-        private void Save_Click(object sender, RoutedEventArgs e)
-        {
-            // 🔥 Không xử lý gì → DTO đã có data
-            DialogResult = true;
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

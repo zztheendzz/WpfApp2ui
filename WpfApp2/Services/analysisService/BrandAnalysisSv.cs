@@ -33,6 +33,7 @@ namespace WpfApp2.Services.analysisService
                     p.Id, m.ModelName, m.ModelCode, v.VendorName, e.EquipmentName,
                     c.CurrencyName AS CurrencyName, p.Quantity, p.UnitPrice,
                     (p.Quantity * p.UnitPrice) AS LineTotal,
+                    (p.Quantity * p.UnitPrice) AS TotalPrice,
                     p.PurchaseDate, u.UserName AS FullName, p.Note
                 FROM PurchaseHistory p
                 INNER JOIN Model m ON p.ModelId = m.Id
@@ -65,7 +66,8 @@ namespace WpfApp2.Services.analysisService
                     .Select(g => new AnalysisShareDto
                     {
                         CategoryName = g.Key,
-                        TotalAmount = g.Sum(x => x.LineTotal)
+                        TotalAmount = g.Sum(x => x.TotalPrice),
+                        
                     })
                     .OrderByDescending(x => x.TotalAmount)
                     .ToList();
@@ -101,7 +103,9 @@ namespace WpfApp2.Services.analysisService
                     .Select(g => new MonthlySpendDto
                     {
                         MonthYear = $"{g.Key.Month:D2}/{g.Key.Year}",
-                        Amount = g.Sum(x => x.LineTotal)
+                        Amount = g.Sum(x => x.TotalPrice),
+
+
                     })
                     .OrderBy(x => DateTime.ParseExact(x.MonthYear, "MM/yyyy", null))
                     .ToList();

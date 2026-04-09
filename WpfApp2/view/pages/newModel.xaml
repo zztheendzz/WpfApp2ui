@@ -83,9 +83,10 @@
 
                     <DataGridTextColumn Width="Auto" MinWidth="120" Binding="{Binding BrandName}">
                         <DataGridTextColumn.Header>
-                            <TextBlock Text="{DynamicResource dg_Vendor}"/>
+                            <TextBlock Text="{DynamicResource dg_Brand}"/>
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
+
 
                     <DataGridTemplateColumn Width="80">
                         <DataGridTemplateColumn.Header>

@@ -39,6 +39,8 @@
     <sys:String x:Key="dg_CreateAt">Ngày tạo</sys:String>
     <sys:String x:Key="dg_User">Người tạo</sys:String>
     <sys:String x:Key="dg_ModelCode">Mã model</sys:String>
+    <sys:String x:Key="dg_Brand">Thương hiệu</sys:String>
+
 
     <sys:String x:Key="lbl_PriceManagementSystem">Hệ Thống Quản Lý Giá</sys:String>
     <sys:String x:Key="lbl_Equipment">Thiết bị</sys:String>
@@ -57,6 +59,13 @@
     <sys:String x:Key="lbl_AvgPrice">Giá trung bình</sys:String>
     <sys:String x:Key="lbl_VendorComparison">So sánh giá theo nhà cung cấp</sys:String>
     <sys:String x:Key="lbl_TotalRecords">Tổng số bản ghi:</sys:String>
+
+    <sys:String x:Key="title_OrderInfo">Thông tin đơn hàng</sys:String>
+    <sys:String x:Key="lbl_Currency">Tiền tệ</sys:String>
+    <sys:String x:Key="lbl_Quantity">Số lượng</sys:String>
+    <sys:String x:Key="btn_Cancel">Hủy bỏ</sys:String>
+    <sys:String x:Key="btn_SaveInfo">Lưu thông tin</sys:String>
+
 
     <sys:String x:Key="lbl_Account">Tài khoản:</sys:String>
     <sys:String x:Key="lbl_FullName">Họ và tên:</sys:String>

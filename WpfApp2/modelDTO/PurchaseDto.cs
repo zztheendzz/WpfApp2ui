@@ -28,7 +28,7 @@ namespace WpfApp2.modelDTO
         public decimal TotalPrice { get; set; }
 
         public string CurrencyCode { get; set; }
-
+        public string CurrencyId { get; set; }
         public string CurrencyName{ get; set; }
 
         public DateTime PurchaseDate { get; set; }

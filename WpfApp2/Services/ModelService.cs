@@ -101,11 +101,20 @@ namespace WpfApp2.Services
         {
             using var conn = _db.GetConnection();
 
+
+            // build cache 1 lần
+            var brandDict = BuildBrandLookup(conn);
+
+            // lấy hoặc tạo brand
+            model.BrandId = GetOrCreateBrand(conn, brandDict, model.BrandName);
+
+
             string sql = @"
         UPDATE Model
         SET 
             ModelCode = @ModelCode,
-            BrandId = @BrandId
+            BrandId = @BrandId,
+            ModelName=@ModelName
         WHERE Id = @Id
         ";
 

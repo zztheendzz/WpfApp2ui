@@ -173,7 +173,6 @@ namespace WpfApp2.viewmodel.analysis
 
                 Analysis = result;
                 UpdateCharts(result);
-                MessageBox.Show($"Lỗi tải dữ liệu: {Analysis.TotalRecord}");
             }
             catch (Exception ex)
             {

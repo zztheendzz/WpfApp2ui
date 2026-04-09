@@ -111,12 +111,26 @@ namespace WpfApp2.viewmodel.tableVm
         {
             if (vendor == null) return;
 
-            var dialog = new edit(vendor);
+            // 🔥 clone
+            var temp = new VendorDto
+            {
+                Id = vendor.Id,
+                VendorName = vendor.VendorName
+            };
+
+            var dialog = new edit(temp);
+
             if (dialog.ShowDialog() == true)
             {
                 try
                 {
+                    // 🔥 copy lại khi OK
+                    vendor.VendorName = temp.VendorName;
+
                     _vendorService.Edit(vendor);
+
+                    // 🔥 reload UI
+                    LoadData();
                 }
                 catch (DatabaseLockedException)
                 {

@@ -30,7 +30,7 @@
     <sys:String x:Key="dg_Equipment">Equipment</sys:String>
     <sys:String x:Key="dg_Quantity">Quantity</sys:String>
     <sys:String x:Key="dg_UnitPrice">Unit Price</sys:String>
-    <sys:String x:Key="dg_TotalPrice">Total Amount</sys:String>
+    <sys:String x:Key="dg_TotalPrice">Total Price</sys:String>
     <sys:String x:Key="dg_Currency">Currency</sys:String>
     <sys:String x:Key="dg_PurchaseDate">Purchase Date</sys:String>
     <sys:String x:Key="dg_Note">Note</sys:String>
@@ -39,7 +39,9 @@
     <sys:String x:Key="dg_CreateAt">Created Date</sys:String>
     <sys:String x:Key="dg_User">Created By</sys:String>
     <sys:String x:Key="dg_ModelCode">Model Code</sys:String>
-
+    <sys:String x:Key="dg_Brand">Brand</sys:String>
+    
+    
     <sys:String x:Key="lbl_PriceManagementSystem">Price Management System</sys:String>
     <sys:String x:Key="lbl_Equipment">Equipment</sys:String>
     <sys:String x:Key="lbl_PurchaseHistory">Purchase History</sys:String>
@@ -63,6 +65,13 @@
     <sys:String x:Key="lbl_Role">Role:</sys:String>
     <sys:String x:Key="lbl_Password">PassWord:</sys:String>
     <sys:String x:Key="lbl_Status">Status:</sys:String>
+    
+    
+    <sys:String x:Key="title_OrderInfo">Order Information</sys:String>
+<sys:String x:Key="lbl_Currency">Currency</sys:String>
+<sys:String x:Key="lbl_Quantity">Quantity</sys:String>
+<sys:String x:Key="btn_Cancel">Cancel</sys:String>
+<sys:String x:Key="btn_SaveInfo">Save Information</sys:String>
     
     
     <sys:String x:Key="msg_ConfirmDelete">Are you sure you want to delete this record?</sys:String>

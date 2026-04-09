@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using WpfApp2.command;
 using WpfApp2.modelDto;
+using WpfApp2.modelDTO;
 using WpfApp2.Services;
 using WpfApp2.Services.exception;
 using WpfApp2.view.dialog;
@@ -101,12 +102,26 @@ namespace WpfApp2.viewmodel.tableVm
 
         public void Edit(BrandDto brand)
         {
-            var dialog = new edit(brand);
+            if (brand == null) return;
+
+            var temp = new BrandDto
+            {
+                Id = brand.Id,
+                BrandName = brand.BrandName,
+                IsActive = brand.IsActive
+            };
+
+            var dialog = new edit(temp);
+
             if (dialog.ShowDialog() == true)
             {
                 try
                 {
+                    // copy ngược lại khi OK
+                    brand.BrandName = temp.BrandName;
+
                     _brandService.Edit(brand);
+                    LoadData();
                 }
                 catch (DatabaseLockedException)
                 {

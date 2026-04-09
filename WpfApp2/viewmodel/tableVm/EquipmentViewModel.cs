@@ -109,12 +109,26 @@ namespace WpfApp2.viewmodel.tableVm
         {
             if (equipment == null) return;
 
-            var dialog = new edit(equipment);
+            // 🔥 clone chỉ cần mỗi field này
+            var temp = new EquipmentDto
+            {
+                Id = equipment.Id,
+                EquipmentName = equipment.EquipmentName
+            };
+
+            var dialog = new edit(temp);
+
             if (dialog.ShowDialog() == true)
             {
                 try
                 {
+                    // 🔥 copy lại khi OK
+                    equipment.EquipmentName = temp.EquipmentName;
+
                     _equipmentService.Edit(equipment);
+
+                    // 🔥 reload để UI chắc chắn update
+                    LoadData();
                 }
                 catch (DatabaseLockedException)
                 {

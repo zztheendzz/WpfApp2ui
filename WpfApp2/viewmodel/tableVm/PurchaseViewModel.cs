@@ -23,6 +23,7 @@ namespace WpfApp2.viewmodel.tableVm
         public ICommand EditCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
         public ICommand AddCommand { get; set; }
+        
 
         private ObservableCollection<PurchaseDto> _purchases;
         public ObservableCollection<PurchaseDto> purchases
@@ -145,13 +146,43 @@ namespace WpfApp2.viewmodel.tableVm
         public void Edit(PurchaseDto purchase)
         {
             if (purchase == null) return;
-            var dialog = new edit(purchase);
+
+            // 🔥 clone để tránh sửa trực tiếp
+            var temp = new PurchaseDto
+            {
+                Id = purchase.Id,
+                ModelCode = purchase.ModelCode,
+                ModelName = purchase.ModelName,
+                VendorName = purchase.VendorName,
+                EquipmentName = purchase.EquipmentName,
+                CurrencyName = purchase.CurrencyName,
+                Quantity = purchase.Quantity,
+                UnitPrice = purchase.UnitPrice,
+                PurchaseDate = purchase.PurchaseDate,
+                Note = purchase.Note
+            };
+
+            var dialog = new EditAddPurchase(temp);
+
             if (dialog.ShowDialog() == true)
             {
                 try
                 {
+                    // 🔥 copy lại khi Save
+                    purchase.ModelCode = temp.ModelCode;
+                    purchase.ModelName = temp.ModelName;
+                    purchase.VendorName = temp.VendorName;
+                    purchase.EquipmentName = temp.EquipmentName;
+                    purchase.CurrencyName = temp.CurrencyName;
+                    purchase.Quantity = temp.Quantity;
+                    purchase.UnitPrice = temp.UnitPrice;
+                    purchase.PurchaseDate = temp.PurchaseDate;
+                    purchase.Note = temp.Note;
+
                     _purchaseService.Edit(purchase);
-                    LoadInitialData(); // Load lại để đảm bảo các thông tin Join (ModelName, VendorName) chính xác
+
+                    // ❌ KHÔNG cần reload toàn bộ
+                    // LoadInitialData();
                 }
                 catch (DatabaseLockedException)
                 {
@@ -168,7 +199,7 @@ namespace WpfApp2.viewmodel.tableVm
                 UserId = SessionService.CurrentUser.Id
             };
 
-            var dialog = new edit(purchase);
+            var dialog = new EditAddPurchase(purchase);
             if (dialog.ShowDialog() == true)
             {
                 try

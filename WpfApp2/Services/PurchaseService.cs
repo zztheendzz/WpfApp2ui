@@ -1,7 +1,9 @@
 ﻿using Dapper;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
+using WpfApp2.model;
 using WpfApp2.modelDTO;
 
 namespace WpfApp2.Services
@@ -76,7 +78,7 @@ namespace WpfApp2.Services
         }
 
 
-     
+
         public IEnumerable<PurchaseDto> GetPurchaseDTO()
         {
             using var conn = _db.GetConnection();
@@ -145,22 +147,39 @@ namespace WpfApp2.Services
         public void Edit(PurchaseDto purchase)
         {
             using var conn = _db.GetConnection();
+            conn.Open();
 
-            string sql = @"
-                UPDATE PurchaseHistory
-                SET
-                    ModelId = @ModelId,
-                    VendorId = @VendorId,
-                    EquipmentId = @EquipmentId,
-                    Quantity = @Quantity,
-                    UnitPrice = @UnitPrice,
+            using var tran = conn.BeginTransaction();
 
-                    PurchaseDate = @PurchaseDate,
-                    Note = @Note
-                WHERE Id = @Id
-";
+            try
+            {
+                // 🔥 1. Ensure FK
+                purchase.ModelId = EnsureModel(purchase.ModelCode, purchase.ModelName,purchase.BrandName, conn, tran);
+                purchase.VendorId = EnsureVendor(purchase.VendorName, conn, tran);
+                purchase.EquipmentId = EnsureEquipment(purchase.EquipmentName, conn, tran);
 
-            conn.Execute(sql, purchase);
+                // 🔥 2. Update
+                string sql = @"
+            UPDATE PurchaseHistory
+            SET
+                ModelId = @ModelId,
+                VendorId = @VendorId,
+                EquipmentId = @EquipmentId,
+                Quantity = @Quantity,
+                UnitPrice = @UnitPrice,
+                PurchaseDate = @PurchaseDate,
+                Note = @Note
+            WHERE Id = @Id";
+
+                conn.Execute(sql, purchase, tran);
+
+                tran.Commit();
+            }
+            catch
+            {
+                tran.Rollback();
+                throw;
+            }
         }
 
 
@@ -169,22 +188,159 @@ namespace WpfApp2.Services
         // ADD
         public int Add(PurchaseDto purchase)
         {
-            string currentTime = GetCurrentDateTime();
             using var conn = _db.GetConnection();
+            conn.Open();
 
-            string sql = @"
-                INSERT INTO PurchaseHistory
-                (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, CurrencyId, PurchaseDate, Note,CreateAt)
-                VALUES
-                (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @CurrencyId, @PurchaseDate, @Note,@currentTime);
-                SELECT last_insert_rowid();
-";
+            using var tran = conn.BeginTransaction();
 
-            return conn.ExecuteScalar<int>(sql, purchase);
+            try
+            {
+                // 🔹 1. Vendor
+                if (!string.IsNullOrWhiteSpace(purchase.VendorName))
+                {
+                    purchase.VendorId = EnsureVendor(
+                        purchase.VendorName,
+                        conn,
+                        tran
+                    );
+                }
+
+                // 🔹 2. Brand
+                //int brandId = 0;
+                //if (!string.IsNullOrWhiteSpace(purchase.BrandName))
+                //{
+                //    brandId = EnsureBrand(
+                //        purchase.BrandName,
+                //        conn,
+                //        tran
+                //    );
+                //}
+
+                // 🔹 3. Model (bắt buộc phải có BrandId)
+                if (!string.IsNullOrWhiteSpace(purchase.ModelName))
+                {
+                    purchase.ModelId = EnsureModel(
+                        purchase.ModelName,
+                        purchase.ModelName,
+                        purchase.BrandName,
+                        conn,
+                        tran
+                    );
+                }
+
+                // 🔥 4. Insert Purchase (KHÔNG dùng BrandId)
+                string sql = @"
+            INSERT INTO PurchaseHistory
+            (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, TotalPrice, CurrencyId, PurchaseDate, CreateAt, UserId, Note)
+            VALUES
+            (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @TotalPrice, 1, @PurchaseDate, @CreateAt, @UserId, @Note);
+
+            SELECT last_insert_rowid();
+        ";
+
+                var newId = conn.ExecuteScalar<int>(sql, new
+                {
+                    purchase.ModelId,
+                    purchase.VendorId,
+                    purchase.EquipmentId,
+                    purchase.Quantity,
+                    purchase.UnitPrice,
+
+                    // 🔥 tính luôn tránh lệch DB
+                    TotalPrice = purchase.Quantity * purchase.UnitPrice,
+
+                    purchase.CurrencyId,
+                    purchase.PurchaseDate,
+                    purchase.UserId,
+                    purchase.Note,
+
+                    CreateAt = DateTime.Now
+                }, tran);
+
+                tran.Commit();
+                return newId;
+            }
+            catch
+            {
+                tran.Rollback();
+                throw;
+            }
         }
-        public string GetCurrentDateTime()
+        private int EnsureVendor(string name, IDbConnection conn, IDbTransaction tran)
         {
-            return DateTime.Now.ToString("HH:mm dd/MM/yyyy");
+            if (string.IsNullOrWhiteSpace(name))
+                throw new Exception("Vendor is required");
+
+            var id = conn.QueryFirstOrDefault<int?>(
+                "SELECT Id FROM Vendor WHERE VendorName = @name",
+                new { name }, tran);
+
+            if (id.HasValue)
+                return id.Value;
+
+            return conn.ExecuteScalar<int>(
+                @"INSERT INTO Vendor (VendorName, IsActive)
+          VALUES (@name, 1);
+          SELECT last_insert_rowid();",
+                new { name }, tran);
         }
+        private int EnsureEquipment(string name, IDbConnection conn, IDbTransaction tran)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new Exception("Equipment is required");
+
+            var id = conn.QueryFirstOrDefault<int?>(
+                "SELECT Id FROM Equipment WHERE EquipmentName = @name",
+                new { name }, tran);
+
+            if (id.HasValue)
+                return id.Value;
+
+            return conn.ExecuteScalar<int>(
+                @"INSERT INTO Equipment (EquipmentName, IsActive)
+          VALUES (@name, 1);
+          SELECT last_insert_rowid();",
+                new { name }, tran);
+        }
+        private int EnsureBrand(string name, IDbConnection conn, IDbTransaction tran)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new Exception("Brand is required");
+
+            name = name.Trim();
+
+            var id = conn.QueryFirstOrDefault<int?>(
+                "SELECT Id FROM Brand WHERE BrandName = @name",
+                new { name }, tran);
+
+            if (id.HasValue)
+                return id.Value;
+
+            return conn.ExecuteScalar<int>(
+                @"INSERT INTO Brand (BrandName, IsActive)
+          VALUES (@name, 1);
+          SELECT last_insert_rowid();",
+                new { name }, tran);
+        }
+        private int EnsureModel(string code, string name, string brandName,
+                                IDbConnection conn, IDbTransaction tran)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+                throw new Exception("ModelCode is required");
+
+            var id = conn.QueryFirstOrDefault<int?>(
+                "SELECT Id FROM Model WHERE ModelCode = @code",
+                new { code }, tran);
+
+            if (id.HasValue)
+                return id.Value;
+
+            return conn.ExecuteScalar<int>(
+                @"INSERT INTO Model (ModelCode, ModelName, IsActive)
+          VALUES (@code, @name, 1);
+          SELECT last_insert_rowid();",
+                new { code, name }, tran);
+        }
+
     }
 }

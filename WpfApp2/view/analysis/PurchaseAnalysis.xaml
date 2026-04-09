@@ -211,7 +211,7 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="{DynamicResource dg_Model}" Width="180">
+                                <DataGridTemplateColumn Header="{DynamicResource dg_ModelCode}" Width="180">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding ModelCode}" TextWrapping="Wrap" Padding="5" VerticalAlignment="Center"/>
