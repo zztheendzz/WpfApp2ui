@@ -9,14 +9,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Xsl;
 using WpfApp2.model;
 using WpfApp2.Services;
 using WpfApp2.view.analysis;
+using WpfApp2.view.login;
 using WpfApp2.view.pages;
 using WpfApp2.viewmodel;
 using WpfApp2.viewmodel.login;
 using WpfApp2.viewmodel.tableVm;
-using WpfApp2.view.login;
 namespace WpfApp2
 {
     /// <summary>

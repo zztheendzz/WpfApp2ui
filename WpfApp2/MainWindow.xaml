@@ -92,7 +92,7 @@
             </DockPanel>
         </Border>
 
-        <Border Grid.Row="1" Grid.Column="0" Background="#34495E">
+        <Border Grid.Row="1" Grid.Column="0" Background="#34495E" FocusManager.IsFocusScope="True" >
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="0,15,0,0">
 

@@ -119,7 +119,7 @@ namespace WpfApp2.viewmodel.analysis
 
         #region ===================== Methods =====================
 
-        private void LoadData()
+        private async Task LoadData()
         {
             // Tự động xác nhận gợi ý nếu nhấn Analyze mà chưa chọn từ danh sách
             if (SelectedBrandId == null && SelectedSearchResult != null)
@@ -135,7 +135,7 @@ namespace WpfApp2.viewmodel.analysis
 
             try
             {
-                var data = _service.GetBrandAnalysis(SelectedBrandId.Value, FromDate, ToDate);
+                var data =await _service.GetBrandAnalysisAsync(SelectedBrandId.Value, FromDate, ToDate);
                 Analysis = data;
                 UpdateUIComponents(data);
             }

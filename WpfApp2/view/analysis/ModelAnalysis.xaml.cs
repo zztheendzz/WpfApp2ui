@@ -129,15 +129,14 @@ namespace WpfApp2.view.analysis
 
         private void RefreshMatrixColumns()
         {
+            if (!(DataContext is ModelAnalysisVm vm)) return;
+
+            dgMatrix.ItemsSource = null; // 🔥 reset trước
+
             dgMatrix.Columns.Clear();
             BuildMatrixColumns();
 
-            // Ép DataGrid làm mới lại các dòng dữ liệu
-            dgMatrix.ItemsSource = null;
-            if (DataContext is ModelAnalysisVm vm)
-            {
-                dgMatrix.ItemsSource = vm.MatrixData.Rows;
-            }
+            dgMatrix.ItemsSource = vm.MatrixData.Rows; // 🔥 set sau cùng
         }
 
         private void BuildMatrixColumns()

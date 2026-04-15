@@ -4,8 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+using System.IO;
 using System.Windows;
 using WpfApp2.model.modelImportExcel;
 using WpfApp2.Services.sessionService;
@@ -85,28 +89,45 @@ namespace WpfApp2.Services.improtExcel
         INSERT INTO Equipment (EquipmentName, IsActive) 
         VALUES (@Name, 1); 
         SELECT last_insert_rowid();",
-                new
-                {
-                    Name = normalizedName,
-                    CreateAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                });
+                new { Name = normalizedName });
         }
 
-        // Thực hiện Insert dữ liệu vào Database
-        public void inSertData(string filePath, string sheetName)
+        // Thực hiện Insert dữ liệu vào Database (non-blocking wrapper)
+        public async void inSertData(string filePath, string sheetName)
         {
             try
             {
+                int success = await inSertDataAsync(filePath, sheetName, CancellationToken.None).ConfigureAwait(false);
+                // Show result on UI thread
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show($"Dự án: {GetProjectName(filePath, sheetName)}\nĐã import thành công {success} dòng.");
+                });
+            }
+            catch (Exception ex)
+            {
+                Application.Current.Dispatcher.Invoke(() => MessageBox.Show(ex.Message));
+            }
+        }
+
+        // Async version with cancellation support. Returns number of imported rows.
+        public async Task<int> inSertDataAsync(string filePath, string sheetName, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentException("filePath is required", nameof(filePath));
+
+            try
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 // 1. Lấy Project Name từ Excel trước
                 string projectName = GetProjectName(filePath, sheetName);
 
-                // 2. Đọc dữ liệu hàng hóa
-                var importPurchases = ReadExcel(filePath, sheetName);
+                // 2. Đọc dữ liệu hàng hóa (IO-bound) - run on threadpool to avoid blocking caller
+                var importPurchases = await Task.Run(() => ReadExcel(filePath, sheetName), cancellationToken).ConfigureAwait(false);
 
-                if (importPurchases.Count == 0)
+                if (importPurchases == null || importPurchases.Count == 0)
                 {
-                    MessageBox.Show("Không tìm thấy dữ liệu hợp lệ!");
-                    return;
+                    throw new InvalidOperationException("Không tìm thấy dữ liệu hợp lệ!");
                 }
 
                 var vendorDict = GetDictionary("SELECT Id, VendorName AS Name FROM Vendor");
@@ -119,12 +140,16 @@ namespace WpfApp2.Services.improtExcel
 
                 try
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     // 3. Lấy hoặc Tạo mới EquipmentId từ Project Name
                     int equipmentId = GetOrCreateEquipment(conn, projectName);
 
                     int success = 0;
                     foreach (var row in importPurchases)
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
+
                         int vendorId = GetOrCreateVendor(conn, vendorDict, row.Vendor);
                         int brandId = GetOrCreateBrand(conn, brandDict, row.Brand);
                         int modelId = GetOrCreateModel(conn, modelDict, row.ModelName, row.ModelCode, brandId);
@@ -135,37 +160,54 @@ namespace WpfApp2.Services.improtExcel
                     (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, TotalPrice, PurchaseDate, CreateAt, UserId,CurrencyId)
                     VALUES 
                     (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @TotalPrice, @PurchaseDate, @CreateAt, @UserId,@CurrencyId)",
-                        new
-                        {
-                            ModelId = modelId,
-                            VendorId = vendorId,
-                            EquipmentId = equipmentId, // Gắn ID thiết bị/dự án vào đây
-                            Quantity = row.Quantity,
-                            UnitPrice = row.UnitPrice,
-                            TotalPrice = row.Quantity * row.UnitPrice,
-                            PurchaseDate = DateTime.Now.ToString("yyyy-MM-dd"),
-                            CreateAt = DateTime.Now.ToString("HH:mm dd-MM-yyyy"),
-                            UserId = UserId,
-                            CurrencyCode = "VND",
-                            CurrencyId = 1// hardcode tạm thời, sau này dieu chinh theo form excel
+                            new
+                            {
+                                ModelId = modelId,
+                                VendorId = vendorId,
+                                EquipmentId = equipmentId, // Gắn ID thiết bị/dự án vào đây
+                                Quantity = row.Quantity,
+                                UnitPrice = row.UnitPrice,
+                                TotalPrice = row.Quantity * row.UnitPrice,
+                                PurchaseDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                                CreateAt = DateTime.Now.ToString("HH:mm dd-MM-yyyy"),
+                                UserId = UserId,
+                                CurrencyId = 1 // hardcode tạm thời
 
-                        }, transaction);
+                            }, transaction);
 
                         success++;
                     }
 
                     transaction.Commit();
-                    MessageBox.Show($"Dự án: {projectName}\nĐã import thành công {success} dòng.");
+                    return success;
+                }
+                catch (IOException ioEx)
+                {
+                    transaction.Rollback();
+                    throw new IOException("Lỗi IO khi ghi vào database: " + ioEx.Message, ioEx);
+                }
+                catch (UnauthorizedAccessException uaEx)
+                {
+                    transaction.Rollback();
+                    throw new UnauthorizedAccessException("Quyền truy cập bị từ chối: " + uaEx.Message, uaEx);
                 }
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    throw new Exception("Lỗi Database: " + ex.Message);
+                    throw new Exception("Lỗi Database: " + ex.Message, ex);
                 }
+            }
+            catch (IOException)
+            {
+                throw;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                throw new Exception("Lỗi khi import dữ liệu: " + ex.Message, ex);
             }
         }
 
@@ -182,8 +224,8 @@ namespace WpfApp2.Services.improtExcel
             IXLRow headerRow = null;
             var headerMap = new Dictionary<string, int>();
 
-            // Bước 1: Tìm hàng tiêu đề (Quét 20 hàng đầu tiên)
-            foreach (var row in ws.RowsUsed().Take(20))
+            // Bước 1: Tìm hàng tiêu đề (Quét 50 hàng đầu tiên)
+            foreach (var row in ws.RowsUsed().Take(50))
             {
                 if (row.CellsUsed().Any(c => IsModelNameHeader(c.GetValue<string>())))
                 {
@@ -196,7 +238,7 @@ namespace WpfApp2.Services.improtExcel
                         if (txt.Contains("STT") || txt.Contains("NO")) headerMap["NO"] = col;
                         else if (txt.Contains("TENHANG") || txt.Contains("제품명") || txt.Contains("MODELNAME")) headerMap["MODELNAME"] = col;
                         else if (txt.Contains("NHANHIEU") || txt.Contains("브랜드") || txt.Contains("BRAND")) headerMap["BRAND"] = col;
-                        else if (txt.Contains("MAHANG") || txt.Contains("CODE")) headerMap["MODELCODE"] = col;
+                        else if (txt.Contains("MAHANG") || txt.Contains("CODE")|| txt.Contains("기능,규격") || txt.Contains("CHUCNANGQUYCACH")) headerMap["MODELCODE"] = col;
                         else if (txt.Contains("DONGIA") || txt.Contains("단가") || txt.Contains("UNITPRICE")) headerMap["UNITPRICE"] = col;
                         else if (txt.Contains("SOLUONG") || txt.Contains("수량") || txt.Contains("QUANTITY")) headerMap["QUANTITY"] = col;
                         else if (txt.Contains("NHACUNG") || txt.Contains("공급업체") || txt.Contains("VENDOR")) headerMap["VENDOR"] = col;
@@ -246,15 +288,15 @@ namespace WpfApp2.Services.improtExcel
         private int ParseInt(string s)
         {
             if (string.IsNullOrWhiteSpace(s)) return 0;
-            // Xử lý trường hợp số có dấu phẩy hoặc chấm thập phân
-            string clean = s.Replace(",", "").Split('.')[0];
-            return int.TryParse(clean, out int val) ? val : 0;
+            var styles = System.Globalization.NumberStyles.Integer | System.Globalization.NumberStyles.AllowThousands;
+            return int.TryParse(s, styles, CultureInfo.CurrentCulture, out int val) ? val : 0;
         }
 
         private decimal ParseDecimal(string s)
         {
             if (string.IsNullOrWhiteSpace(s)) return 0;
-            return decimal.TryParse(s.Replace(",", ""), out decimal val) ? val : 0;
+            var styles = System.Globalization.NumberStyles.Number | System.Globalization.NumberStyles.AllowThousands;
+            return decimal.TryParse(s, styles, CultureInfo.CurrentCulture, out decimal val) ? val : 0;
         }
 
         private int GetOrCreateVendor(IDbConnection conn, Dictionary<string, int> dict, string name)

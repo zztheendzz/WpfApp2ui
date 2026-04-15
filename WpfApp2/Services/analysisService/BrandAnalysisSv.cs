@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks; // Cần thêm namespace này
 using WpfApp2.modelDTO;
 using WpfApp2.modelDTO.analysisDto.ShareDto;
 using WpfApp2.modelDTO.analysysDto;
@@ -13,8 +14,10 @@ namespace WpfApp2.Services.analysisService
     {
         private readonly DatabaseService _db = new DatabaseService();
 
-        public BrandAnalysisDto GetBrandAnalysis(int brandId, DateTime? fromDate = null, DateTime? toDate = null)
+        // Chuyển sang Task<T> và thêm hậu tố Async
+        public async Task<BrandAnalysisDto> GetBrandAnalysisAsync(int brandId, DateTime? fromDate = null, DateTime? toDate = null)
         {
+            // Sử dụng await để mở kết nối bất đồng bộ (tùy thuộc vào DatabaseService của bạn)
             using var conn = _db.GetConnection();
 
             string sql = @"
@@ -46,36 +49,35 @@ namespace WpfApp2.Services.analysisService
                 AND (@toDate IS NULL OR p.PurchaseDate <= @toDate)
                 ORDER BY p.PurchaseDate DESC;";
 
-            using var multi = conn.QueryMultiple(sql, new
+            // Dùng QueryMultipleAsync thay cho QueryMultiple
+            using var multi = await conn.QueryMultipleAsync(sql, new
             {
                 brandId,
                 fromDate = fromDate?.ToString("yyyy-MM-dd"),
                 toDate = toDate?.ToString("yyyy-MM-dd")
             });
 
-            var result = multi.ReadFirst<BrandAnalysisDto>();
-            var items = multi.Read<PurchaseDto>().ToList();
+            // Đọc dữ liệu bất đồng bộ
+            var result = await multi.ReadFirstAsync<BrandAnalysisDto>();
+            var items = (await multi.ReadAsync<PurchaseDto>()).ToList();
             result.Items = items;
 
-            // ===================== CHART =====================
+            // Phần tính toán LINQ có thể giữ nguyên vì nó thao tác trên Memory.
+            // Tuy nhiên, nếu items có hàng chục ngàn dòng, hãy cân nhắc bọc trong Task.Run
             if (items.Any())
             {
-                // ===== 1. GROUP FULL DATA =====
+                // Logic Chart (giữ nguyên logic của bạn)
                 var grouped = items
                     .GroupBy(x => x.ModelCode)
                     .Select(g => new AnalysisShareDto
                     {
                         CategoryName = g.Key,
                         TotalAmount = g.Sum(x => x.TotalPrice),
-                        
                     })
                     .OrderByDescending(x => x.TotalAmount)
                     .ToList();
 
-                // ===== 2. TOP 9 =====
                 var top9 = grouped.Take(9).ToList();
-
-                // ===== 3. OTHERS =====
                 var othersAmount = grouped.Skip(9).Sum(x => x.TotalAmount);
 
                 if (othersAmount > 0)
@@ -87,7 +89,6 @@ namespace WpfApp2.Services.analysisService
                     });
                 }
 
-                // ===== 4. TÍNH LẠI % (QUAN TRỌNG) =====
                 foreach (var item in top9)
                 {
                     item.Percentage = result.TotalPrice > 0
@@ -97,15 +98,12 @@ namespace WpfApp2.Services.analysisService
 
                 result.ModelShares = top9;
 
-                // ===== 5. MONTHLY CHART =====
                 result.MonthlySpends = items
                     .GroupBy(x => new { x.PurchaseDate.Year, x.PurchaseDate.Month })
                     .Select(g => new MonthlySpendDto
                     {
                         MonthYear = $"{g.Key.Month:D2}/{g.Key.Year}",
                         Amount = g.Sum(x => x.TotalPrice),
-
-
                     })
                     .OrderBy(x => DateTime.ParseExact(x.MonthYear, "MM/yyyy", null))
                     .ToList();
