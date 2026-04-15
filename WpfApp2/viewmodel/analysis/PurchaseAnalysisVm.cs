@@ -149,6 +149,10 @@ namespace WpfApp2.viewmodel.analysis
 
         public PurchaseAnalysisVm()
         {
+
+            VendorPriceSeries = new SeriesCollection();
+            PriceTrendSeries = new SeriesCollection();
+            
             SearchCommand = new RelayCommand(_ => LoadData());
             ClearCommand = new RelayCommand(_ => ClearAll());
         }
@@ -335,8 +339,8 @@ namespace WpfApp2.viewmodel.analysis
             PriceMin = PriceMax = null;
             SelectedDateFrom = new DateTime(DateTime.Now.Year, 1, 1);
             SelectedDateTo = DateTime.Now;
-            VendorPriceSeries?.Clear();
-            PriceTrendSeries?.Clear();
+            VendorPriceSeries = new SeriesCollection();
+            PriceTrendSeries = new SeriesCollection();
             _isInternalChange = false;
         }
 

@@ -5,12 +5,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.IO;
+using System.Transactions;
 using System.Windows;
+using WpfApp2.model;
 using WpfApp2.model.modelImportExcel;
 using WpfApp2.Services.sessionService;
 
@@ -97,7 +99,9 @@ namespace WpfApp2.Services.improtExcel
         {
             try
             {
-                int success = await inSertDataAsync(filePath, sheetName, CancellationToken.None).ConfigureAwait(false);
+                //int success = await inSertDataAsync(filePath, sheetName, CancellationToken.None).ConfigureAwait(false);
+
+                int success = await updateData(filePath, sheetName, CancellationToken.None).ConfigureAwait(false);
                 // Show result on UI thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
@@ -110,6 +114,139 @@ namespace WpfApp2.Services.improtExcel
             }
         }
 
+
+        public async Task<int> updateData(string filePath, string sheetName, CancellationToken cancellationToken = default)
+        {
+
+
+            if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentException("filePath is required", nameof(filePath));
+                int success = 0;
+
+
+            try
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var importPurchases = await Task.Run(() => ReadExcel(filePath, sheetName), cancellationToken).ConfigureAwait(false);
+                if (importPurchases == null || importPurchases.Count == 0)
+                {
+                    throw new InvalidOperationException("Không tìm thấy dữ liệu hợp lệ!");
+                }
+
+                var vendorDict = GetDictionary("SELECT Id, VendorName AS Name FROM Vendor");
+                var brandDict = GetDictionary("SELECT Id, BrandName AS Name FROM Brand");
+                var modelDict = GetDictionary("SELECT Id, ModelCode AS Name FROM Model");
+                using var conn = _db.GetConnection();
+                if (conn.State == ConnectionState.Closed) conn.Open();
+                using var transaction = conn.BeginTransaction();
+
+                string projectName = GetProjectName(filePath, sheetName);
+                int equipmentId = GetOrCreateEquipment(conn, projectName);
+
+
+
+                var existingDict = conn.Query<(int Id, int ModelId)>(@"
+                SELECT Id, ModelId 
+                FROM PurchaseHistory 
+                WHERE EquipmentId = @EquipmentId",
+                new { EquipmentId = equipmentId }, transaction)
+                .ToDictionary(x => x.ModelId, x => x.Id);
+
+                foreach (var row in importPurchases)
+                {
+
+                    var key = Normalize(row.ModelCode);
+
+                    int vendorId = GetOrCreateVendor(conn, vendorDict, row.Vendor);
+                    int brandId = GetOrCreateBrand(conn, brandDict, row.Brand);
+
+
+
+                    if (!modelDict.TryGetValue(key, out int modelId))
+                                {
+                        // INSERT
+                        modelId = conn.ExecuteScalar<int>(@"
+        INSERT INTO Model(ModelName, ModelCode, BrandId, IsActive)
+        VALUES(@Name, @Code, @BrandId, 1);
+        SELECT last_insert_rowid();",
+                            new { Name = row.ModelName, Code = row.ModelCode, BrandId = brandId }, transaction);
+
+                        modelDict[key] = modelId;
+                    }
+                    else
+                    {
+                        // 🔥 UPDATE model nếu cần
+                        conn.Execute(@"
+        UPDATE Model
+        SET ModelName = @Name,
+            BrandId = @BrandId
+        WHERE Id = @Id",
+                            new
+                            {
+                                Id = modelId,
+                                Name = row.ModelName,
+                                BrandId = brandId
+                            }, transaction);
+                    }
+
+                                if (existingDict.TryGetValue(modelId, out int existId))
+                                {
+                                    // UPDATE
+                                    conn.Execute(@"
+                        UPDATE PurchaseHistory
+                        SET Quantity = @Quantity,
+                            UnitPrice = @UnitPrice,
+                            TotalPrice = @TotalPrice,
+                            VendorId = @VendorId,
+                            UserId = @UserId,
+                            CurrencyId = @CurrencyId ,
+                            CreateAt = @CreateAt
+                        WHERE Id = @Id",
+                                        new
+                                        {
+                                            Id = existId,
+                                            Quantity = row.Quantity,
+                                            UnitPrice = row.UnitPrice,
+                                            TotalPrice = row.Quantity * row.UnitPrice,
+                                            VendorId = vendorId,
+                                            UserId=UserId,
+                                            CurrencyId=1,
+                                            CreateAt = DateTime.Now.ToString("HH:mm dd-MM-yyyy")
+                                        }, transaction);
+                                }
+                                else
+                                {
+                                    // INSERT
+                                    conn.Execute(@"
+                        INSERT INTO PurchaseHistory
+                        (ModelId, EquipmentId, Quantity, UnitPrice, TotalPrice,VendorId,UserId,CurrencyId,CreateAt)
+                        VALUES
+                        (@ModelId, @EquipmentId, @Quantity, @UnitPrice, @TotalPrice,@VendorId,@UserId, @CurrencyId ,@CreateAt)",
+                                        new
+                                        {
+                                            ModelId = modelId,
+                                            EquipmentId = equipmentId,
+                                            Quantity = row.Quantity,
+                                            UnitPrice = row.UnitPrice,
+                                            TotalPrice = row.Quantity * row.UnitPrice,
+                                            VendorId = vendorId,
+                                            UserId = UserId,
+                                            CurrencyId = 1,
+                                            CreateAt = DateTime.Now.ToString("HH:mm dd-MM-yyyy")
+                                        }, transaction);
+                                }
+                }
+                transaction.Commit();
+
+                return success;
+
+            }
+            catch (Exception ex)
+            {
+                Application.Current.Dispatcher.Invoke(() => MessageBox.Show(ex.Message));
+                return success;
+            }
+
+        }
         // Async version with cancellation support. Returns number of imported rows.
         public async Task<int> inSertDataAsync(string filePath, string sheetName, CancellationToken cancellationToken = default)
         {
@@ -257,9 +394,10 @@ namespace WpfApp2.Services.improtExcel
 
             for (int r = startRow; r <= lastRow; r++)
             {
+
+
                 var row = ws.Row(r);
                 string modelName = GetCellValue(row, headerMap, "MODELNAME");
-
                 // Bỏ qua nếu hàng trống hoặc lỡ đọc phải hàng tiêu đề phụ (nếu có)
                 if (string.IsNullOrWhiteSpace(modelName) || IsModelNameHeader(modelName)) continue;
 
@@ -278,6 +416,12 @@ namespace WpfApp2.Services.improtExcel
 
             return result;
         }
+
+
+
+
+
+
 
         #region Helpers
         private string GetCellValue(IXLRow row, Dictionary<string, int> map, string key)
