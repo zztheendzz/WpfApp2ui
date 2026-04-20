@@ -141,7 +141,6 @@ namespace WpfApp2.viewmodel.analysis
                 // Truyền SelectedVendorId.Value vì Service cần int
                 var data = _service.GetVendorAnalysis(SelectedVendorId.Value, FromDate, ToDate);
                 Analysis = data;
-                MessageBox.Show("data = "+ Analysis.Items.Count + "id= "+ SelectedVendorId);
                 UpdateUIComponents(data);
             }
             catch (DatabaseLockedException)

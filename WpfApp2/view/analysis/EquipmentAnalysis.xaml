@@ -303,6 +303,16 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
+                        <DataGridTextColumn Header="{DynamicResource dg_UnitPrice}"
+                        Width="90"
+                        Binding="{Binding UnitPrice, StringFormat={}{0:N0}}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
                         <!-- TotalPrice: phải -->
                         <DataGridTextColumn Header="{DynamicResource dg_TotalPrice}"
                         Width="120"

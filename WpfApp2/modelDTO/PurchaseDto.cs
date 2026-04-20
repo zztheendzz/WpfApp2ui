@@ -12,6 +12,7 @@ namespace WpfApp2.modelDTO
         public string ModelName { get; set; }
         public string ModelCode { get; set; }
         public decimal LineTotal { get; set; }
+        public decimal TotalPrice { get; set; }
         public int VendorId { get; set; }
         public string VendorName { get; set; }
 
@@ -25,7 +26,7 @@ namespace WpfApp2.modelDTO
 
         public decimal UnitPrice { get; set; }
 
-        public decimal TotalPrice { get; set; }
+
 
         public string CurrencyCode { get; set; }
         public string CurrencyId { get; set; }

@@ -167,6 +167,10 @@ namespace WpfApp2.viewmodel.analysis
             var pieCollection = new SeriesCollection();
             if (data.BrandShares != null)
             {
+                // MESS KIỂM TRA: Xem tổng số Brand và giá trị của Brand đầu tiên
+                var firstBrand = data.BrandShares.FirstOrDefault();
+              
+
                 var sortedBrands = data.BrandShares.OrderByDescending(x => x.TotalAmount).ToList();
                 var top10Brands = sortedBrands.Take(10).ToList();
                 var otherBrands = sortedBrands.Skip(10).ToList();
@@ -176,6 +180,7 @@ namespace WpfApp2.viewmodel.analysis
                     pieCollection.Add(new PieSeries
                     {
                         Title = share.CategoryName,
+                        // Giữ nguyên decimal như bạn yêu cầu
                         Values = new ChartValues<decimal> { share.TotalAmount },
                         DataLabels = true,
                         LabelPoint = p => $"{p.SeriesView.Title}: {p.Participation:P1}"
@@ -191,7 +196,6 @@ namespace WpfApp2.viewmodel.analysis
                         DataLabels = false,
                         Fill = Brushes.Gray,
                         LabelPoint = p => $"Khác: {p.Participation:P1}"
-
                     });
                 }
             }
@@ -200,11 +204,18 @@ namespace WpfApp2.viewmodel.analysis
             // 2. Cập nhật Biểu đồ Cột ngang
             if (data.TopItems != null)
             {
+                // MESS KIỂM TRA: Xem dữ liệu Top Items trước khi đưa vào biểu đồ
+                string checkTop = string.Join("\n", data.TopItems.Take(3).Select(x => $"{x.CategoryName}: {x.TotalAmount}"));
+
+
                 TopItemsValues = new ChartValues<decimal>(data.TopItems.Select(x => x.TotalAmount).Reverse());
                 TopItemsLabels = data.TopItems.Select(x => x.CategoryName).Reverse().ToArray();
+
+                OnPropertyChanged(nameof(TopItemsValues));
+                OnPropertyChanged(nameof(TopItemsLabels));
+
             }
         }
-
         private void UpdateSuggestions()
         {
             if (string.IsNullOrWhiteSpace(GlobalSearchText) || GlobalSearchText.Length < 1)

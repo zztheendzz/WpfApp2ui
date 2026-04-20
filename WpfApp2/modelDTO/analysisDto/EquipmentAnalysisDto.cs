@@ -10,7 +10,8 @@ namespace WpfApp2.modelDTO.analysysDto
         public string EquipmentName { get; set; }
 
         // --- 2. Số liệu tổng quát (Hiển thị trên 3 Card trên cùng) ---
-        public decimal TotalPrice { get; set; }        // Tổng giá trị (VND)
+        public decimal TotalPrice { get; set; }
+        public decimal LineTotal{ get; set; }    // Tổng giá trị (VND)
         public int TotalTransactions { get; set; }   // Số lần mua/thay thế
         public int TotalModel { get; set; }          // Số lượng loại linh kiện khác nhau
 
