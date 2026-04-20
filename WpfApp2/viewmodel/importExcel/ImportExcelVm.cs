@@ -111,8 +111,8 @@ namespace WpfApp2.viewmodel.importExcel
                 // Thực hiện gọi Service để Insert
                 _purchaseExcelSv.inSertData(FilePath, SelectedSheet);
 
-                Message = "Import thành công!";
-                MessageBox.Show("Dữ liệu đã được nhập thành công vào hệ thống.", "Hoàn tất");
+                //Message = "Import thành công!";
+                //MessageBox.Show("Dữ liệu đã được nhập thành công vào hệ thống.", "Hoàn tất");
             }
             catch (DatabaseLockedException)
             {

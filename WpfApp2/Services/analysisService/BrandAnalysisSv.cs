@@ -29,7 +29,7 @@ namespace WpfApp2.Services.analysisService
                 JOIN Model m ON p.ModelId = m.Id
                 WHERE m.BrandId = @brandId 
                 AND (@fromDate IS NULL OR p.PurchaseDate >= @fromDate)
-                AND (@toDate IS NULL OR p.PurchaseDate <= @toDate);
+                AND (@toDate IS NULL OR p.PurchaseDate < @toDate);
 
                 -- 2. Detail List
                 SELECT 
@@ -53,8 +53,8 @@ namespace WpfApp2.Services.analysisService
             using var multi = await conn.QueryMultipleAsync(sql, new
             {
                 brandId,
-                fromDate = fromDate?.ToString("yyyy-MM-dd"),
-                toDate = toDate?.ToString("yyyy-MM-dd")
+                fromDate = fromDate?.Date,
+                toDate = toDate?.Date.AddDays(1)
             });
 
             // Đọc dữ liệu bất đồng bộ

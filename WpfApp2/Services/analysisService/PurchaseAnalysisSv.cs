@@ -6,6 +6,7 @@ using System.Text;
 using WpfApp2.modelDTO;
 using WpfApp2.modelDTO.analysysDto;
 using WpfApp2.modelDTO.analysisDto.ShareDto;
+using System.Windows;
 
 namespace WpfApp2.Services.analysisService
 {
@@ -24,6 +25,8 @@ namespace WpfApp2.Services.analysisService
             decimal? minPrice,
             decimal? maxPrice)
         {
+
+
             var sql = new StringBuilder(@"
                 SELECT 
                     p.Id, 
@@ -48,7 +51,6 @@ namespace WpfApp2.Services.analysisService
 
                 LEFT JOIN Currency c ON p.CurrencyId = c.Id
                 LEFT JOIN [User] u ON p.UserId = u.Id
-
     WHERE 1=1
             ");
 
@@ -60,11 +62,11 @@ namespace WpfApp2.Services.analysisService
                 sql.Append(" AND p.ModelId = @modelId");
                 param.Add("modelId", modelId);
             }
-            else if (!string.IsNullOrWhiteSpace(modelSearch))
-            {
-                sql.Append(" AND (LOWER(m.ModelName) LIKE @ms OR LOWER(m.ModelCode) LIKE @ms)");
-                param.Add("ms", $"%{modelSearch.ToLower()}%");
-            }
+            //if (!string.IsNullOrWhiteSpace(modelSearch))
+            //{
+            //    sql.Append(" AND (LOWER(m.ModelName) LIKE @ms OR LOWER(m.ModelCode) LIKE @ms)");
+            //    param.Add("ms", $"%{modelSearch.ToLower()}%");
+            //}
 
             if (vendorId.HasValue)
             {
@@ -84,16 +86,16 @@ namespace WpfApp2.Services.analysisService
             }
 
 
-            // Lọc theo khoảng thời gian
+            //Lọc theo khoảng thời gian
             if (from.HasValue)
             {
-                sql.Append(" AND date(p.PurchaseDate) >= date(@from)");
-                param.Add("from", from);
+                sql.Append(" AND p.PurchaseDate >= @from");
+                param.Add("from", from.Value.Date);
             }
             if (to.HasValue)
             {
-                sql.Append(" AND date(p.PurchaseDate) <= date(@to)");
-                param.Add("to", to);
+                sql.Append(" AND p.PurchaseDate <= @to");
+                param.Add("to", to.Value.Date.AddDays(1));
             }
 
             // Lọc theo đơn giá

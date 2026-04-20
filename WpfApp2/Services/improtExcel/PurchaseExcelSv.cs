@@ -105,7 +105,7 @@ namespace WpfApp2.Services.improtExcel
                 // Show result on UI thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    MessageBox.Show($"Dự án: {GetProjectName(filePath, sheetName)}\nĐã import thành công {success} dòng.");
+                    MessageBox.Show($"Dự án: {GetProjectName(filePath, sheetName)}\nĐã import thành công.");
                 });
             }
             catch (Exception ex)
@@ -199,6 +199,7 @@ namespace WpfApp2.Services.improtExcel
                             VendorId = @VendorId,
                             UserId = @UserId,
                             CurrencyId = @CurrencyId ,
+                            PurchaseDate=@PurchaseDate,
                             CreateAt = @CreateAt
                         WHERE Id = @Id",
                                         new
@@ -210,7 +211,8 @@ namespace WpfApp2.Services.improtExcel
                                             VendorId = vendorId,
                                             UserId=UserId,
                                             CurrencyId=1,
-                                            CreateAt = DateTime.Now.ToString("HH:mm dd-MM-yyyy")
+                                            PurchaseDate= DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                                            CreateAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
                                         }, transaction);
                                 }
                                 else
@@ -218,9 +220,9 @@ namespace WpfApp2.Services.improtExcel
                                     // INSERT
                                     conn.Execute(@"
                         INSERT INTO PurchaseHistory
-                        (ModelId, EquipmentId, Quantity, UnitPrice, TotalPrice,VendorId,UserId,CurrencyId,CreateAt)
+                        (ModelId, EquipmentId, Quantity, UnitPrice, TotalPrice,VendorId,UserId,CurrencyId,CreateAt,PurchaseDate)
                         VALUES
-                        (@ModelId, @EquipmentId, @Quantity, @UnitPrice, @TotalPrice,@VendorId,@UserId, @CurrencyId ,@CreateAt)",
+                        (@ModelId, @EquipmentId, @Quantity, @UnitPrice, @TotalPrice,@VendorId,@UserId, @CurrencyId ,@CreateAt,@PurchaseDate)",
                                         new
                                         {
                                             ModelId = modelId,
@@ -231,7 +233,8 @@ namespace WpfApp2.Services.improtExcel
                                             VendorId = vendorId,
                                             UserId = UserId,
                                             CurrencyId = 1,
-                                            CreateAt = DateTime.Now.ToString("HH:mm dd-MM-yyyy")
+                                            PurchaseDate= DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                                            CreateAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
                                         }, transaction);
                                 }
                 }
@@ -305,8 +308,8 @@ namespace WpfApp2.Services.improtExcel
                                 Quantity = row.Quantity,
                                 UnitPrice = row.UnitPrice,
                                 TotalPrice = row.Quantity * row.UnitPrice,
-                                PurchaseDate = DateTime.Now.ToString("yyyy-MM-dd"),
-                                CreateAt = DateTime.Now.ToString("HH:mm dd-MM-yyyy"),
+                                PurchaseDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                                CreateAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                                 UserId = UserId,
                                 CurrencyId = 1 // hardcode tạm thời
 

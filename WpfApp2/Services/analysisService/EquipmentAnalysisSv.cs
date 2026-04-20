@@ -18,8 +18,8 @@ namespace WpfApp2.Services.analysisService
             using var conn = _db.GetConnection();
 
             // Chuyển đổi ngày sang string để SQLite xử lý chính xác
-            string fromDateStr = fromDate?.ToString("yyyy-MM-dd");
-            string toDateStr = toDate?.ToString("yyyy-MM-dd");
+          //  string fromDateStr = fromDate?.ToString("yyyy-MM-dd");
+         //   string toDateStr = toDate?.ToString("yyyy-MM-dd");
 
             string sql = @"
                 -- 1. Summary & Equipment Name
@@ -43,7 +43,7 @@ namespace WpfApp2.Services.analysisService
                 SELECT 
                     p.Id, m.ModelName, m.ModelCode, v.VendorName, b.BrandName,
                     c.CurrencyName, p.Quantity, p.UnitPrice,
-                    (p.Quantity * p.UnitPrice) AS LineTotal,
+                    (p.Quantity * p.UnitPrice) AS TotalPrice,
                     p.PurchaseDate, u.UserName AS FullName, p.Note
                 FROM PurchaseHistory p
                 INNER JOIN Model m ON p.ModelId = m.Id
@@ -59,8 +59,8 @@ namespace WpfApp2.Services.analysisService
             using var multi = conn.QueryMultiple(sql, new
             {
                 equipmentId,
-                fromDate = fromDateStr,
-                toDate = toDateStr
+                fromDate = fromDate?.Date,
+                toDate = toDate?.Date.AddDays(1)
             });
 
             // Sử dụng ReadFirstOrDefault để tránh crash nếu ID không tồn tại

@@ -150,8 +150,8 @@ namespace WpfApp2.viewmodel.analysis
         public PurchaseAnalysisVm()
         {
 
-            VendorPriceSeries = new SeriesCollection();
-            PriceTrendSeries = new SeriesCollection();
+           // VendorPriceSeries = new SeriesCollection();
+          //  PriceTrendSeries = new SeriesCollection();
             
             SearchCommand = new RelayCommand(_ => LoadData());
             ClearCommand = new RelayCommand(_ => ClearAll());
@@ -161,6 +161,9 @@ namespace WpfApp2.viewmodel.analysis
 
         private void LoadData()
         {
+            var from = SelectedDateFrom?.Date;
+            var to = SelectedDateTo?.Date;
+
             try
             {
                 var result = _purchaseService.GetComprehensiveAnalysis(
@@ -169,14 +172,13 @@ namespace WpfApp2.viewmodel.analysis
                     SelectedVendorId == 0 ? null : (int?)SelectedVendorId,
                     SelectedEquipmentId == 0 ? null : (int?)SelectedEquipmentId,
                     SelectedBrandId == 0 ? null : (int?)SelectedBrandId,
-                    SelectedDateFrom,
-                    SelectedDateTo,
+                    from,
+                    to,
                     PriceMin,
                     PriceMax
                 );
 
                 Analysis = result;
-                UpdateCharts(result);
             }
             catch (Exception ex)
             {

@@ -25,7 +25,7 @@ namespace WpfApp2.Services.analysisService
                 FROM PurchaseHistory p
                 WHERE p.VendorId = @vendorId 
                 AND (@fromDate IS NULL OR p.PurchaseDate >= @fromDate)
-                AND (@toDate IS NULL OR p.PurchaseDate <= @toDate);
+                AND (@toDate IS NULL OR p.PurchaseDate < @toDate);
 
                 -- 2. Lấy danh sách chi tiết (Details)
                 SELECT 
@@ -47,8 +47,8 @@ namespace WpfApp2.Services.analysisService
             using var multi = conn.QueryMultiple(sql, new
             {
                 vendorId,
-                fromDate = fromDate?.ToString("yyyy-MM-dd"),
-                toDate = toDate?.ToString("yyyy-MM-dd")
+                fromDate = fromDate?.Date,
+                toDate = toDate?.Date.AddDays(1)
             });
 
             var result = multi.ReadFirst<VendorAnalysisDto>();

@@ -52,10 +52,7 @@
                     </ListBox.ToolTip>
                 </ListBox>
             </StackPanel>
-
-
         </Grid>
-
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
