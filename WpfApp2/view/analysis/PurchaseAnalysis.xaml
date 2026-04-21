@@ -67,18 +67,10 @@
                             <StackPanel Width="220" Margin="5">
                                 <TextBlock Text="{DynamicResource dg_ModelCode}" Margin="0,0,0,5" FontWeight="SemiBold" Foreground="#666"/>
                                 <Grid>
-                                    <TextBox x:Name="txtSearchModel" Tag="M"
-                                             Text="{Binding SearchModelText, UpdateSourceTrigger=PropertyChanged}" 
-                                             PreviewKeyDown="SearchBox_PreviewKeyDown"/>
-                                    <Popup IsOpen="{Binding IsDropDownOpenM}" 
-                                           PlacementTarget="{Binding ElementName=txtSearchModel}" 
-                                           StaysOpen="False" 
-                                           AllowsTransparency="True">
+                                    <TextBox x:Name="txtSearchModel" Tag="M" Text="{Binding SearchModelText, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="SearchBox_PreviewKeyDown"/>
+                                    <Popup IsOpen="{Binding IsDropDownOpenM}" PlacementTarget="{Binding ElementName=txtSearchModel}" StaysOpen="False" AllowsTransparency="True">
                                         <Border Background="White" BorderBrush="#DDD" BorderThickness="1" Width="{Binding ElementName=txtSearchModel, Path=ActualWidth}">
-                                            <ListBox x:Name="lstModel" 
-                                                     DisplayMemberPath="Text" 
-                                                     ItemsSource="{Binding ModelSuggestions}" 
-                                                     SelectedItem="{Binding SelectedModel}">
+                                            <ListBox x:Name="lstModel" DisplayMemberPath="Text" ItemsSource="{Binding ModelSuggestions}" SelectedItem="{Binding SelectedModel}">
                                                 <ListBox.ItemContainerStyle>
                                                     <Style TargetType="ListBoxItem">
                                                         <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListBoxItemClick"/>
@@ -143,18 +135,31 @@
                                     </Popup>
                                 </Grid>
                             </StackPanel>
-
-                            <Button Content="{DynamicResource btn_Analyze}" Background="{StaticResource AccentBlue}" Command="{Binding SearchCommand}" Foreground="White" Width="120" Height="32" VerticalAlignment="Bottom" Margin="0,0,0,1" BorderThickness="0" FontWeight="SemiBold" />
-                            <Button Content="{DynamicResource btn_Clear}" Command="{Binding ClearCommand}" Margin="5,20,0,0" Width="Auto" Height="38" Style="{StaticResource MaterialDesignOutlinedButton}"/>
                         </WrapPanel>
 
-                        <StackPanel Orientation="Horizontal" Margin="5,15,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="5,15,0,0" VerticalAlignment="Center">
                             <DatePicker Width="130" SelectedDate="{Binding SelectedDateFrom}" materialDesign:HintAssist.Hint="{DynamicResource ph_DateFrom}" Margin="0,0,10,0"/>
                             <DatePicker Width="130" SelectedDate="{Binding SelectedDateTo}" materialDesign:HintAssist.Hint="{DynamicResource ph_DateTo}" Margin="0,0,20,0"/>
+
                             <TextBlock Text="{DynamicResource ph_MinPrice}" VerticalAlignment="Center" Margin="0,0,5,0" Foreground="#666"/>
-                            <xctk:DoubleUpDown Value="{Binding PriceMin}" Width="100" Margin="0,0,10,0" FormatString="N0"/>
+                            <xctk:DoubleUpDown Value="{Binding PriceMin}" Width="100" Margin="0,0,10,0" FormatString="N0" VerticalAlignment="Center"/>
+
                             <TextBlock Text="{DynamicResource ph_MaxPrice}" VerticalAlignment="Center" Margin="0,0,5,0" Foreground="#666"/>
-                            <xctk:DoubleUpDown Value="{Binding PriceMax}" Width="100" FormatString="N0"/>
+                            <xctk:DoubleUpDown Value="{Binding PriceMax}" Width="100" Margin="0,0,20,0" FormatString="N0" VerticalAlignment="Center"/>
+
+                            <Button Content="{DynamicResource btn_Analyze}" 
+                Background="{StaticResource AccentBlue}" 
+                Command="{Binding SearchCommand}" 
+                Foreground="White" 
+                Width="120" Height="32" 
+                BorderThickness="0" 
+                FontWeight="SemiBold" 
+                Margin="0,0,5,0"/>
+
+                            <Button Content="{DynamicResource btn_Clear}" 
+                Command="{Binding ClearCommand}" 
+                Width="Auto" Height="32" 
+                Style="{StaticResource MaterialDesignOutlinedButton}"/>
                         </StackPanel>
                     </StackPanel>
                 </materialDesign:Card>
