@@ -160,6 +160,12 @@
                 Command="{Binding ClearCommand}" 
                 Width="Auto" Height="32" 
                 Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                            <Button Content="{DynamicResource btn_ExportExcel}" 
+                Command="{Binding ExportExcelPurchase}" 
+                Width="Auto" Height="32" 
+                Style="{StaticResource MaterialDesignOutlinedButton}"/>
+
+
                         </StackPanel>
                     </StackPanel>
                 </materialDesign:Card>

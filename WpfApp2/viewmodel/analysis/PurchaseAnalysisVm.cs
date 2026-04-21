@@ -1,17 +1,19 @@
-﻿using System;
+﻿using LiveCharts;
+using LiveCharts.Wpf;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using LiveCharts;
-using LiveCharts.Wpf;
 using WpfApp2.command;
 using WpfApp2.modelDTO;
 using WpfApp2.modelDTO.analysysDto;
 using WpfApp2.Services;
 using WpfApp2.Services.analysisService;
+using WpfApp2.Services.exportExcel;
 
 namespace WpfApp2.viewmodel.analysis
 {
@@ -19,6 +21,8 @@ namespace WpfApp2.viewmodel.analysis
     {
         private readonly SearchService _searchService = new SearchService();
         private readonly PurchaseAnalysisSv _purchaseService = new PurchaseAnalysisSv();
+        private readonly ExportSv _exportSv = new ExportSv();
+        //ExportExcelPurchase
         private bool _isInternalChange;
 
         #region ===================== Properties Dữ Liệu & Charts =====================
@@ -145,19 +149,52 @@ namespace WpfApp2.viewmodel.analysis
         public ICommand SearchCommand { get; set; }
         public ICommand ClearCommand { get; set; }
 
+        public ICommand ExportExcelPurchase { get; set; }
+
         #endregion
 
         public PurchaseAnalysisVm()
         {
 
-           // VendorPriceSeries = new SeriesCollection();
-          //  PriceTrendSeries = new SeriesCollection();
-            
+            // VendorPriceSeries = new SeriesCollection();
+            //  PriceTrendSeries = new SeriesCollection();
+            ExportExcelPurchase = new RelayCommand(async _ =>await ExportCommand());
             SearchCommand = new RelayCommand(_ => LoadData());
             ClearCommand = new RelayCommand(_ => ClearAll());
+            //ExportExcelPurchase = new RelayCommand(_ => _exportSv.ExportPurchaseAnalysis(Analysis));
         }
 
         #region ===================== Logic Methods =====================
+
+        public async Task ExportCommand()
+        {
+            try
+            {
+                string folderPath = @"D:\reportHistory";
+
+                // Tạo thư mục nếu chưa tồn tại
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                // Tạo file path
+                string path = Path.Combine(
+                    folderPath,
+                    $"Purchase_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx"
+                );
+
+                // Export
+                await _exportSv.ExportPurchaseHistoryAsync(Analysis.Items, path);
+
+                MessageBox.Show("Export thành công!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi: {ex.Message}");
+            }
+        }
+
 
         private void LoadData()
         {

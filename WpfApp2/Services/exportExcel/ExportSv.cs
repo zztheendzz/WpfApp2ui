@@ -7,11 +7,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using WpfApp2.modelDTO.analysisDto;
+using WpfApp2.modelDTO;
 
 namespace WpfApp2.Services.exportExcel
 {
-        public class ExportSv
-        {
+    public class ExportSv
+    {
         public void ExportModelMatrix(ModelVendorMatrixDto matrixData, string outputPath)
         {
             // 1. Kiểm tra đầu vào tổng quát
@@ -95,6 +96,117 @@ namespace WpfApp2.Services.exportExcel
                     startRow++;
                 }
 
+                workbook.SaveAs(outputPath);
+            }
+        }
+
+        public async Task ExportPurchaseHistoryAsync(List<PurchaseDto> purchaseData, string outputPath)
+        {
+            if (purchaseData == null)
+                throw new Exception("Dữ liệu không hợp lệ hoặc bị trống.");
+
+            string templatePath = Path.Combine(
+                AppContext.BaseDirectory,
+                "excelTemplate",
+                "purchase_history_template.xlsx"
+            );
+
+            if (!File.Exists(templatePath))
+                throw new Exception("Không tìm thấy file purchase_history_template.xlsx");
+
+            await Task.Run(() =>
+            {
+                using (var workbook = new XLWorkbook(templatePath))
+                {
+                    var ws = workbook.Worksheet(1);
+                    int startRow = 5;
+                    int i = 0;
+
+                    foreach (var item in purchaseData)
+                    {
+                        i++;
+
+                        ws.Cell(startRow, 1).Value = i;
+                        ws.Cell(startRow, 2).Value = item.ModelName ?? "";
+                        ws.Cell(startRow, 3).Value = item.BrandName ?? "";
+                        ws.Cell(startRow, 4).Value = item.ModelCode ?? "";
+
+                        ws.Cell(startRow, 6).Value = item.Quantity;
+                        ws.Cell(startRow, 6).Style.NumberFormat.Format = "#,##0";
+
+                        ws.Cell(startRow, 7).Value = item.UnitPrice;
+                        ws.Cell(startRow, 7).Style.NumberFormat.Format = "#,##0";
+
+                        ws.Cell(startRow, 8).Value = item.TotalPrice;
+                        ws.Cell(startRow, 8).Style.NumberFormat.Format = "#,##0";
+
+                        ws.Cell(startRow, 9).Value = item.Note ?? "";
+
+                        var range = ws.Range(startRow, 1, startRow, 13);
+                        range.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                        range.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+
+                        startRow++;
+                    }
+                    int totalRow = startRow;
+
+                    // Ghi chữ "Tổng"
+                    ws.Cell(totalRow, 7).Value = "Sum:";
+                    ws.Cell(totalRow, 7).Style.Font.Bold = true;
+
+                    // Công thức SUM cột TotalPrice (cột 8)
+                    ws.Cell(totalRow, 8).FormulaA1 = $"SUM(H5:H{startRow - 1})";
+                    ws.Cell(totalRow, 8).Style.NumberFormat.Format = "#,##0";
+                    ws.Cell(totalRow, 8).Style.Font.Bold = true;
+
+                    // Kẻ khung
+                    var totalRange = ws.Range(totalRow, 7, totalRow, 8);
+                    totalRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                    workbook.SaveAs(outputPath);
+                }
+            });
+        }
+
+
+        public void ExportPurchaseHistory(List<PurchaseDto> purchaseData, string outputPath)
+        {
+            if (purchaseData == null)
+                throw new Exception("Dữ liệu không hợp lệ hoặc bị trống.");
+            string templatePath = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "excelTemplate",
+                "purchase_history_template.xlsx"
+            );
+            if (!File.Exists(templatePath))
+                throw new Exception("Không tìm thấy file purchase_history_template.xlsx");
+            using (var workbook = new XLWorkbook(templatePath))
+            {
+                var ws = workbook.Worksheet(1);
+                int startRow = 5;
+                int i = 0;
+                foreach (var item in purchaseData)
+                {
+                    i++ ;
+
+                    ws.Cell(startRow, 1).Value = i;
+                    ws.Cell(startRow, 2).Value = item.ModelName ?? "";
+                    ws.Cell(startRow, 3).Value = item.BrandName ?? "";
+                    ws.Cell(startRow, 4).Value = item.ModelCode ?? "";
+                    ws.Cell(startRow, 6).Value = item.Quantity;
+                    ws.Cell(startRow, 6).Style.NumberFormat.Format = "#,##0";
+
+                    ws.Cell(startRow, 7).Value = item.UnitPrice;
+                    ws.Cell(startRow, 7).Style.NumberFormat.Format = "#,##0";
+
+                    ws.Cell(startRow, 8).Value = item.TotalPrice;
+                    ws.Cell(startRow, 8).Style.NumberFormat.Format = "#,##0";
+                    ws.Cell(startRow, 9).Value = item.Note ?? "";
+                    // Kẻ khung cho đẹp
+                    var range = ws.Range(startRow, 1, startRow, 13);
+                    range.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                    range.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+                    startRow++;
+                }
                 workbook.SaveAs(outputPath);
             }
         }
