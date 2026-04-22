@@ -13,6 +13,7 @@ namespace WpfApp2.modelDTO.analysysDto
         public decimal MinPrice { get; set; }
         public decimal MaxPrice { get; set; }
         public decimal AvgPrice { get; set; }
+        public decimal GrandTotal { get; set; }
         public int TotalRecord { get; set; }
         public string LastVendorName { get; set; }
         public List<PurchaseDto> Items { get; set; } = new();

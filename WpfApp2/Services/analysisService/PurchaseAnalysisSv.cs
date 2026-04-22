@@ -124,6 +124,7 @@ namespace WpfApp2.Services.analysisService
                 result.MinPrice = items.Min(x => x.UnitPrice);
                 result.MaxPrice = items.Max(x => x.UnitPrice);
                 result.AvgPrice = items.Average(x => x.UnitPrice);
+                result.GrandTotal = items.Sum(x => x.Quantity * x.UnitPrice);
 
                 var lastPurchase = items.OrderByDescending(x => x.PurchaseDate).First();
                 result.LastPrice = lastPurchase.UnitPrice;
