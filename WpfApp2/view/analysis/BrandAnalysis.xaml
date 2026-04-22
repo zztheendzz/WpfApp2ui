@@ -218,6 +218,15 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
+                        <DataGridTextColumn Header="{DynamicResource ph_ModelCode}" MinWidth="150" Width="Auto" Binding="{Binding ModelCode}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Left"/>
+                                    <Setter Property="Padding" Value="5,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
                         <DataGridTextColumn Header="{DynamicResource ph_Equipment}" Width="Auto" Binding="{Binding EquipmentName}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using WpfApp2.modelDTO;
 using WpfApp2.modelDTO.analysisDto;
 using WpfApp2.modelDTO.analysysDto;
@@ -12,6 +13,7 @@ namespace WpfApp2.Services.analysisService
         public DatabaseService _db = new DatabaseService();
         public ModelAnalysisDto GetModelAnalysis(int modelId)
         {
+
             using var conn = _db.GetConnection();
 
             string sql = @"

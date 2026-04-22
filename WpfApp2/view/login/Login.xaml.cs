@@ -31,6 +31,8 @@ namespace WpfApp2.view.login
                 main.Show();
                 this.Close();
             };
+
         }
+
     }
 }

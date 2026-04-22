@@ -49,7 +49,7 @@
                 </TextBox>
 
                 <Grid Margin="0,0,0,30">
-                    <CheckBox Content="Ghi nhớ" FontSize="12" VerticalAlignment="Center">
+                    <CheckBox Content="Ghi nhớ" FontSize="12" VerticalAlignment="Center" IsChecked="{Binding IsRemembered}">
                         <CheckBox.Style>
                             <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
                                 <Style.Triggers>

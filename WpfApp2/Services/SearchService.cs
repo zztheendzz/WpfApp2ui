@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
 using WpfApp2.model;
 using WpfApp2.modelDto;
 using WpfApp2.modelDTO;
@@ -204,9 +205,8 @@ namespace WpfApp2.Services
             string pattern = "%" + keyword + "%";
 
             var models = conn.Query<Model>(
-                "SELECT * FROM Model WHERE ModelCode LIKE @pattern LIMIT 20",
+                "SELECT * FROM Model WHERE ModelCode LIKE  @pattern  LIMIT 20",
                 new { pattern });
-
             return models.Select(m => new SearchResultDto
             {
                 Id = m.Id,
