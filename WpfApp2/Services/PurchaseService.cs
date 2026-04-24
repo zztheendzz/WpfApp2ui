@@ -99,6 +99,8 @@ namespace WpfApp2.Services
                         p.ModelId,
                         m.ModelName,
                         m.ModelCode,
+                        m.Image,
+
                         p.VendorId,
                         v.VendorName,
 

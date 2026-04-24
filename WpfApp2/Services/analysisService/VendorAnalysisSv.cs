@@ -29,7 +29,7 @@ namespace WpfApp2.Services.analysisService
 
                 -- 2. Lấy danh sách chi tiết (Details)
                 SELECT 
-                    p.Id, m.ModelName, m.ModelCode, b.BrandName, v.VendorName, 
+                    p.Id, m.ModelName, m.ModelCode,m.Image, b.BrandName, v.VendorName, 
                     e.EquipmentName, p.Quantity, p.UnitPrice, 
                     (p.Quantity * p.UnitPrice) AS LineTotal,
                     p.PurchaseDate, u.FullName, p.Note

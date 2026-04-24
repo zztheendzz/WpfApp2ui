@@ -207,6 +207,22 @@
                             <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}" Width="90" Binding="{Binding PurchaseDate, StringFormat='dd/MM/yyyy'}"/>
                             <DataGridTextColumn Header="{DynamicResource ph_ModelName}" Width="2*" Binding="{Binding ModelName}"/>
                             <DataGridTextColumn Header="{DynamicResource dg_ModelCode}" Width="*" Binding="{Binding ModelCode}"/>
+                            <DataGridTemplateColumn Width="100">
+                                <DataGridTemplateColumn.Header>
+                                    <!--<TextBlock Text="{DynamicResource dg_Image}"/>-->
+                                    <TextBlock Text="Image"/>
+                                </DataGridTemplateColumn.Header>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Image Source="{Binding Image}" 
+                                  Stretch="Uniform" 
+                                  MaxHeight="50" 
+                                  Width="80"
+                                  Margin="5"
+                                  RenderOptions.BitmapScalingMode="HighQuality"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTextColumn Header="{DynamicResource ph_Equipment}" Width="*" Binding="{Binding EquipmentName}"/>
                             <DataGridTextColumn Header="{DynamicResource dg_Quantity}" Width="60" Binding="{Binding Quantity, StringFormat={}{0:N0}}"/>
                             <DataGridTextColumn Header="{DynamicResource dg_TotalPrice}" Width="110" Binding="{Binding LineTotal, StringFormat={}{0:N0}}">

@@ -24,8 +24,6 @@
                 <Button  Content="{StaticResource btn_Save}" Width="80" Margin="5" Click="Save_Click"/>
                 <Button  Content="{StaticResource btn_Cancel}" Width="80" Margin="5" Click="Cancel_Click" IsCancel="True"/>
 
-
-
             </StackPanel>
 
         </Grid>

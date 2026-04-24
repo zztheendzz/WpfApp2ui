@@ -7,7 +7,6 @@
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
       xmlns:fa="http://schemas.fontawesome.io/icons/"
-      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       mc:Ignorable="d" 
       d:DesignHeight="800" d:DesignWidth="1100"
       Title="ModelAnalysis"
@@ -172,6 +171,22 @@
                                 <DataGridTextColumn Header="{DynamicResource dg_Id}" Binding="{Binding Id}" Width="60"/>
                                 <DataGridTextColumn Header="{DynamicResource dg_Model}" Width="1*" Binding="{Binding ModelName}"/>
                                 <DataGridTextColumn Header="{DynamicResource dg_ModelCode}" Width="1*" Binding="{Binding ModelCode}"/>
+                                <DataGridTemplateColumn Width="100">
+                                    <DataGridTemplateColumn.Header>
+                                        <!--<TextBlock Text="{DynamicResource dg_Image}"/>-->
+                                        <TextBlock Text="Image"/>
+                                    </DataGridTemplateColumn.Header>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding Image}" 
+                                  Stretch="Uniform" 
+                                  MaxHeight="50" 
+                                  Width="80"
+                                  Margin="5"
+                                  RenderOptions.BitmapScalingMode="HighQuality"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="{DynamicResource dg_Equipment}" Width="1*" Binding="{Binding EquipmentName}"/>
                                 <DataGridTextColumn Header="{DynamicResource dg_Vendor}" Width="1*" Binding="{Binding VendorName}"/>
                                 <DataGridTextColumn Header="{DynamicResource dg_UnitPrice}" Width="120" Binding="{Binding UnitPrice, StringFormat='N0'}">
@@ -185,6 +200,7 @@
                                 </DataGridTextColumn>
                                 <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}" Width="110" Binding="{Binding PurchaseDate, StringFormat='dd/MM/yyyy'}"/>
                                 <DataGridTextColumn Header="{DynamicResource dg_Note}" Width="1.5*" Binding="{Binding Note}"/>
+
                             </DataGrid.Columns>
                         </DataGrid>
                     </DockPanel>

@@ -22,6 +22,7 @@ SELECT
     m.Id AS ModelId,
     m.ModelName,
     m.ModelCode,
+    m.Image,
 
 
     (
@@ -77,6 +78,7 @@ SELECT
     p.Id,
     m.ModelName,
     m.ModelCode,
+    m.Image,
     e.EquipmentName,
     b.BrandName,
     v.VendorName,

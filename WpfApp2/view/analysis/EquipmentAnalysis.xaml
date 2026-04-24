@@ -281,6 +281,24 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
+
+                        <DataGridTemplateColumn Width="100">
+                            <DataGridTemplateColumn.Header>
+                                <!--<TextBlock Text="{DynamicResource dg_Image}"/>-->
+                                <TextBlock Text="Image"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Image Source="{Binding Image}" 
+                                    Stretch="Uniform" 
+                                    MaxHeight="50" 
+                                    Width="80"
+                                    Margin="5"
+                                    RenderOptions.BitmapScalingMode="HighQuality"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
                         <!-- Brand: giữa -->
                         <DataGridTextColumn Header="{DynamicResource lbl_Brand}"
                         Width="140"

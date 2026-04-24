@@ -114,241 +114,251 @@ namespace WpfApp2.Services.improtExcel
             }
         }
 
-
         public async Task<int> updateData(string filePath, string sheetName, CancellationToken cancellationToken = default)
         {
+            return await Task.Run(() =>
+            {
+                return updateDataInternal(filePath, sheetName, cancellationToken);
+            });
+        }
 
 
-            if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentException("filePath is required", nameof(filePath));
-                int success = 0;
 
+        private int updateDataInternal(string filePath, string sheetName, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+                throw new ArgumentException("filePath is required");
 
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var importPurchases = await Task.Run(() => ReadExcel(filePath, sheetName), cancellationToken).ConfigureAwait(false);
+
+                string projectName = GetProjectName(filePath, sheetName);
+
+                var importPurchases = ReadExcel(filePath, sheetName);
+
                 if (importPurchases == null || importPurchases.Count == 0)
+                    throw new Exception("Không có dữ liệu!");
+
+                int headerRowNumber = GetHeaderRowNumber(filePath, sheetName);
+
+                var images = GetImages(filePath);
+
+                string folder = @"Z:\Nguyen Lam Long Trong\Image";
+                Directory.CreateDirectory(folder);
+
+                for (int i = 0; i < importPurchases.Count; i++)
                 {
-                    throw new InvalidOperationException("Không tìm thấy dữ liệu hợp lệ!");
+                    int excelRow = headerRowNumber + i + 1; // 🔥 fix luôn
+
+                    if (!images.TryGetValue(excelRow, out var img))
+                        continue;
+
+                    var model = importPurchases[i];
+
+                    if (string.IsNullOrWhiteSpace(model.ModelCode))
+                        continue;
+
+                    string safeCode = string.Join("_",
+                        model.ModelCode.Split(Path.GetInvalidFileNameChars()));
+
+                    string ext = img.ext.StartsWith(".") ? img.ext : "." + img.ext;
+                    string fileName = safeCode + ext;
+
+                    string path = Path.Combine(folder, fileName);
+
+                    Directory.CreateDirectory(Path.GetDirectoryName(path));
+
+                    File.WriteAllBytes(path, img.data);
+
+                    model.Image = path;
                 }
+
+                using var conn = _db.GetConnection();
+                if (conn.State == ConnectionState.Closed) conn.Open();
+
+                using var transaction = conn.BeginTransaction();
 
                 var vendorDict = GetDictionary("SELECT Id, VendorName AS Name FROM Vendor");
                 var brandDict = GetDictionary("SELECT Id, BrandName AS Name FROM Brand");
                 var modelDict = GetDictionary("SELECT Id, ModelCode AS Name FROM Model");
-                using var conn = _db.GetConnection();
-                if (conn.State == ConnectionState.Closed) conn.Open();
-                using var transaction = conn.BeginTransaction();
 
-                string projectName = GetProjectName(filePath, sheetName);
                 int equipmentId = GetOrCreateEquipment(conn, projectName);
 
-
-
-                var existingDict = conn.Query<(int Id, int ModelId)>(@"
-                SELECT Id, ModelId 
-                FROM PurchaseHistory 
-                WHERE EquipmentId = @EquipmentId",
-                new { EquipmentId = equipmentId }, transaction)
-                .ToDictionary(x => x.ModelId, x => x.Id);
+                var existingDict = conn.Query<(int Id, string ModelCode)>(@"
+            SELECT ph.Id, m.ModelCode
+            FROM PurchaseHistory ph
+            JOIN Model m ON ph.ModelId = m.Id
+            WHERE ph.EquipmentId = @EquipmentId",
+                    new { EquipmentId = equipmentId }, transaction)
+                    .ToDictionary(
+                        x => Normalize(x.ModelCode),
+                        x => x.Id
+                    );
 
                 foreach (var row in importPurchases)
                 {
+                    if (string.IsNullOrWhiteSpace(row.ModelCode))
+                        continue;
 
-                    var key = Normalize(row.ModelCode);
+                    string key = Normalize(row.ModelCode);
 
                     int vendorId = GetOrCreateVendor(conn, vendorDict, row.Vendor);
                     int brandId = GetOrCreateBrand(conn, brandDict, row.Brand);
 
+                    int modelId = GetOrCreateOrUpdateModel(
+                        conn,
+                        modelDict,
+                        row.ModelName,
+                        row.ModelCode,
+                        brandId,
+                        row.Image
+                    );
 
-
-                    if (!modelDict.TryGetValue(key, out int modelId))
-                                {
-                        // INSERT
-                        modelId = conn.ExecuteScalar<int>(@"
-        INSERT INTO Model(ModelName, ModelCode, BrandId, IsActive)
-        VALUES(@Name, @Code, @BrandId, 1);
-        SELECT last_insert_rowid();",
-                            new { Name = row.ModelName, Code = row.ModelCode, BrandId = brandId }, transaction);
-
-                        modelDict[key] = modelId;
-                    }
-                    else
+                    if (existingDict.TryGetValue(key, out int existId))
                     {
-                        // 🔥 UPDATE model nếu cần
                         conn.Execute(@"
-        UPDATE Model
-        SET ModelName = @Name,
-            BrandId = @BrandId
-        WHERE Id = @Id",
+                    UPDATE PurchaseHistory
+                    SET Quantity = @Quantity,
+                        UnitPrice = @UnitPrice,
+                        TotalPrice = @TotalPrice,
+                        VendorId = @VendorId,
+                        UserId = @UserId,
+                        CurrencyId = @CurrencyId,
+                        CreateAt = @CreateAt,
+                        PurchaseDate = @PurchaseDate
+                    WHERE Id = @Id",
                             new
                             {
-                                Id = modelId,
-                                Name = row.ModelName,
-                                BrandId = brandId
-                            }, transaction);
-                    }
-
-                                if (existingDict.TryGetValue(modelId, out int existId))
-                                {
-                                    // UPDATE
-                                    conn.Execute(@"
-                        UPDATE PurchaseHistory
-                        SET Quantity = @Quantity,
-                            UnitPrice = @UnitPrice,
-                            TotalPrice = @TotalPrice,
-                            VendorId = @VendorId,
-                            UserId = @UserId,
-                            CurrencyId = @CurrencyId ,
-                            PurchaseDate=@PurchaseDate,
-                            CreateAt = @CreateAt
-                        WHERE Id = @Id",
-                                        new
-                                        {
-                                            Id = existId,
-                                            Quantity = row.Quantity,
-                                            UnitPrice = row.UnitPrice,
-                                            TotalPrice = row.Quantity * row.UnitPrice,
-                                            VendorId = vendorId,
-                                            UserId=UserId,
-                                            CurrencyId=1,
-                                            PurchaseDate= DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                                            CreateAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                                        }, transaction);
-                                }
-                                else
-                                {
-                                    // INSERT
-                                    conn.Execute(@"
-                        INSERT INTO PurchaseHistory
-                        (ModelId, EquipmentId, Quantity, UnitPrice, TotalPrice,VendorId,UserId,CurrencyId,CreateAt,PurchaseDate)
-                        VALUES
-                        (@ModelId, @EquipmentId, @Quantity, @UnitPrice, @TotalPrice,@VendorId,@UserId, @CurrencyId ,@CreateAt,@PurchaseDate)",
-                                        new
-                                        {
-                                            ModelId = modelId,
-                                            EquipmentId = equipmentId,
-                                            Quantity = row.Quantity,
-                                            UnitPrice = row.UnitPrice,
-                                            TotalPrice = row.Quantity * row.UnitPrice,
-                                            VendorId = vendorId,
-                                            UserId = UserId,
-                                            CurrencyId = 1,
-                                            PurchaseDate= DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                                            CreateAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                                        }, transaction);
-                                }
-                }
-                transaction.Commit();
-
-                return success;
-
-            }
-            catch (Exception ex)
-            {
-                Application.Current.Dispatcher.Invoke(() => MessageBox.Show(ex.Message));
-                return success;
-            }
-
-        }
-        // Async version with cancellation support. Returns number of imported rows.
-        public async Task<int> inSertDataAsync(string filePath, string sheetName, CancellationToken cancellationToken = default)
-        {
-            if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentException("filePath is required", nameof(filePath));
-
-            try
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                // 1. Lấy Project Name từ Excel trước
-                string projectName = GetProjectName(filePath, sheetName);
-
-                // 2. Đọc dữ liệu hàng hóa (IO-bound) - run on threadpool to avoid blocking caller
-                var importPurchases = await Task.Run(() => ReadExcel(filePath, sheetName), cancellationToken).ConfigureAwait(false);
-
-                if (importPurchases == null || importPurchases.Count == 0)
-                {
-                    throw new InvalidOperationException("Không tìm thấy dữ liệu hợp lệ!");
-                }
-
-                var vendorDict = GetDictionary("SELECT Id, VendorName AS Name FROM Vendor");
-                var brandDict = GetDictionary("SELECT Id, BrandName AS Name FROM Brand");
-                var modelDict = GetDictionary("SELECT Id, ModelCode AS Name FROM Model");
-
-                using var conn = _db.GetConnection();
-                if (conn.State == ConnectionState.Closed) conn.Open();
-                using var transaction = conn.BeginTransaction();
-
-                try
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    // 3. Lấy hoặc Tạo mới EquipmentId từ Project Name
-                    int equipmentId = GetOrCreateEquipment(conn, projectName);
-
-                    int success = 0;
-                    foreach (var row in importPurchases)
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-
-                        int vendorId = GetOrCreateVendor(conn, vendorDict, row.Vendor);
-                        int brandId = GetOrCreateBrand(conn, brandDict, row.Brand);
-                        int modelId = GetOrCreateModel(conn, modelDict, row.ModelName, row.ModelCode, brandId);
-
-                        // 4. Insert vào PurchaseHistory (Thêm cột EquipmentId)
-                        conn.Execute(@"
-                    INSERT INTO PurchaseHistory 
-                    (ModelId, VendorId, EquipmentId, Quantity, UnitPrice, TotalPrice, PurchaseDate, CreateAt, UserId,CurrencyId)
-                    VALUES 
-                    (@ModelId, @VendorId, @EquipmentId, @Quantity, @UnitPrice, @TotalPrice, @PurchaseDate, @CreateAt, @UserId,@CurrencyId)",
-                            new
-                            {
-                                ModelId = modelId,
-                                VendorId = vendorId,
-                                EquipmentId = equipmentId, // Gắn ID thiết bị/dự án vào đây
+                                Id = existId,
                                 Quantity = row.Quantity,
                                 UnitPrice = row.UnitPrice,
                                 TotalPrice = row.Quantity * row.UnitPrice,
-                                PurchaseDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                                CreateAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                                VendorId = vendorId,
                                 UserId = UserId,
-                                CurrencyId = 1 // hardcode tạm thời
-
+                                CurrencyId = 1,
+                                CreateAt = DateTime.Now,
+                                PurchaseDate = DateTime.Now
+                            }, transaction);
+                    }
+                    else
+                    {
+                        conn.Execute(@"
+                    INSERT INTO PurchaseHistory
+                    (ModelId, EquipmentId, Quantity, UnitPrice, TotalPrice, VendorId, UserId, CurrencyId, CreateAt, PurchaseDate)
+                    VALUES
+                    (@ModelId, @EquipmentId, @Quantity, @UnitPrice, @TotalPrice, @VendorId, @UserId, @CurrencyId, @CreateAt, @PurchaseDate)",
+                            new
+                            {
+                                ModelId = modelId,
+                                EquipmentId = equipmentId,
+                                Quantity = row.Quantity,
+                                UnitPrice = row.UnitPrice,
+                                TotalPrice = row.Quantity * row.UnitPrice,
+                                VendorId = vendorId,
+                                UserId = UserId,
+                                CurrencyId = 1,
+                                CreateAt = DateTime.Now,
+                                PurchaseDate = DateTime.Now
                             }, transaction);
 
-                        success++;
+                        existingDict[key] = 1;
                     }
+                }
 
-                    transaction.Commit();
-                    return success;
-                }
-                catch (IOException ioEx)
-                {
-                    transaction.Rollback();
-                    throw new IOException("Lỗi IO khi ghi vào database: " + ioEx.Message, ioEx);
-                }
-                catch (UnauthorizedAccessException uaEx)
-                {
-                    transaction.Rollback();
-                    throw new UnauthorizedAccessException("Quyền truy cập bị từ chối: " + uaEx.Message, uaEx);
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    throw new Exception("Lỗi Database: " + ex.Message, ex);
-                }
-            }
-            catch (IOException)
-            {
-                throw;
-            }
-            catch (UnauthorizedAccessException)
-            {
-                throw;
+                transaction.Commit();
+
+                return importPurchases.Count;
             }
             catch (Exception ex)
             {
-                throw new Exception("Lỗi khi import dữ liệu: " + ex.Message, ex);
+                // ⚠️ không gọi trực tiếp MessageBox ở background
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show(ex.Message);
+                });
+
+                return 0;
             }
+        }
+
+        // Async version with cancellation support. Returns number of imported rows.
+
+        private int GetOrCreateOrUpdateModel(IDbConnection conn,
+                Dictionary<string, int> dict,
+                string name,
+                string modelCode,
+                int brandId,
+                string image)
+        {
+            var key = Normalize(modelCode);
+            if (string.IsNullOrEmpty(key)) return 0;
+
+            if (dict.TryGetValue(key, out int id))
+            {
+                // 🔥 update luôn Image
+                conn.Execute(@"
+            UPDATE Model
+            SET ModelName = @Name,
+                BrandId = @BrandId,
+                Image = @Image
+            WHERE Id = @Id",
+                    new { Id = id, Name = name, BrandId = brandId, Image = image });
+
+                return id;
+            }
+
+            id = conn.ExecuteScalar<int>(@"
+        INSERT INTO Model(ModelName, ModelCode, BrandId, Image, IsActive)
+        VALUES(@Name, @ModelCode, @BrandId, @Image, 1);
+        SELECT last_insert_rowid();",
+                new { Name = name, ModelCode = modelCode, BrandId = brandId, Image = image });
+
+            dict[key] = id;
+            return id;
+        }
+        public int GetHeaderRowNumber(string filePath, string sheetName)
+        {
+            using var wb = new XLWorkbook(filePath);
+            var ws = wb.Worksheet(sheetName);
+
+            foreach (var row in ws.RowsUsed().Take(50))
+            {
+                if (row.CellsUsed().Any(c => IsModelNameHeader(c.GetValue<string>())))
+                {
+                    return row.RowNumber();
+                }
+            }
+
+            throw new Exception("Không tìm thấy header");
+        }
+        public Dictionary<int, (byte[] data, string ext)> GetImages(string filePath)
+        {
+            var result = new Dictionary<int, (byte[], string)>();
+
+            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            var wb = new NPOI.XSSF.UserModel.XSSFWorkbook(fs);
+            var sheet = (NPOI.XSSF.UserModel.XSSFSheet)wb.GetSheetAt(0);
+
+            var drawing = sheet.GetDrawingPatriarch();
+            if (drawing == null) return result;
+
+            foreach (var shape in drawing.GetShapes())
+            {
+                if (shape is NPOI.XSSF.UserModel.XSSFPicture pic)
+                {
+                    var anchor = pic.GetPreferredSize();
+
+                    int row = anchor.Row1; // 🔥 dùng Row1 là đủ
+
+                    var data = pic.PictureData.Data;
+                    string ext = pic.PictureData.SuggestFileExtension();
+
+                    result[row] = (data, ext);
+                }
+            }
+
+            return result;
         }
 
         // Đọc dữ liệu từ Excel với cơ chế quét cột động
@@ -420,12 +430,6 @@ namespace WpfApp2.Services.improtExcel
             return result;
         }
 
-
-
-
-
-
-
         #region Helpers
         private string GetCellValue(IXLRow row, Dictionary<string, int> map, string key)
         {
@@ -459,6 +463,7 @@ namespace WpfApp2.Services.improtExcel
 
         private int GetOrCreateBrand(IDbConnection conn, Dictionary<string, int> dict, string name)
         {
+
             var key = Normalize(name);
             if (string.IsNullOrEmpty(key)) return 0;
             if (dict.TryGetValue(key, out int id)) return id;
@@ -466,14 +471,14 @@ namespace WpfApp2.Services.improtExcel
             dict[key] = id;
             return id;
         }
-
-        private int GetOrCreateModel(IDbConnection conn, Dictionary<string, int> dict, string name, string modelCode, int brandId)
+        
+        private int GetOrCreateModel(IDbConnection conn, Dictionary<string, int> dict, string name, string modelCode, int brandId,string Image)
         {
             var key = Normalize(modelCode);
             if (string.IsNullOrEmpty(key)) return 0;
             if (dict.TryGetValue(key, out int id)) return id;
-            id = conn.ExecuteScalar<int>(@"INSERT INTO Model(ModelName, ModelCode, BrandId, IsActive) VALUES(@Name, @ModelCode, @BrandId, 1); SELECT last_insert_rowid();",
-                new { Name = name, ModelCode = modelCode, BrandId = brandId });
+            id = conn.ExecuteScalar<int>(@"INSERT INTO Model(ModelName, ModelCode, BrandId,Image, IsActive) VALUES(@Name, @ModelCode, @BrandId, @Image, 1); SELECT last_insert_rowid();",
+                new { Name = name, ModelCode = modelCode, BrandId = brandId, Image = Image });
             dict[key] = id;
             return id;
         }

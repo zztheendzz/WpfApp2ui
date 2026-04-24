@@ -33,7 +33,7 @@ namespace WpfApp2.Services.analysisService
 
                 -- 2. Detail List
                 SELECT 
-                    p.Id, m.ModelName, m.ModelCode, v.VendorName, e.EquipmentName,
+                    p.Id, m.ModelName, m.ModelCode,m.Image, v.VendorName, e.EquipmentName,
                     c.CurrencyName AS CurrencyName, p.Quantity, p.UnitPrice,
                     (p.Quantity * p.UnitPrice) AS LineTotal,
                     (p.Quantity * p.UnitPrice) AS TotalPrice,

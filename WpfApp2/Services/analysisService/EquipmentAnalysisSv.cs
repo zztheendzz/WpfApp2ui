@@ -38,7 +38,7 @@ namespace WpfApp2.Services.analysisService
 
         -- 2. Detail List
         SELECT 
-            p.Id, m.ModelName, m.ModelCode, v.VendorName, b.BrandName,
+            p.Id, m.ModelName, m.ModelCode,m.Image, v.VendorName, b.BrandName,
             c.CurrencyName, 
             p.Quantity, 
             p.UnitPrice,

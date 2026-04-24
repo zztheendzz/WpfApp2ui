@@ -81,11 +81,30 @@
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
 
+
+                    <DataGridTemplateColumn Width="100">
+                        <DataGridTemplateColumn.Header>
+                            <!--<TextBlock Text="{DynamicResource dg_Image}"/>-->
+                            <TextBlock Text="Image"/>
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding Image}" 
+                                  Stretch="Uniform" 
+                                  MaxHeight="50" 
+                                  Width="80"
+                                  Margin="5"
+                                  RenderOptions.BitmapScalingMode="HighQuality"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
                     <DataGridTextColumn Width="Auto" MinWidth="120" Binding="{Binding BrandName}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource dg_Brand}"/>
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
+
 
 
                     <DataGridTemplateColumn Width="80">

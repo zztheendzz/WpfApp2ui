@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using System.Windows;
 using WpfApp2.modelDto;
 using WpfApp2.modelDTO;
 
@@ -17,6 +18,7 @@ namespace WpfApp2.Services
             string sql = @"
                 SELECT 
                     m.Id,
+                    m.Image,
                     m.ModelCode,
                     m.BrandId,        -- FK (int)
                     m.ModelName,
@@ -78,11 +80,6 @@ namespace WpfApp2.Services
             return brandId;
         }
 
-
-
-
-
-
         public void Delete(int id)
         {
             using var conn = _db.GetConnection();
@@ -108,13 +105,14 @@ namespace WpfApp2.Services
             // lấy hoặc tạo brand
             model.BrandId = GetOrCreateBrand(conn, brandDict, model.BrandName);
 
-
+            MessageBox.Show("sv = " + model.Image);
             string sql = @"
         UPDATE Model
         SET 
             ModelCode = @ModelCode,
             BrandId = @BrandId,
-            ModelName=@ModelName
+            ModelName=@ModelName,
+            Image=@Image
         WHERE Id = @Id
         ";
 

@@ -14,6 +14,7 @@ namespace WpfApp2.model.modelImportExcel
         public decimal UnitPrice { get; set; }
         public string Vendor { get; set; }
         public string Note { get; set; }
+        public string Image { get; set; }
 
     }
 }

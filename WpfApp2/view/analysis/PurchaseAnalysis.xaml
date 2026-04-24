@@ -223,10 +223,33 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="{DynamicResource dg_Model}" Width="180">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding ModelName}" TextWrapping="Wrap" Padding="5" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                                 <DataGridTemplateColumn Header="{DynamicResource dg_ModelCode}" Width="180">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding ModelCode}" TextWrapping="Wrap" Padding="5" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Width="100">
+                                    <DataGridTemplateColumn.Header>
+                                        <!--<TextBlock Text="{DynamicResource dg_Image}"/>-->
+                                        <TextBlock Text="Image"/>
+                                    </DataGridTemplateColumn.Header>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding Image}" 
+                                  Stretch="Uniform" 
+                                  MaxHeight="50" 
+                                  Width="80"
+                                  Margin="5"
+                                  RenderOptions.BitmapScalingMode="HighQuality"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -292,8 +315,9 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                
-                                
+
+
+
                             </DataGrid.Columns>
                         </DataGrid>
 

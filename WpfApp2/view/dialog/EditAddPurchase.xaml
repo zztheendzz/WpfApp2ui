@@ -50,11 +50,20 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0">
-                    <TextBlock Text="{StaticResource ph_ModelCode}" Style="{StaticResource LabelStyle}"/>
-                    <TextBox Text="{Binding ModelCode}"/>
+                    <TextBlock Text="{StaticResource ph_ModelCode}"  Style="{StaticResource LabelStyle}" />
+                    <TextBox 
+                        IsReadOnly="True"
+                        Background="#F1F2F6"
+                        Foreground="Black"
+                        BorderBrush="#E0E0E0"
+                        Text="{Binding ModelCode}"/>
 
                     <TextBlock Text="{StaticResource ph_ModelName}" Style="{StaticResource LabelStyle}"/>
-                    <TextBox Text="{Binding ModelName}"/>
+                    <TextBox IsReadOnly="True" 
+                        Background="#F1F2F6"
+                        Foreground="Black"
+                        BorderBrush="#E0E0E0"
+                        Text="{Binding ModelName}"/>
 
                     <TextBlock Text="{StaticResource lbl_Vendor}" Style="{StaticResource LabelStyle}"/>
                     <TextBox Text="{Binding VendorName}"/>
@@ -75,7 +84,7 @@
                             <TextBlock Text="{StaticResource lbl_Currency}" Style="{StaticResource LabelStyle}"/>
                             <TextBox Text="VND" IsReadOnly="True"
                                      Background="#F1F2F6"
-                                     Foreground="#A4A9AD"
+                                     Foreground="Black"
                                      BorderBrush="#E0E0E0"
                                      Cursor="Arrow"/>
                         </StackPanel>

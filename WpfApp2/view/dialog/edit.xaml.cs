@@ -59,6 +59,8 @@ namespace WpfApp2.view.dialog
                 if (prop.Name == "CreateAt") continue;
                 if (prop.Name == "CurrencyCode") continue;
 
+
+
                 string displayName = prop.Name == "LineTotal" ? "Total Price" : SplitName(prop.Name);
                 // ❌ bỏ Name nếu có Id tương ứng
                 if (prop.Name.EndsWith("Id"))
@@ -120,6 +122,53 @@ namespace WpfApp2.view.dialog
                     });
 
                 return date;
+            }
+            // 🔥 IMAGE (string path)
+            if (prop.PropertyType == typeof(string) && prop.Name.ToLower().Contains("image"))
+            {
+                var panel = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                    Margin = new Thickness(0, 0, 0, 10)
+                };
+
+                var txtImage = new TextBox
+                {
+                    Width = 200,
+                    IsReadOnly = true
+                };
+
+                txtImage.SetBinding(TextBox.TextProperty,
+                    new Binding(prop.Name)
+                    {
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                    });
+
+                var btn = new Button
+                {
+                    Content = "Chọn ảnh",
+                    Margin = new Thickness(5, 0, 0, 0)
+                };
+
+                btn.Click += (s, e) =>
+                {
+                    var dlg = new Microsoft.Win32.OpenFileDialog
+                    {
+                        Filter = "Image files (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg",
+                        Title = "Chọn ảnh"
+                    };
+
+                    if (dlg.ShowDialog() == true)
+                    {
+                        txtImage.Text = dlg.FileName;
+                    }
+                };
+
+                panel.Children.Add(txtImage);
+                panel.Children.Add(btn);
+
+                return panel;
             }
 
             // 🔥 DEFAULT

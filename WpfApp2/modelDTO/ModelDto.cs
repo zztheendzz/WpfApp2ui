@@ -18,5 +18,6 @@ namespace WpfApp2.modelDTO
 
         public bool IsActive { get; set; }
         public string BrandName { get; set; }
+        public string Image { get; set; }
     }
 }

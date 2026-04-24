@@ -36,5 +36,6 @@ namespace WpfApp2.modelDTO.analysysDto
         public double BestVendorPrice { get; set; }
         public List<VendorPriceDto> Vendors { get; set; }
 
+        public string Image { get; set; }
     }
 }

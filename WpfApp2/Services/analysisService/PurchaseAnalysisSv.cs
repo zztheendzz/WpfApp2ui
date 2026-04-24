@@ -30,7 +30,7 @@ namespace WpfApp2.Services.analysisService
             var sql = new StringBuilder(@"
                 SELECT 
                     p.Id, 
-                    m.ModelName, m.ModelCode,
+                    m.ModelName, m.ModelCode,m.Image,
                     v.VendorName, 
                     e.EquipmentName, 
                     b.BrandName,

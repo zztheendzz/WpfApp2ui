@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -124,10 +125,40 @@ namespace WpfApp2.viewmodel.tableVm
             {
                 try
                 {
+                    MessageBox.Show(temp.Image ?? "NULL");
+                    MessageBox.Show(File.Exists(temp.Image).ToString());
+                    if (!string.IsNullOrEmpty(temp.Image) && File.Exists(temp.Image))
+                    {
+                        string folder = @"Z:\Nguyen Lam Long Trong\Image";
+
+                        // tạo folder nếu chưa có
+                        if (!Directory.Exists(folder))
+                            Directory.CreateDirectory(folder);
+
+                        // lấy đuôi file (.png, .jpg...)
+                        string ext = Path.GetExtension(temp.Image);
+
+                        // tên mới = ModelCode + extension
+                        string newFileName = temp.ModelCode + ext;
+
+                        string destPath = Path.Combine(folder, newFileName);
+
+                        // copy + overwrite nếu tồn tại
+                        File.Copy(temp.Image, destPath, true);
+
+                        // 🔥 lưu lại path mới (quan trọng)
+                        temp.Image = destPath;
+
+                        MessageBox.Show("destPath = " + destPath);
+
+                    }
                     // 🔥 copy lại khi OK
                     model.ModelName = temp.ModelName;
                     model.ModelCode = temp.ModelCode;
                     model.BrandName = temp.BrandName;
+                    model.Image = temp.Image;
+
+                    MessageBox.Show("vm = " + model.Image);
 
                     _modelService.Edit(model);
 

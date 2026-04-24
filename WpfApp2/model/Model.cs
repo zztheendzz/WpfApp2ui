@@ -29,5 +29,9 @@ namespace WpfApp2.model
         [DisplayName("Active")]
         [Column("IsActive")]
         public int IsActive { get; set; }
+
+        [DisplayName("Image")]
+        [Column("Image")]
+        public string Image { get; set; }
     }
 }
