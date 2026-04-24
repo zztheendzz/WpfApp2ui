@@ -39,11 +39,11 @@
                        Margin="0,0,0,30" FontWeight="Bold" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 
             <!--<Label Grid.Row="1" Grid.Column="0" Content="{DynamicResource lbl_FullName}"-->
-            <Label Grid.Row="1" Grid.Column="0" Content="Full Name" 
+            <Label Grid.Row="1" Grid.Column="0" Content="{DynamicResource lbl_FullName}"
                    VerticalAlignment="Center" Margin="0,0,0,20" FontWeight="SemiBold"/>
             <TextBox Grid.Row="1" Grid.Column="1" 
                      Text="{Binding CurrentUser.FullName, UpdateSourceTrigger=PropertyChanged}" 
-                     materialDesign:HintAssist.Hint="Enter FullName"
+                     materialDesign:HintAssist.Hint="{DynamicResource ph_Enter FullName}"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,20"/>
 

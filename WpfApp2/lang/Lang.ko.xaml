@@ -115,4 +115,27 @@
     <sys:String x:Key="title_MatrixComparison">모델 - 업체별 가격 비교 매트릭스</sys:String>
     <sys:String x:Key="btn_ExportExcel">엑셀 내보내기</sys:String>
 
+
+    <sys:String x:Key="m_ImportTitle">엑셀 데이터 가져오기</sys:String>
+    <sys:String x:Key="m_Step1">1단계: 엑셀 파일 선택 (.xlsx)</sys:String>
+    <sys:String x:Key="m_SelectFile">파일 선택</sys:String>
+    <sys:String x:Key="m_Step2">2단계: 워크시트 선택</sys:String>
+
+    <sys:String x:Key="m_ImportBtn">데이터 가져오기</sys:String>
+    <sys:String x:Key="m_Preview">데이터 미리보기:</sys:String>
+    <sys:String x:Key="m_NoData">표시할 데이터가 없습니다.</sys:String>
+
+    <sys:String x:Key="m_MsgSuccess">데이터를 성공적으로 가져왔습니다!</sys:String>
+    <sys:String x:Key="m_MsgError">파일을 불러오는 중 오류가 발생했습니다.</sys:String>
+
+    <sys:String x:Key="m_UserTitle">계정 목록</sys:String>
+    <sys:String x:Key="m_UserSearchHint">계정 검색...</sys:String>
+    <sys:String x:Key="m_AddUser">사용자 추가</sys:String>
+    <sys:String x:Key="m_ColName">성명</sys:String>
+    <sys:String x:Key="m_ColAccount">계정</sys:String>
+    <sys:String x:Key="m_ColRole">권한</sys:String>
+    <sys:String x:Key="m_ColActive">상태</sys:String>
+    <sys:String x:Key="m_ColAction">작업</sys:String>
+
+
 </ResourceDictionary>

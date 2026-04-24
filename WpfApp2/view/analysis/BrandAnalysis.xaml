@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WpfApp2.view.analysis"
+      xmlns:lang="clr-namespace:WpfApp2.Services.langService"
       xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
       xmlns:fa="http://schemas.fontawesome.io/icons/"
       mc:Ignorable="d" 
@@ -201,7 +202,10 @@
                     </DataGrid.ColumnHeaderStyle>
 
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="{DynamicResource dg_PurchaseDate}" Width="110" Binding="{Binding PurchaseDate, StringFormat='dd/MM/yyyy'}">
+                        <DataGridTextColumn Width="110" Binding="{Binding PurchaseDate, StringFormat='dd/MM/yyyy'}">
+                            <DataGridTextColumn.Header>
+                                <TextBlock Text="{DynamicResource dg_PurchaseDate}" />
+                            </DataGridTextColumn.Header>
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="TextAlignment" Value="Center"/>
@@ -209,7 +213,10 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="{DynamicResource ph_ModelName}" MinWidth="150" Width="Auto" Binding="{Binding ModelName}">
+                        <DataGridTextColumn Binding="{Binding ModelName}" MinWidth="150" Width="Auto">
+                            <DataGridTextColumn.Header>
+                                <TextBlock Text="{DynamicResource ph_ModelName}" />
+                            </DataGridTextColumn.Header>
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="TextAlignment" Value="Left"/>
@@ -218,7 +225,10 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="{DynamicResource ph_ModelCode}" MinWidth="150" Width="Auto" Binding="{Binding ModelCode}">
+                        <DataGridTextColumn MinWidth="150" Width="Auto" Binding="{Binding ModelCode}">
+                            <DataGridTextColumn.Header>
+                                <TextBlock Text="{DynamicResource ph_ModelCode}" />
+                            </DataGridTextColumn.Header>
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="TextAlignment" Value="Left"/>
@@ -229,22 +239,24 @@
 
                         <DataGridTemplateColumn Width="100">
                             <DataGridTemplateColumn.Header>
-                                <!--<TextBlock Text="{DynamicResource dg_Image}"/>-->
                                 <TextBlock Text="Image"/>
                             </DataGridTemplateColumn.Header>
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Image Source="{Binding Image}" 
-                                  Stretch="Uniform" 
-                                  MaxHeight="50" 
-                                  Width="80"
-                                  Margin="5"
-                                  RenderOptions.BitmapScalingMode="HighQuality"/>
+                               Stretch="Uniform" 
+                               MaxHeight="50" 
+                               Width="80"
+                               Margin="5"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTextColumn Header="{DynamicResource ph_Equipment}" Width="Auto" Binding="{Binding EquipmentName}">
+                        <DataGridTextColumn Width="Auto" Binding="{Binding EquipmentName}">
+                            <DataGridTextColumn.Header>
+                                <TextBlock Text="{DynamicResource ph_Equipment}" />
+                            </DataGridTextColumn.Header>
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="TextAlignment" Value="Center"/>
@@ -252,7 +264,10 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="{DynamicResource dg_Quantity}" Width="80" Binding="{Binding Quantity}">
+                        <DataGridTextColumn Width="80" Binding="{Binding Quantity}">
+                            <DataGridTextColumn.Header>
+                                <TextBlock Text="{DynamicResource dg_Quantity}" />
+                            </DataGridTextColumn.Header>
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="TextAlignment" Value="Center"/>
@@ -260,7 +275,10 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="{DynamicResource dg_TotalPrice}" Width="130" Binding="{Binding TotalPrice, StringFormat={}{0:N0}}">
+                        <DataGridTextColumn Width="130" Binding="{Binding TotalPrice, StringFormat={}{0:N0}}">
+                            <DataGridTextColumn.Header>
+                                <TextBlock Text="{DynamicResource dg_TotalPrice}" />
+                            </DataGridTextColumn.Header>
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="TextAlignment" Value="Right"/>

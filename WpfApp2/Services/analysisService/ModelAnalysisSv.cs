@@ -127,6 +127,7 @@ ORDER BY p.PurchaseDate DESC;
         SELECT 
             m.ModelName,
             m.ModelCode,
+            m.Image,
             v.VendorName,
             p.UnitPrice,
             p.PurchaseDate

@@ -131,33 +131,23 @@ namespace WpfApp2.view.analysis
         {
             if (!(DataContext is ModelAnalysisVm vm)) return;
 
-            dgMatrix.ItemsSource = null; // 🔥 reset trước
+            dgMatrix.ItemsSource = null;
 
-            dgMatrix.Columns.Clear();
+            // ❗ CHỈ xoá các cột dynamic (vendor), giữ lại 2 cột đầu
+            while (dgMatrix.Columns.Count > 2)
+            {
+                dgMatrix.Columns.RemoveAt(dgMatrix.Columns.Count - 1);
+            }
+
             BuildMatrixColumns();
 
-            dgMatrix.ItemsSource = vm.MatrixData.Rows; // 🔥 set sau cùng
+            dgMatrix.ItemsSource = vm.MatrixData.Rows;
         }
 
         private void BuildMatrixColumns()
         {
             if (!(DataContext is ModelAnalysisVm vm)) return;
             if (vm.MatrixData == null) return;
-
-            // Cột Model
-            dgMatrix.Columns.Add(new DataGridTextColumn
-            {
-                Header = "Model Name",
-                Binding = new Binding("ModelName"),
-                
-                Width = DataGridLength.Auto
-            });
-            dgMatrix.Columns.Add(new DataGridTextColumn
-            {
-                Header = "Model Code",
-                Binding = new Binding("ModelCode"),
-                Width = DataGridLength.Auto
-            });
 
             // Dynamic vendor columns
             foreach (var vendor in vm.MatrixData.Vendors)

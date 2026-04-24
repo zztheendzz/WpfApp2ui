@@ -5,79 +5,80 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:vm="clr-namespace:WpfApp2.viewmodel.importExcel"
       mc:Ignorable="d" 
-      d:DesignHeight="500" d:DesignWidth="800"
+      d:DesignHeight="600" d:DesignWidth="900"
       Title="Import Excel">
 
     <Page.DataContext>
         <vm:ImportExcelVm/>
     </Page.DataContext>
 
-    <Border Background="#F5F5F5" Padding="30">
+    <Border Background="#F0F2F5" Padding="25">
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" Margin="0,0,0,20">
-                <TextBlock Text="NHẬP DỮ LIỆU TỪ EXCEL" FontSize="20" FontWeight="Bold" Foreground="#333"/>
-                <Separator Margin="0,5,0,0" Background="#DDD" Height="1"/>
+            <StackPanel Grid.Row="0" Margin="0,0,0,15">
+                <TextBlock Text="{DynamicResource m_ImportTitle}" FontSize="22" FontWeight="ExtraBold" Foreground="#1A237E"/>
+                <Separator Margin="0,8,0,0" Background="#BDBDBD" Height="1"/>
             </StackPanel>
 
-            <Border Grid.Row="1" Background="White" CornerRadius="8" Padding="20">
+            <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="20" Margin="0,0,0,15">
                 <Border.Effect>
-                    <DropShadowEffect BlurRadius="15" ShadowDepth="1" Opacity="0.1"/>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.1"/>
                 </Border.Effect>
 
-                <StackPanel>
-                    <TextBlock Text="Bước 1: Chọn tệp tin Excel (.xlsx)" FontWeight="SemiBold" Margin="0,0,0,10" Foreground="#555"/>
-                    <Grid Margin="0,0,0,25">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox Text="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}" 
-                                 IsReadOnly="True" 
-                                 Padding="8,5" 
-                                 VerticalContentAlignment="Center"
-                                 BorderBrush="#CCC"
-                                 FontSize="13"/>
-                        <Button Grid.Column="1" 
-                                Content="Select File" 
-                                Width="100" Margin="10,0,0,0"
-                                Command="{Binding BrowseFileCommand}"
-                                Cursor="Hand"/>
-                    </Grid>
+                <UniformGrid Columns="2">
+                    <StackPanel Margin="0,0,15,0">
+                        <TextBlock Text="{DynamicResource m_Step1}" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#455A64"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}" 
+                                     IsReadOnly="True" Padding="8" VerticalContentAlignment="Center" BorderBrush="#CFD8DC"/>
+                            <Button Grid.Column="1" Content="{DynamicResource m_SelectFile}" 
+                                    Command="{Binding BrowseFileCommand}" 
+                                    Padding="15,0" Margin="5,0,0,0" Cursor="Hand"/>
+                        </Grid>
+                    </StackPanel>
 
-                    <TextBlock Text="Bước 2: Chọn Sheet chứa dữ liệu" FontWeight="SemiBold" Margin="0,0,0,10" Foreground="#555"/>
-                    <ComboBox ItemsSource="{Binding SheetList}" 
-                              SelectedItem="{Binding SelectedSheet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                              Padding="8,5"
-                              Width="300"
-                              HorizontalAlignment="Left"
-                              Margin="0,0,0,30"/>
-
-                    <Button Content="IMPORT" 
-                            Command="{Binding InsertCommand}"
-                            Height="45" Width="200"
-                            HorizontalAlignment="Left"
-                            Foreground="White"
-                            FontWeight="Bold" FontSize="14"
-                            Cursor="Hand">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="5"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                </StackPanel>
+                    <StackPanel Margin="15,0,0,0">
+                        <TextBlock Text="{DynamicResource m_Step2}" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#455A64"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox ItemsSource="{Binding SheetList}" 
+                                      SelectedItem="{Binding SelectedSheet, Mode=TwoWay}"
+                                      Padding="8" VerticalContentAlignment="Center"/>
+                            <Button Grid.Column="1" Content="{DynamicResource m_ImportBtn}" 
+                                    Command="{Binding InsertCommand}"
+                                    Background="#2E7D32" Foreground="White" FontWeight="Bold"
+                                    Padding="20,0" Margin="10,0,0,0" Cursor="Hand"/>
+                        </Grid>
+                    </StackPanel>
+                </UniformGrid>
             </Border>
 
-            <Border Grid.Row="2" Margin="0,20,0,0" Padding="10" CornerRadius="4" Background="#FFF3E0">
+            <GroupBox Grid.Row="2" Header="{DynamicResource m_Preview}" Foreground="#546E7A" FontSize="13">
+                <DataGrid ItemsSource="{Binding PreviewData}" 
+                          AutoGenerateColumns="True" 
+                          IsReadOnly="True"
+                          Background="White"
+                          GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#F1F1F1"
+                          RowHeight="35"/>
+            </GroupBox>
+
+            <Border Grid.Row="3" Margin="0,15,0,0" Padding="12" CornerRadius="6" Background="#FFF3E0">
                 <Border.Style>
                     <Style TargetType="Border">
-                        <Setter Property="Visibility" Value="Visible"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Message}" Value="">
                                 <Setter Property="Visibility" Value="Collapsed"/>
@@ -88,10 +89,9 @@
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
-
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="ℹ️" Margin="0,0,10,0"/>
-                    <TextBlock Text="{Binding Message}" VerticalAlignment="Center" TextWrapping="Wrap" Foreground="#E65100"/>
+                    <TextBlock Text="📢" Margin="0,0,10,0"/>
+                    <TextBlock Text="{Binding Message}" VerticalAlignment="Center" FontWeight="Medium" Foreground="#E65100"/>
                 </StackPanel>
             </Border>
         </Grid>

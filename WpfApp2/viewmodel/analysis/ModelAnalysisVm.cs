@@ -137,7 +137,7 @@ namespace WpfApp2.viewmodel.analysis
         {
             var data = _service.GetMatrixByModel(modelId);
             if (data == null || data.Count == 0) return;
-
+       
             var firstItem = data.First();
             if (MatrixData.Rows.Any(x => x.ModelCode == firstItem.ModelCode && !x.IsTotalRow)) return;
 
@@ -152,7 +152,8 @@ namespace WpfApp2.viewmodel.analysis
             var row = new ModelVendorMatrixRowDto
             {
                 ModelName = firstItem.ModelName,
-                ModelCode = firstItem.ModelCode
+                ModelCode = firstItem.ModelCode,
+                Image = firstItem.Image
             };
 
             foreach (var vendor in MatrixData.Vendors)

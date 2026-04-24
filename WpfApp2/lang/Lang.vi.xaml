@@ -115,4 +115,25 @@
 
     <sys:String x:Key="btn_ExportExcel">Xuất Excel</sys:String>
     <sys:String x:Key="title_MatrixComparison">Ma trận so sánh giá Model - Nhà cung cấp</sys:String>
+
+
+    <sys:String x:Key="m_ImportTitle">NHẬP DỮ LIỆU TỪ EXCEL</sys:String>
+    <sys:String x:Key="m_Step1">Bước 1: Chọn tệp tin Excel (.xlsx)</sys:String>
+    <sys:String x:Key="m_SelectFile">Chọn tệp</sys:String>
+    <sys:String x:Key="m_Step2">Bước 2: Chọn Sheet chứa dữ liệu</sys:String>
+    <sys:String x:Key="m_ImportBtn">NHẬP DỮ LIỆU</sys:String>
+    <sys:String x:Key="m_Preview">Bản xem trước dữ liệu:</sys:String>
+    <sys:String x:Key="m_NoData">Chưa có dữ liệu để hiển thị.</sys:String>
+
+
+    <sys:String x:Key="m_UserTitle">DANH SÁCH TÀI KHOẢN</sys:String>
+    <sys:String x:Key="m_UserSearchHint">Tìm tài khoản...</sys:String>
+    <sys:String x:Key="m_AddUser">THÊM TÀI KHOẢN</sys:String>
+    <sys:String x:Key="m_ColName">Họ Tên</sys:String>
+    <sys:String x:Key="m_ColAccount">Tài Khoản</sys:String>
+    <sys:String x:Key="m_ColRole">Quyền</sys:String>
+    <sys:String x:Key="m_ColActive">Trạng Thái</sys:String>
+    <sys:String x:Key="m_ColAction">Thao Tác</sys:String>
+
+
 </ResourceDictionary>

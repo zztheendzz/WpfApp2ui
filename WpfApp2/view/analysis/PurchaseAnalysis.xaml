@@ -213,47 +213,63 @@
                         </Grid>
 
                         <DataGrid ItemsSource="{Binding Analysis.Items}" AutoGenerateColumns="False" IsReadOnly="True" 
-                                  CanUserSortColumns="True" Background="White"
-                                  MinHeight="300" MaxHeight="600" materialDesign:DataGridAssist.CellPadding="10">
+          CanUserSortColumns="True" Background="White"
+          MinHeight="300" MaxHeight="600" materialDesign:DataGridAssist.CellPadding="10">
                             <DataGrid.Columns>
-                                <DataGridTemplateColumn Header="{DynamicResource dg_PurchaseDate}">
+
+                                <DataGridTemplateColumn>
+                                    <DataGridTemplateColumn.Header>
+                                        <TextBlock Text="{DynamicResource dg_PurchaseDate}"/>
+                                    </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding PurchaseDate, StringFormat=dd/MM/yyyy}" Padding="5" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding PurchaseDate, StringFormat=dd/MM/yyyy}" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="{DynamicResource dg_Model}" Width="180">
+
+                                <DataGridTemplateColumn Width="180">
+                                    <DataGridTemplateColumn.Header>
+                                        <TextBlock Text="{DynamicResource dg_Model}"/>
+                                    </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding ModelName}" TextWrapping="Wrap" Padding="5" VerticalAlignment="Center"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="{DynamicResource dg_ModelCode}" Width="180">
+
+                                <DataGridTemplateColumn Width="180">
+                                    <DataGridTemplateColumn.Header>
+                                        <TextBlock Text="{DynamicResource dg_ModelCode}"/>
+                                    </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding ModelCode}" TextWrapping="Wrap" Padding="5" VerticalAlignment="Center"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+
                                 <DataGridTemplateColumn Width="100">
                                     <DataGridTemplateColumn.Header>
-                                        <!--<TextBlock Text="{DynamicResource dg_Image}"/>-->
                                         <TextBlock Text="Image"/>
                                     </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Image Source="{Binding Image}" 
-                                  Stretch="Uniform" 
-                                  MaxHeight="50" 
-                                  Width="80"
-                                  Margin="5"
-                                  RenderOptions.BitmapScalingMode="HighQuality"/>
+                           Stretch="Uniform" 
+                           MaxHeight="50" 
+                           Width="80"
+                           Margin="5"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="{DynamicResource ph_Vendor}" Width="150">
+
+                                <DataGridTemplateColumn Width="150">
+                                    <DataGridTemplateColumn.Header>
+                                        <TextBlock Text="{DynamicResource ph_Vendor}"/>
+                                    </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding VendorName}" TextWrapping="Wrap" Padding="5" VerticalAlignment="Center"/>
@@ -261,7 +277,10 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
 
-                                <DataGridTemplateColumn Header="{DynamicResource ph_Brand}" Width="150">
+                                <DataGridTemplateColumn Width="150">
+                                    <DataGridTemplateColumn.Header>
+                                        <TextBlock Text="{DynamicResource ph_Brand}"/>
+                                    </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding BrandName}" TextWrapping="Wrap" Padding="5" VerticalAlignment="Center"/>
@@ -269,29 +288,43 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
 
-                                <DataGridTemplateColumn Header="{DynamicResource dg_Quantity}">
+                                <DataGridTemplateColumn>
+                                    <DataGridTemplateColumn.Header>
+                                        <TextBlock Text="{DynamicResource dg_Quantity}"/>
+                                    </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Quantity, StringFormat={}{0:N0}}" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="{DynamicResource dg_UnitPrice}">
+
+                                <DataGridTemplateColumn>
+                                    <DataGridTemplateColumn.Header>
+                                        <TextBlock Text="{DynamicResource dg_UnitPrice}"/>
+                                    </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding UnitPrice, StringFormat={}{0:N0}}" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="{DynamicResource dg_TotalPrice}">
+
+                                <DataGridTemplateColumn>
+                                    <DataGridTemplateColumn.Header>
+                                        <TextBlock Text="{DynamicResource dg_TotalPrice}"/>
+                                    </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding TotalPrice, StringFormat={}{0:N0}}" FontWeight="Bold" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                            <TextBlock Text="{Binding TotalPrice, StringFormat={}{0:N0}}" FontWeight="Bold" Foreground="{StaticResource SubBlue}" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                
-                                <DataGridTemplateColumn Header="{DynamicResource dg_Currency}">
+
+                                <DataGridTemplateColumn>
+                                    <DataGridTemplateColumn.Header>
+                                        <TextBlock Text="{DynamicResource dg_Currency}"/>
+                                    </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding CurrencyName}" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -299,7 +332,10 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
 
-                                <DataGridTemplateColumn Header="{DynamicResource dg_User}">
+                                <DataGridTemplateColumn>
+                                    <DataGridTemplateColumn.Header>
+                                        <TextBlock Text="{DynamicResource dg_User}"/>
+                                    </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding FullName}" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -307,16 +343,16 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
 
-
-                                <DataGridTemplateColumn Header="{DynamicResource dg_Note}" Width="*">
+                                <DataGridTemplateColumn Width="*">
+                                    <DataGridTemplateColumn.Header>
+                                        <TextBlock Text="{DynamicResource dg_Note}"/>
+                                    </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Note}" TextWrapping="Wrap" Padding="5" VerticalAlignment="Center"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-
-
 
                             </DataGrid.Columns>
                         </DataGrid>

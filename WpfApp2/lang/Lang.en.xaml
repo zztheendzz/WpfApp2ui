@@ -120,4 +120,27 @@
     <sys:String x:Key="btn_ExportExcel">Export Excel</sys:String>
 
 
+
+    <sys:String x:Key="m_ImportTitle">IMPORT DATA FROM EXCEL</sys:String>
+    <sys:String x:Key="m_Step1">Step 1: Select Excel File (.xlsx)</sys:String>
+    <sys:String x:Key="m_SelectFile">Browse File</sys:String>
+    <sys:String x:Key="m_Step2">Step 2: Select Worksheet</sys:String>
+
+    <sys:String x:Key="m_ImportBtn">IMPORT DATA</sys:String>
+    <sys:String x:Key="m_Preview">Data Preview:</sys:String>
+    <sys:String x:Key="m_NoData">No data available to display.</sys:String>
+
+    <sys:String x:Key="m_MsgSuccess">Data imported successfully!</sys:String>
+    <sys:String x:Key="m_MsgError">An error occurred while loading file.</sys:String>
+
+
+    <sys:String x:Key="m_UserTitle">USER LIST</sys:String>
+    <sys:String x:Key="m_UserSearchHint">Search account...</sys:String>
+    <sys:String x:Key="m_AddUser">ADD USER</sys:String>
+    <sys:String x:Key="m_ColName">Full Name</sys:String>
+    <sys:String x:Key="m_ColAccount">Account</sys:String>
+    <sys:String x:Key="m_ColRole">Role</sys:String>
+    <sys:String x:Key="m_ColActive">Active</sys:String>
+    <sys:String x:Key="m_ColAction">Action</sys:String>
+
 </ResourceDictionary>

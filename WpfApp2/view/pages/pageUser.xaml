@@ -6,69 +6,122 @@
       xmlns:vm="clr-namespace:WpfApp2.viewmodel.tableVm"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d"
-      d:DesignHeight="450"
-      d:DesignWidth="800">
+      d:DesignHeight="500" d:DesignWidth="900">
 
     <Page.DataContext>
         <vm:UserViewModel/>
     </Page.DataContext>
 
-    <Grid Margin="20">
+    <Grid Background="#F8FAFC">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
-            <materialDesign:PackIcon Kind="AccountKey" Width="30" Height="30" VerticalAlignment="Center" Foreground="#2C3E50"/>
-            <TextBlock Text="DANH SÁCH TÀI KHOẢN" FontSize="20" FontWeight="Bold" Margin="10,0,30,0" VerticalAlignment="Center" Foreground="#2C3E50"/>
+        <Border Grid.Row="0" Background="White" Padding="25,15" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.03"/>
+            </Border.Effect>
 
-            <TextBox Width="250" materialDesign:HintAssist.Hint="Tìm tài khoản..." 
-                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <materialDesign:PackIcon Kind="AccountGroup" Width="28" Height="28" 
+                                             VerticalAlignment="Center" Foreground="#3B82F6"/>
+                    <TextBlock Text="{DynamicResource m_UserTitle}" FontSize="20" FontWeight="Bold" 
+                               Margin="12,0,0,0" VerticalAlignment="Center" Foreground="#1E293B"/>
+                </StackPanel>
 
-            <Button Content="ADD USER" Margin="20,0,0,0" Background="#455A64" BorderBrush="{x:Null}"
-                    Command="{Binding AddCommand}"/>
-        </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBox Width="250" 
+                             materialDesign:HintAssist.Hint="{DynamicResource m_UserSearchHint}" 
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             Height="42" Padding="10,6" FontSize="13"
+                             materialDesign:TextFieldAssist.HasClearButton="True"
+                             BorderBrush="#CBD5E1"/>
 
-        <materialDesign:Card Grid.Row="1" VerticalAlignment="Stretch">
-            <DataGrid ItemsSource="{Binding Users}" AutoGenerateColumns="False"
-                      CanUserAddRows="False" IsReadOnly="True"
-                      GridLinesVisibility="Vertical" VerticalGridLinesBrush="#DDDDDD">
+                    <Button Content="{DynamicResource m_AddUser}" 
+                            Command="{Binding AddCommand}"
+                            Margin="15,0,0,0" 
+                            Height="42"
+                            Background="#3B82F6" 
+                            BorderBrush="#3B82F6"
+                            Foreground="White"
+                            FontWeight="SemiBold"
+                            materialDesign:ButtonAssist.CornerRadius="8"
+                            Cursor="Hand">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatMidBgButton}">
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.2" Color="#3B82F6"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#2563EB"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <materialDesign:Card Grid.Row="1" Margin="20" VerticalAlignment="Stretch" 
+                             
+                             UniformCornerRadius="12" BorderThickness="1" BorderBrush="#E2E8F0">
+            <DataGrid ItemsSource="{Binding Users}" 
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False" 
+                      IsReadOnly="True"
+                      Background="White"
+                      GridLinesVisibility="Horizontal" 
+                      HorizontalGridLinesBrush="#F1F5F9"
+                      HeadersVisibility="Column"
+                      SelectionMode="Single">
+
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                        <Setter Property="Background" Value="#F8FAFC"/>
+                        <Setter Property="Height" Value="45"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Foreground" Value="#64748B"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                        <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                    </Style>
+                </DataGrid.Resources>
+
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding FullName}" Width="150"/>
-                    <DataGridTextColumn Header="Account" Binding="{Binding UserName}" Width="150"/>
+                    <DataGridTextColumn Header="{DynamicResource m_ColName}" Binding="{Binding FullName}" Width="*"/>
+                    <DataGridTextColumn Header="{DynamicResource m_ColAccount}" Binding="{Binding UserName}" Width="180"/>
 
-                    <DataGridTemplateColumn Header="Role" Width="120">
-                        
-
-
-                        
+                    <DataGridTemplateColumn Header="{DynamicResource m_ColRole}" Width="150">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Border Background="{Binding RoleColor}" CornerRadius="4" Padding="5,2">
-                                    <TextBlock Text="{Binding RoleName}" Foreground="Black" HorizontalAlignment="Center"/>
+                                <Border Background="{Binding RoleColor}" CornerRadius="15" Padding="10,3" HorizontalAlignment="Left">
+                                    <TextBlock Text="{Binding RoleName}" Foreground="White" FontSize="11" FontWeight="Bold"/>
                                 </Border>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridCheckBoxColumn Header="Active" Binding="{Binding IsActive}" Width="80"/>
+                    <DataGridCheckBoxColumn Header="{DynamicResource m_ColActive}" Binding="{Binding IsActive}" Width="100"/>
 
-                    <DataGridTemplateColumn Header="Thao tác" Width="100">
+                    <DataGridTemplateColumn Header="{DynamicResource m_ColAction}" Width="120">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <Button Style="{StaticResource MaterialDesignIconButton}"
-        Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-        CommandParameter="{Binding}">
-                                        <materialDesign:PackIcon Kind="Edit" Width="18" Height="18"/>
+                                            Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                            CommandParameter="{Binding}" Width="32" Height="32">
+                                        <materialDesign:PackIcon Kind="PencilOutline" Width="18" Height="18" Foreground="#64748B"/>
                                     </Button>
                                     <Button Style="{StaticResource MaterialDesignIconButton}" 
-        Foreground="Red" 
-        Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-        CommandParameter="{Binding}">
-                                        <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
+                                            Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                            CommandParameter="{Binding}" Width="32" Height="32" Margin="5,0,0,0">
+                                        <materialDesign:PackIcon Kind="DeleteOutline" Width="18" Height="18" Foreground="#EF4444"/>
                                     </Button>
                                 </StackPanel>
                             </DataTemplate>

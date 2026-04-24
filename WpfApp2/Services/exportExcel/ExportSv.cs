@@ -1,13 +1,10 @@
 ﻿using ClosedXML.Excel;
-using System;
-using System;
-using System.Collections.Generic;
-using System.Collections.Generic;
+using ClosedXML.Excel.Drawings;
+using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using WpfApp2.modelDTO.analysisDto;
+using System.Windows;
 using WpfApp2.modelDTO;
+using WpfApp2.modelDTO.analysisDto;
 
 namespace WpfApp2.Services.exportExcel
 {
@@ -77,9 +74,36 @@ namespace WpfApp2.Services.exportExcel
                                 ws.Cell(startRow, vendorColIndex + 1).Value = "";
                             }
                         }
+                        if (!string.IsNullOrEmpty(row.Image) && File.Exists(row.Image))
+                        {
+                            int imgWidth = 80;
+                            int imgHeight = 80;
+                            // set kích thước cột + row trước
+                            ws.Column(5).Width = 18;      // tăng độ rộng cột
+                            ws.Row(startRow).Height = 70;  // tăng chiều cao dòng
+
+                            var cell = ws.Cell(startRow, 5);
+
+                            var picture = ws.AddPicture(row.Image);
+
+                            picture.WithPlacement(XLPicturePlacement.FreeFloating);
+                            picture.WithSize(imgWidth, imgHeight);
+
+                            // 👉 TÍNH TOÁN TRƯỚC
+                            var cellWidthPx = ws.Column(10).Width * 7;
+                            var cellHeightPx = ws.Row(startRow).Height * 1.33;
+
+                            int offsetX = (int)((cellWidthPx - imgWidth) / 2);
+                            int offsetY = (int)((cellHeightPx - imgHeight) / 2);
+
+                            // 👉 RỒI MỚI MOVE
+                            picture.MoveTo(cell, new System.Drawing.Point(offsetX, offsetY));
+
+                        }
 
                         vendorColIndex += 2;
                     }
+
 
                     // Kẻ khung cho đẹp
                     var range = ws.Range(startRow, 1, startRow, 16);
@@ -142,6 +166,34 @@ namespace WpfApp2.Services.exportExcel
 
                         ws.Cell(startRow, 9).Value = item.Note ?? "";
 
+                        if (!string.IsNullOrEmpty(item.Image) && File.Exists(item.Image))
+                        {
+                            int imgWidth = 80;
+                            int imgHeight = 80;
+
+                            // set kích thước cột + row trước
+                            ws.Column(5).Width = 18;      // tăng độ rộng cột
+                            ws.Row(startRow).Height = 70;  // tăng chiều cao dòng
+
+                            var cell = ws.Cell(startRow, 5);
+
+                            var picture = ws.AddPicture(item.Image);
+
+                            picture.WithPlacement(XLPicturePlacement.FreeFloating);
+                            picture.WithSize(imgWidth, imgHeight);
+
+                            // 👉 TÍNH TOÁN TRƯỚC
+                            var cellWidthPx = ws.Column(10).Width * 7;
+                            var cellHeightPx = ws.Row(startRow).Height * 1.33;
+
+                            int offsetX = (int)((cellWidthPx - imgWidth) / 2);
+                            int offsetY = (int)((cellHeightPx - imgHeight) / 2);
+
+                            // 👉 RỒI MỚI MOVE
+                            picture.MoveTo(cell, new System.Drawing.Point(offsetX, offsetY));
+
+                        }
+
                         var range = ws.Range(startRow, 1, startRow, 13);
                         range.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
                         range.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
@@ -201,6 +253,15 @@ namespace WpfApp2.Services.exportExcel
                     ws.Cell(startRow, 8).Value = item.TotalPrice;
                     ws.Cell(startRow, 8).Style.NumberFormat.Format = "#,##0";
                     ws.Cell(startRow, 9).Value = item.Note ?? "";
+                    if (!string.IsNullOrEmpty(item.Image) && File.Exists(item.Image))
+                    {
+                        var picture = ws.AddPicture(item.Image)
+                            .MoveTo(ws.Cell(startRow, 5))
+                            .WithSize(80, 80); // chỉnh size tùy ý
+
+                        // chỉnh chiều cao row để vừa ảnh
+                        ws.Row(startRow).Height = 60;
+                    }
                     // Kẻ khung cho đẹp
                     var range = ws.Range(startRow, 1, startRow, 13);
                     range.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;

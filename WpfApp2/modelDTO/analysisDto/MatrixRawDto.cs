@@ -6,6 +6,7 @@ namespace WpfApp2.modelDTO.analysisDto
 {
     public class MatrixRawDto
     {
+        public string Image { get; set; }
         public string ModelName { get; set; }
         public string ModelCode { get; set; }
         public string VendorName { get; set; }
