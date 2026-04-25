@@ -25,7 +25,17 @@ namespace WpfApp2
     /// </summary>
     public partial class MainWindow : Window
     {
+        private bool isMenuOpen = true;
 
+        private void ToggleMenu_Click(object sender, RoutedEventArgs e)
+        {
+            //if (isMenuOpen)
+            //    SidebarColumn.Width = new GridLength(0);
+            //else
+            //    SidebarColumn.Width = new GridLength(280);
+
+            //isMenuOpen = !isMenuOpen;
+        }
         public MainWindow()
         {
             InitializeComponent();

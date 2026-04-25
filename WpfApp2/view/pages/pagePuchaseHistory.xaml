@@ -30,6 +30,13 @@
                         MinWidth="100" Padding="15,6"
                         Command="{Binding AddCommand}"
                         Margin="0,0,10,5"/>
+                <Button Content="Delete Selected"
+                        Command="{Binding DeleteSelectedCommand}"
+                        Margin="0,0,10,5"/>
+
+                <Button Content="Delete All"
+                        Command="{Binding DeleteAll}"
+                        Margin="0,0,10,5"/>
 
                 <TextBox Width="200" Margin="10,0,10,5" VerticalContentAlignment="Center"
                          Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
@@ -181,14 +188,31 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="60">
+                        <DataGridTemplateColumn.Header>
+                            <CheckBox HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  IsChecked="{Binding DataContext.IsAllSelected, 
+                                      RelativeSource={RelativeSource AncestorType=DataGrid}, 
+                                      Mode=TwoWay}"/>
+                        </DataGridTemplateColumn.Header>
+
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
 
-            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <!--<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
                 <Button Content="{DynamicResource btn_Prev}" Width="45" Height="28" Command="{Binding PrevCommand}"/>
                 <TextBlock Text="{Binding CurrentPage}" Margin="20,0" VerticalAlignment="Center" FontWeight="Bold" FontSize="15"/>
                 <Button Content="{DynamicResource btn_Next}" Width="45" Height="28" Command="{Binding NextCommand}"/>
-            </StackPanel>
+            </StackPanel>-->
         </Grid>
     </Grid>
 </Page>

@@ -357,13 +357,13 @@
                             </DataGrid.Columns>
                         </DataGrid>
 
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+                        <!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
                             <Button Content="&lt;" Command="{Binding PrevCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
                             <Border Background="#1976D2" CornerRadius="15" Width="30" Height="30" Margin="10,0">
                                 <TextBlock Text="{Binding CurrentPage}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
                             </Border>
                             <Button Content="&gt;" Command="{Binding NextCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
-                        </StackPanel>
+                        </StackPanel>-->
                     </StackPanel>
                 </materialDesign:Card>
             </StackPanel>

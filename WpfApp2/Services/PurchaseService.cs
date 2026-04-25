@@ -135,6 +135,16 @@ namespace WpfApp2.Services
 
             return conn.Query<PurchaseDto>(sql);
         }
+
+        public void deleteAll()
+        {
+            using var conn = _db.GetConnection();
+
+            string sql = "DELETE FROM PurchaseHistory";
+
+            conn.Execute(sql);
+        }
+
         // DELETE
         public void Delete(int id)
         {

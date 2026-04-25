@@ -6,34 +6,44 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:WpfApp2"
         mc:Ignorable="d"
-        Title="{DynamicResource lbl_PriceManagementSystem}" Height="750" Width="1200"
-        WindowState="Maximized"
-        WindowStyle="SingleBorderWindow"
-        ResizeMode="CanResize">
+        Title="{DynamicResource lbl_PriceManagementSystem}"
+        Height="750" Width="1200"
+        WindowState="Maximized">
 
+    <!-- ================== RESOURCES ================== -->
     <Window.Resources>
-        <Style x:Key="SidebarButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+
+        <!-- Sidebar Radio Style -->
+        <Style x:Key="SidebarButtonStyle" TargetType="RadioButton">
             <Setter Property="Foreground" Value="#D5DBDB"/>
             <Setter Property="Height" Value="50"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <!-- FIX -->
             <Setter Property="Padding" Value="45,0,0,0"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+
             <Style.Triggers>
+
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#455A64"/>
                     <Setter Property="Foreground" Value="White"/>
                 </Trigger>
-                <Trigger Property="IsFocused" Value="True">
+
+                <Trigger Property="IsChecked" Value="True">
                     <Setter Property="Background" Value="#2E4053"/>
                     <Setter Property="Foreground" Value="#1ABC9C"/>
                     <Setter Property="FontWeight" Value="Bold"/>
                     <Setter Property="BorderThickness" Value="5,0,0,0"/>
                     <Setter Property="BorderBrush" Value="#1ABC9C"/>
                 </Trigger>
+
             </Style.Triggers>
         </Style>
 
+        <!-- Expander -->
         <Style x:Key="MyExpanderStyle" TargetType="Expander" BasedOn="{StaticResource MaterialDesignExpander}">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="White"/>
@@ -41,8 +51,10 @@
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="Margin" Value="0,2"/>
         </Style>
+
     </Window.Resources>
 
+    <!-- ================== LAYOUT ================== -->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="65"/>
@@ -50,83 +62,113 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="280" MinWidth="180" MaxWidth="500"/>
+            <ColumnDefinition Width="280"/>
             <ColumnDefinition Width="4"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Row="0" Grid.ColumnSpan="3" Background="#2C3E50" Padding="20,0">
+        <!-- ================== HEADER ================== -->
+        <Border Grid.Row="0" Grid.ColumnSpan="3" Background="#2C3E50" Padding="10,0">
             <DockPanel LastChildFill="False">
-                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
+
+                <!-- LEFT -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+
+                    <Button Click="ToggleMenu_Click"
+                            Style="{StaticResource MaterialDesignIconButton}"
+                            Foreground="White"
+                            Margin="0,0,10,0">
+                        <materialDesign:PackIcon Kind="Menu" Width="24" Height="24"/>
+                    </Button>
+
                     <Border Background="White" CornerRadius="5" Padding="5" Margin="0,0,12,0">
-                        <Image Source="/Images/logo.jpg" Width="30" Height="25" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <Image Source="/Images/logo.jpg" Width="30" Height="25"/>
                     </Border>
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="{DynamicResource lbl_PriceManagementSystem}" Foreground="White" FontSize="20" FontWeight="Bold"/>
-                        <TextBlock Text="Management &amp; Automation System" Foreground="#BDC3C7" FontSize="11" Margin="0,-2,0,0"/>
+
+                    <StackPanel>
+                        <TextBlock Text="{DynamicResource lbl_PriceManagementSystem}"
+                                   Foreground="White"
+                                   FontSize="20"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="Management &amp; Automation System"
+                                   Foreground="#BDC3C7"
+                                   FontSize="11"/>
                     </StackPanel>
                 </StackPanel>
 
-                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Command="{Binding resetCurrencyCommand}" 
-                            ToolTip="Refresh Data" 
-                            Style="{StaticResource MaterialDesignIconButton}"
-                            Foreground="#ECF0F1"
-                            Margin="0,0,10,0">
-                        <materialDesign:PackIcon Kind="Refresh" Width="24" Height="24"/>
-                    </Button>
+                <!-- RIGHT -->
+                <StackPanel Orientation="Horizontal"
+                            DockPanel.Dock="Right"
+                            VerticalAlignment="Center">
 
-                    <materialDesign:PopupBox PlacementMode="BottomAndAlignRightEdges" StaysOpen="False" Foreground="White">
+                    <materialDesign:PopupBox PlacementMode="BottomAndAlignRightEdges">
+
                         <materialDesign:PopupBox.ToggleContent>
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Translate" Width="24" Height="24" VerticalAlignment="Center"/>
-                                <materialDesign:PackIcon Kind="ChevronDown" Width="18" Height="18" VerticalAlignment="Center" Margin="2,0,0,0"/>
-                            </StackPanel>
+                            <Border Background="#34495E" Padding="10,5" CornerRadius="6">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="Translate" Foreground="White"/>
+                                    <TextBlock Text="EN" Margin="6,0" Foreground="White"/>
+                                </StackPanel>
+                            </Border>
                         </materialDesign:PopupBox.ToggleContent>
-                        <StackPanel Width="160">
-                            <Button Content="{DynamicResource lang_VN}" FontSize="14" Command="{Binding ChangeLangCommand}" CommandParameter="vi-VN"/>
-                            <Button Content="{DynamicResource lang_EN}" FontSize="14" Command="{Binding ChangeLangCommand}" CommandParameter="en-US"/>
-                            <Button Content="{DynamicResource lang_KR}" FontSize="14" Command="{Binding ChangeLangCommand}" CommandParameter="ko-KR"/>
+
+                        <StackPanel Background="White">
+                            <Button Content="{DynamicResource lang_VN}" Command="{Binding ChangeLangCommand}" CommandParameter="vi-VN"/>
+                            <Button Content="{DynamicResource lang_EN}" Command="{Binding ChangeLangCommand}" CommandParameter="en-US"/>
+                            <Button Content="{DynamicResource lang_KR}" Command="{Binding ChangeLangCommand}" CommandParameter="ko-KR"/>
                         </StackPanel>
+
                     </materialDesign:PopupBox>
+
                 </StackPanel>
             </DockPanel>
         </Border>
 
-        <Border Grid.Row="1" Grid.Column="0" Background="#34495E" FocusManager.IsFocusScope="True">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <!-- ================== SIDEBAR ================== -->
+        <Border Grid.Row="1" Grid.Column="0" Background="#34495E">
+            <ScrollViewer>
                 <StackPanel Margin="0,15,0,0">
 
+                    <!-- Inquiry -->
                     <Expander Header="{DynamicResource menu_Inquiry}" Style="{StaticResource MyExpanderStyle}" IsExpanded="True">
                         <StackPanel Background="#2C3E50">
-                            <Button Content="{DynamicResource sub_PurchaseAnalysis}" Command="{Binding ShowPurchaseAnalysisPageCommand}" Style="{StaticResource SidebarButtonStyle}"/>
-                            <Button Content="{DynamicResource sub_ModelAnalysis}" Command="{Binding ShowModelAnalysisCommand}" Style="{StaticResource SidebarButtonStyle}"/>
-                            <Button Content="{DynamicResource sub_VendorAnalysis}" Command="{Binding ShowVendorAnalysisCommand}" Style="{StaticResource SidebarButtonStyle}"/>
-                            <Button Content="{DynamicResource sub_BrandAnalysis}" Command="{Binding ShowBrandAnalysisCommand}" Style="{StaticResource SidebarButtonStyle}"/>
-                            <Button Content="{DynamicResource sub_EquipmentAnalysis}" Command="{Binding ShowEquipmentAnalysisCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+
+                            <RadioButton Content="{DynamicResource sub_PurchaseAnalysis}" Command="{Binding ShowPurchaseAnalysisPageCommand}" GroupName="Menu" Style="{StaticResource SidebarButtonStyle}"/>
+                            <RadioButton Content="{DynamicResource sub_ModelAnalysis}" Command="{Binding ShowModelAnalysisCommand}" GroupName="Menu" Style="{StaticResource SidebarButtonStyle}"/>
+                            <RadioButton Content="{DynamicResource sub_VendorAnalysis}" Command="{Binding ShowVendorAnalysisCommand}" GroupName="Menu" Style="{StaticResource SidebarButtonStyle}"/>
+                            <RadioButton Content="{DynamicResource sub_BrandAnalysis}" Command="{Binding ShowBrandAnalysisCommand}" GroupName="Menu" Style="{StaticResource SidebarButtonStyle}"/>
+                            <RadioButton Content="{DynamicResource sub_EquipmentAnalysis}" Command="{Binding ShowEquipmentAnalysisCommand}" GroupName="Menu" Style="{StaticResource SidebarButtonStyle}"/>
+
                         </StackPanel>
                     </Expander>
 
+                    <!-- Data -->
                     <Expander Header="{DynamicResource menu_DataManagement}" Style="{StaticResource MyExpanderStyle}">
                         <StackPanel Background="#2C3E50">
-                            <Button Content="{DynamicResource sub_Model}" Command="{Binding ShowModelPageCommand}" Style="{StaticResource SidebarButtonStyle}"/>
-                            <Button Content="{DynamicResource sub_Brand}" Command="{Binding ShowBrandlPageCommand}" Style="{StaticResource SidebarButtonStyle}"/>
-                            <Button Content="{DynamicResource sub_Vendor}" Command="{Binding ShowVendorPageCommand}" Style="{StaticResource SidebarButtonStyle}" />
-                            <Button Content="{DynamicResource sub_Equipment}" Command="{Binding ShowEquipmentPageCommand}" Style="{StaticResource SidebarButtonStyle}" />
-                            <Button Content="{DynamicResource sub_PurchaseHistory}" Command="{Binding ShowPurchaseHistoryPageCommand}" Style="{StaticResource SidebarButtonStyle}" />
+
+                            <RadioButton Content="{DynamicResource sub_Model}" Command="{Binding ShowModelPageCommand}" GroupName="Menu" Style="{StaticResource SidebarButtonStyle}"/>
+                            <RadioButton Content="{DynamicResource sub_Brand}" Command="{Binding ShowBrandlPageCommand}" GroupName="Menu" Style="{StaticResource SidebarButtonStyle}" IsChecked="True"/>
+                            <RadioButton Content="{DynamicResource sub_Vendor}" Command="{Binding ShowVendorPageCommand}" GroupName="Menu" Style="{StaticResource SidebarButtonStyle}"/>
+                            <RadioButton Content="{DynamicResource sub_Equipment}" Command="{Binding ShowEquipmentPageCommand}" GroupName="Menu" Style="{StaticResource SidebarButtonStyle}"/>
+                            <RadioButton Content="{DynamicResource sub_PurchaseHistory}" Command="{Binding ShowPurchaseHistoryPageCommand}" GroupName="Menu" Style="{StaticResource SidebarButtonStyle}"/>
+
                         </StackPanel>
                     </Expander>
 
+                    <!-- Excel -->
                     <Expander Header="{DynamicResource menu_Excel}" Style="{StaticResource MyExpanderStyle}">
                         <StackPanel Background="#2C3E50">
-                            <Button Content="{DynamicResource sub_ExcelUpload}" Command="{Binding ShowImportExcelCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+                            <RadioButton Content="{DynamicResource sub_ExcelUpload}" Command="{Binding ShowImportExcelCommand}" GroupName="Menu" Style="{StaticResource SidebarButtonStyle}"/>
                         </StackPanel>
                     </Expander>
 
+                    <!-- Settings -->
                     <Expander Header="{DynamicResource menu_Settings}" Style="{StaticResource MyExpanderStyle}">
                         <StackPanel Background="#2C3E50">
-                            <Button Content="{DynamicResource sub_User}" Style="{StaticResource SidebarButtonStyle}" Command="{Binding ShowUserPageCommand}" Visibility="{Binding IsAdminVisible}" />
-                            <Button Content="{DynamicResource btn_Logout}" Style="{StaticResource SidebarButtonStyle}" Command="{Binding LogoutCommand}" Foreground="#E74C3C" FontWeight="Bold"/>
+
+                            <RadioButton Content="{DynamicResource sub_User}" Command="{Binding ShowUserPageCommand}" Visibility="{Binding IsAdminVisible}" GroupName="Menu" Style="{StaticResource SidebarButtonStyle}"/>
+                            <RadioButton Content="{DynamicResource btn_Logout}" Command="{Binding LogoutCommand}" Foreground="#E74C3C" GroupName="Menu" Style="{StaticResource SidebarButtonStyle}"/>
+
                         </StackPanel>
                     </Expander>
 
@@ -134,17 +176,14 @@
             </ScrollViewer>
         </Border>
 
-        <GridSplitter Grid.Row="1" Grid.Column="1" 
-                      Width="4" 
-                      HorizontalAlignment="Stretch" 
-                      VerticalAlignment="Stretch"
-                      Background="#212F3C"
-                      ShowsPreview="True"/>
+        <!-- SPLITTER -->
+        <GridSplitter Grid.Row="1" Grid.Column="1" Width="4" Background="#212F3C"/>
 
+        <!-- ================== CONTENT ================== -->
         <Grid Grid.Row="1" Grid.Column="2" Background="#F8F9F9">
             <Border Margin="20" Background="White" CornerRadius="10">
                 <Border.Effect>
-                    <DropShadowEffect BlurRadius="15" ShadowDepth="1" Color="#D0D3D4"/>
+                    <DropShadowEffect BlurRadius="15" ShadowDepth="1"/>
                 </Border.Effect>
                 <Frame Content="{Binding CurrentPage}" NavigationUIVisibility="Hidden"/>
             </Border>

@@ -23,8 +23,8 @@ namespace WpfApp2.viewmodel.tableVm
         public ICommand EditCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
         public ICommand AddCommand { get; set; }
-        
 
+        public ICommand DeleteAll { get; set; }
         private ObservableCollection<PurchaseDto> _purchases;
         public ObservableCollection<PurchaseDto> purchases
         {
@@ -41,7 +41,6 @@ namespace WpfApp2.viewmodel.tableVm
         }
 
         public ICollectionView PurchasesView { get; set; }
-
         public PurchaseViewModel()
         {
             // Load dữ liệu ban đầu
@@ -50,6 +49,13 @@ namespace WpfApp2.viewmodel.tableVm
             EditCommand = new RelayCommand(x => Edit((PurchaseDto)x));
             DeleteCommand = new RelayCommand(x => Delete((PurchaseDto)x));
             AddCommand = new RelayCommand(x => Add());
+            DeleteAll = new RelayCommand(x => DeleteAllData());
+        }
+
+        public void DeleteAllData(){
+            _purchaseService.deleteAll();
+            LoadInitialData();
+
         }
 
         private void LoadInitialData()
